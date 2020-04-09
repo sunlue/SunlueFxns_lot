@@ -1,4 +1,4 @@
-package com.sunlue;
+package com.sunlue.env_monitor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,15 +7,15 @@ import java.util.Date;
 public class DataTreating {
 
 	public SocketEntity treat(String string) {
-		// É¾³ý×Ö·û´®ÖÐµÄ¿Õ¸ñ
+		// É¾ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ÐµÄ¿Õ¸ï¿½
 		String s = string.replaceAll(" ", "").substring(42);
 		ArrayList<Object> list = new ArrayList<Object>();
 		int index = 0;
 		do {
 			String d = Integer.valueOf(s.substring(index * 4, index * 4 + 4), 16).toString();
-			if (index == 0 || index == 1 || index == 14) {// ×ª¸¡µãÊýÂß¼­
+			if (index == 0 || index == 1 || index == 14) {// ×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
 				list.add(Float.parseFloat(d) / 10);
-			} else {// Õý³£Êý¾ÝÂß¼­
+			} else {// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
 				list.add(d);
 			}
 			index += 1;
@@ -35,7 +35,7 @@ public class DataTreating {
 			entity.setOriginal(string);
 			entity.setAddTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		} catch (Exception e) {
-			System.out.println("--------´¦ÀíÊµÌåÒì³£-------------");
+			System.out.println("--------ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ì³£-------------");
 			return null;
 		}
 		return entity;

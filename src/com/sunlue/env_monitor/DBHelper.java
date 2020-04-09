@@ -1,4 +1,4 @@
-package com.sunlue;
+package com.sunlue.env_monitor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sunlue.gui.East;
+
 public class DBHelper {
 
 //	static String URL = "jdbc:mysql://118.123.13.196:3306/fxnsjq_lot";
@@ -26,14 +28,14 @@ public class DBHelper {
 	static PreparedStatement pstmt;
 
 	public DBHelper() {
-		Sgui.insert("数据库连接:" + URL);
-		Sgui.insert("数据库验证:" + USERNAME + "&&" + PASSWORD);
+		East.insert("数据库连接:" + URL);
+		East.insert("数据库验证:" + USERNAME + "&&" + PASSWORD);
 	}
 
 	public boolean closeConnection() {
 		try {
 			conn.close();
-			Sgui.insert("关闭数据库连接");
+			East.insert("关闭数据库连接");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -54,18 +56,18 @@ public class DBHelper {
 
 	public boolean openWriteConnection() {
 		try {
-			Sgui.insert("实例化数据库，请稍后...");
+			East.insert("实例化数据库，请稍后...");
 			Class.forName(driver);
 			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-			Sgui.insert("实例化数据库成功，实例为：" + conn);
+			East.insert("实例化数据库成功，实例为：" + conn);
 			return true;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			Sgui.insert("数据库初始化失败【com.mysql.jdbc.Driver】："+e.getMessage());
+			East.insert("数据库初始化失败【com.mysql.jdbc.Driver】："+e.getMessage());
 			return false;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			Sgui.insert("数据库驱动程序初始化失败："+e.getMessage());
+			East.insert("数据库驱动程序初始化失败："+e.getMessage());
 			return false;
 		}
 	}
@@ -79,7 +81,7 @@ public class DBHelper {
 			iter = null;
 		try {
 			// 准备执行语句
-			Sgui.insert("准备写入数据...");
+			East.insert("准备写入数据...");
 			pstmt = conn.prepareStatement(sql);
 			// 解析参数列表
 			if (iter != null)
@@ -87,12 +89,12 @@ public class DBHelper {
 					Object p = iter.next();
 					pstmt.setObject(i++, p);
 				}
-			Sgui.insert("正在写入数据...");
+			East.insert("正在写入数据...");
 			pstmt.execute();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			Sgui.insert("数据处理错误：" + e.getMessage());
+			East.insert("数据处理错误：" + e.getMessage());
 			return false;
 		}
 	}
@@ -169,12 +171,12 @@ public class DBHelper {
 		}
 		// 拼写sql语句
 		String sql = "insert into fxnsjq_lot(" + collist + ") values (" + sit + ")";
-		Sgui.insert("处理Sql:" + sql);
+		East.insert("处理Sql:" + sql);
 		System.out.println("execute sql is ：" + sql);
 		boolean init = openWriteConnection();
 		if (init) {
 			boolean ret = doSql(sql, values);// 执行sql语句
-			Sgui.insert("处理Sql结果：" + ret);
+			East.insert("处理Sql结果：" + ret);
 			closeConnection();
 			return ret;
 		}

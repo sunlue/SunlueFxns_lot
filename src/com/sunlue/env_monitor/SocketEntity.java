@@ -1,7 +1,7 @@
-package com.sunlue;
+package com.sunlue.env_monitor;
 
 /**
- * »·¾³¼à²âÊµÌåÀà
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½
  * 
  * @author hyh
  *
@@ -117,8 +117,8 @@ public class SocketEntity {
 	}
 
 	public String getString() {
-		return "ÎÂ¶È" + wendu + "¡æ;" + "Êª¶È" + shidu + "%;" + "ÓêÁ¿" + yuliang + ";" + "·çÏò" + fengxiang + ";" + "·çËÙ" + fengsu
-				+ ";" + "Ò»Ñõ»¯Ì¼" + co + ";" + "PM2.5" + pm25 + ";" + "PM10" + pm10 + ";" + "ÆøÑ¹" + qiya + ";" + "¸ºÀë×Ó"
+		return "ï¿½Â¶ï¿½" + wendu + "ï¿½ï¿½;" + "Êªï¿½ï¿½" + shidu + "%;" + "ï¿½ï¿½ï¿½ï¿½" + yuliang + ";" + "ï¿½ï¿½ï¿½ï¿½" + fengxiang + ";" + "ï¿½ï¿½ï¿½ï¿½" + fengsu
+				+ ";" + "Ò»ï¿½ï¿½ï¿½ï¿½Ì¼" + co + ";" + "PM2.5" + pm25 + ";" + "PM10" + pm10 + ";" + "ï¿½ï¿½Ñ¹" + qiya + ";" + "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
 				+ fulizi + ";";
 	}
 

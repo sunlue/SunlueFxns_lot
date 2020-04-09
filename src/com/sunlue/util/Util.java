@@ -18,7 +18,8 @@ import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
-import com.sunlue.Index;
+import com.sunlue.gui.Index;
+
 
 public class Util {
 

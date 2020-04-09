@@ -1,14 +1,12 @@
-package com.sunlue.socket;
+package com.sunlue.env_monitor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.sunlue.DBHelper;
-import com.sunlue.DataTreating;
-import com.sunlue.Sgui;
-import com.sunlue.SocketEntity;
+import com.sunlue.gui.East;
+
 
 public class Server extends Thread {
 	Socket socket = null;
@@ -26,11 +24,11 @@ public class Server extends Thread {
 	public void run() {
 		super.run();
 		try {
-			Sgui.insert("·şÎñ¶ËÆô¶¯¼àÌı");
-			// Í¨¹ıËÀÑ­»·¿ªÆô³¤Á¬½Ó£¬¿ªÆôÏß³ÌÈ¥´¦ÀíÏûÏ¢
+			East.insert("æœåŠ¡ç«¯å¯åŠ¨ç›‘å¬");
+			// é€šè¿‡æ­»å¾ªç¯å¼€å¯é•¿è¿æ¥ï¼Œå¼€å¯çº¿ç¨‹å»å¤„ç†æ¶ˆæ¯
 			while (true) {
 				socket = server.accept();
-				Sgui.insert(socket.getInetAddress().getHostAddress() + " ¿Í»§¶ËÁ¬½Ó³É¹¦");
+				East.insert(socket.getInetAddress().getHostAddress() + " å®¢æˆ·ç«¯è¿æ¥æˆåŠŸ");
 				new Thread(new MyRuns(socket)).start();
 			}
 		} catch (Exception e) {
@@ -45,6 +43,8 @@ public class Server extends Thread {
 			}
 		}
 	}
+	
+	
 
 	class MyRuns implements Runnable {
 		Socket socket;
@@ -61,31 +61,32 @@ public class Server extends Thread {
 				byte[] buf = new byte[1024];
 				while ((len = in.read(buf)) != -1) {
 
-					Sgui.insert(socket.getInetAddress().getHostAddress() + "ÊÕµ½Êı¾İ\r\n[" + new String(buf, 0, len)+"]");
-					System.out.println("ÊÕµ½¿Í»§¶ËÊı¾İ: " + new String(buf, 0, len));
-					// Êı¾İ´¦Àí
+					East.insert(socket.getInetAddress().getHostAddress() + "æ”¶åˆ°æ•°æ®\r\n[" + new String(buf, 0, len)+"]");
+					System.out.println("æ”¶åˆ°å®¢æˆ·ç«¯æ•°æ®: " + new String(buf, 0, len));
+					// æ•°æ®å¤„ç†
 					String data_t = new String(buf, 0, len);
 					SocketEntity entity = new DataTreating().treat(data_t);
 					if (entity == null) {
-						System.out.println("ÊµÌåÒì³£");
-						Sgui.insert("´¦Àí" + socket.getInetAddress().getHostAddress() + " Êı¾İÒì³£");
+						System.out.println("å®ä½“å¼‚å¸¸");
+						East.insert("å¤„ç†" + socket.getInetAddress().getHostAddress() + " æ•°æ®å¼‚å¸¸");
 						return;
 					}
 					boolean saveBeans = new DBHelper().saveBeans(entity);
 					if (!saveBeans) {
-						System.out.println("Êı¾İ¿â´¦ÀíÒì³£");
-						Sgui.insert("´¦Àí" + socket.getInetAddress().getHostAddress() + " Êı¾İ¿âÒì³£");
+						System.out.println("æ•°æ®åº“å¤„ç†å¼‚å¸¸");
+						East.insert("å¤„ç†" + socket.getInetAddress().getHostAddress() + " æ•°æ®åº“å¼‚å¸¸");
 						return;
 					}
-					Sgui.insert("Êı¾İ½á¹û¡¾" + entity.getString()+"¡¿");
-					Sgui.insert("-------------------end-----------------------");
+					socket.shutdownOutput();
+					East.insert("æ•°æ®ç»“æœã€" + entity.getString()+"ã€‘");
+					East.insert("-------------------end-----------------------");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				try {
 					if (socket != null) {
-						Sgui.insert(socket.getInetAddress().getHostAddress() + " ¿Í»§¶Ë¹Ø±Õ³É¹¦");
+						East.insert(socket.getInetAddress().getHostAddress() + " å®¢æˆ·ç«¯å…³é—­æˆåŠŸ");
 						socket.close();
 					}
 				} catch (Exception e2) {
@@ -93,6 +94,13 @@ public class Server extends Thread {
 				}
 			}
 		}
+
 	}
 
+
 }
+
+
+
+
+
