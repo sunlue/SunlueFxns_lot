@@ -1,4 +1,4 @@
-package com.sunlue.gui;
+package com.test;
 
 import java.awt.Color;
 

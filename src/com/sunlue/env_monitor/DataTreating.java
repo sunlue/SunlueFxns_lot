@@ -7,15 +7,14 @@ import java.util.Date;
 public class DataTreating {
 
 	public SocketEntity treat(String string) {
-		// ɾ���ַ����еĿո�
 		String s = string.replaceAll(" ", "").substring(42);
 		ArrayList<Object> list = new ArrayList<Object>();
 		int index = 0;
 		do {
 			String d = Integer.valueOf(s.substring(index * 4, index * 4 + 4), 16).toString();
-			if (index == 0 || index == 1 || index == 14) {// ת�������߼�
+			if (index == 0 || index == 1 || index == 14) {
 				list.add(Float.parseFloat(d) / 10);
-			} else {// ���������߼�
+			} else {
 				list.add(d);
 			}
 			index += 1;
@@ -35,7 +34,7 @@ public class DataTreating {
 			entity.setOriginal(string);
 			entity.setAddTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		} catch (Exception e) {
-			System.out.println("--------����ʵ���쳣-------------");
+			System.out.println("--------实体错误-------------");
 			return null;
 		}
 		return entity;

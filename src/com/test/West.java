@@ -1,10 +1,19 @@
-package com.sunlue.gui;
+package com.test;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -18,10 +27,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import com.sunlue.gui.Frame;
+
 public class West {
 	public static JFrame jf;
 	private static JTextArea contentArea;
-	private static JTextField txtMsg;
 	
 	private static JTextField clientMaxTxt;
 	private static JTextField portTxt;
@@ -112,11 +122,22 @@ public class West {
 		txtHbGap = new JTextField("30");
 		txtLastRepTime = new JTextField();
 		txtSyncTime = new JTextField();
-		southPanel.add(new JLabel("心跳间隔"));
+		
+		long timemillis = System.currentTimeMillis();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		txtSyncTime.setText(df.format(new Date(timemillis)));
+		String dateTime = readLastRepTime();
+		if (dateTime.length() > 0) {
+			txtLastRepTime.setText(dateTime);
+		} else {
+			txtLastRepTime.setText(txtSyncTime.getText());
+		}
+		
+		southPanel.add(new JLabel("心跳时间间隔"));
 		southPanel.add(txtHbGap);
-		southPanel.add(new JLabel("最后时间"));
+		southPanel.add(new JLabel("最后上传时间"));
 		southPanel.add(txtLastRepTime);
-		southPanel.add(new JLabel("心跳间隔"));
+		southPanel.add(new JLabel("系统同步时间"));
 		southPanel.add(txtSyncTime);
 		
 		
@@ -125,6 +146,37 @@ public class West {
 		
 		return panel;
 	}
+
+	private static final String FILE_NAME = "lastRepTime.txt";
+	// 读取最后上传时间
+	public static String readLastRepTime() {
+		String dateTime = "";
+		try {
+			File filename = new File(FILE_NAME);
+			InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
+			BufferedReader br = new BufferedReader(reader);
+			dateTime = br.readLine();
+			System.out.println("dateTime: " + dateTime);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dateTime;
+	}
+
+	// 写最后上传时间
+	public void writeLastRepTime(String lastRepTime) {
+		File writename = new File(FILE_NAME); // 相对路径，如果没有则要建立一个新的output。txt文件
+		try {
+			writename.createNewFile();
+			BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+			out.write(lastRepTime + "\r\n"); // \r\n即为换行
+			out.flush(); // 把缓存区内容压入文件
+			out.close(); // 最后记得关闭文件
+		} catch (IOException e) {
+			e.printStackTrace();
+		} // 创建新文件
+	}
+	
 }
 
 

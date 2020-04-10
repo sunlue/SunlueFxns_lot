@@ -13,13 +13,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.sunlue.gui.East;
+import com.test.East;
+
 
 public class DBHelper {
 
-//	static String URL = "jdbc:mysql://118.123.13.196:3306/fxnsjq_lot";
-//	static String USERNAME = "fxnsjq_lot";
-//	static String PASSWORD = "E3v=n$pMN7";
 	static String URL = "jdbc:mysql://118.123.13.196:3306/fxnsjq_lot";
 	static String USERNAME = "fxnsjq_lot";
 	static String PASSWORD = "E3v=n$pMN7";

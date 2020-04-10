@@ -24,10 +24,12 @@ public class Frame {
 		jf.setBounds(x, y, width, height);
 		jf.setIconImage(new ImageIcon("img/logo.png").getImage());
 
-		jf.add(Header.init(jf), BorderLayout.NORTH);
-		jf.add(West.init(jf), BorderLayout.WEST);
-		jf.add(Center.init(),BorderLayout.CENTER);
-		jf.add(East.init(jf), BorderLayout.EAST);
+//		jf.add(Header.init(jf), BorderLayout.NORTH);
+//		jf.add(West.init(jf), BorderLayout.WEST);
+//		jf.add(Center.init(),BorderLayout.CENTER);
+//		jf.add(East.init(jf), BorderLayout.EAST);
+		jf.add(Menu.init(jf),BorderLayout.WEST);
+		jf.add(Content.init(jf),BorderLayout.CENTER);
 		jf.setVisible(true);
 
 	}

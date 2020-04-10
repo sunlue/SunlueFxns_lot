@@ -2,21 +2,25 @@ package com.sunlue.env_monitor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.sunlue.gui.East;
+import com.test.East;
 
 
 public class Server extends Thread {
 	Socket socket = null;
 	ServerSocket server = null;
-
-	public Server(int port) {
+	public Server(int port) throws BindException {
 		try {
 			server = new ServerSocket(port);
-		} catch (IOException e) {
+		} catch (BindException e) {
 			e.printStackTrace();
+			throw new BindException("端口号已被占用，请换一个！");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BindException("启动服务器异常！");
 		}
 	}
 
@@ -25,10 +29,10 @@ public class Server extends Thread {
 		super.run();
 		try {
 			East.insert("服务端启动监听");
-			// 通过死循环开启长连接，开启线程去处理消息
 			while (true) {
 				socket = server.accept();
-				East.insert(socket.getInetAddress().getHostAddress() + " 客户端连接成功");
+				East.insert("-start【"+socket.getInetAddress().getHostAddress()+"】-");
+				East.insert("客户端连接成功");
 				new Thread(new MyRuns(socket)).start();
 			}
 		} catch (Exception e) {
@@ -43,8 +47,6 @@ public class Server extends Thread {
 			}
 		}
 	}
-	
-	
 
 	class MyRuns implements Runnable {
 		Socket socket;
@@ -61,25 +63,26 @@ public class Server extends Thread {
 				byte[] buf = new byte[1024];
 				while ((len = in.read(buf)) != -1) {
 
-					East.insert(socket.getInetAddress().getHostAddress() + "收到数据\r\n[" + new String(buf, 0, len)+"]");
-					System.out.println("收到客户端数据: " + new String(buf, 0, len));
-					// 数据处理
+					East.insert("收到数据：[" + new String(buf, 0, len) + "]");
 					String data_t = new String(buf, 0, len);
-					SocketEntity entity = new DataTreating().treat(data_t);
-					if (entity == null) {
-						System.out.println("实体异常");
-						East.insert("处理" + socket.getInetAddress().getHostAddress() + " 数据异常");
-						return;
+					if (!data_t.matches("^[A-Fa-f0-9]+$")) {
+						East.insert("数据非法");
+					}else {
+						SocketEntity entity = new DataTreating().treat(data_t);
+						if (entity == null) {
+							System.out.println("实体异常");
+							East.insert("处理" + socket.getInetAddress().getHostAddress() + " 数据异常");
+							return;
+						}
+						boolean saveBeans = new DBHelper().saveBeans(entity);
+						if (!saveBeans) {
+							System.out.println("数据库处理异常");
+							East.insert("处理" + socket.getInetAddress().getHostAddress() + " 数据库异常");
+							return;
+						}
+						East.insert("数据结果【" + entity.getString() + "】");
 					}
-					boolean saveBeans = new DBHelper().saveBeans(entity);
-					if (!saveBeans) {
-						System.out.println("数据库处理异常");
-						East.insert("处理" + socket.getInetAddress().getHostAddress() + " 数据库异常");
-						return;
-					}
-					socket.shutdownOutput();
-					East.insert("数据结果【" + entity.getString()+"】");
-					East.insert("-------------------end-----------------------");
+					East.insert("-stop【"+socket.getInetAddress().getHostAddress()+"】-");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -87,6 +90,8 @@ public class Server extends Thread {
 				try {
 					if (socket != null) {
 						East.insert(socket.getInetAddress().getHostAddress() + " 客户端关闭成功");
+						East.btnStart.setEnabled(true);
+						East.btnStart.setText("重新启动");
 						socket.close();
 					}
 				} catch (Exception e2) {
@@ -95,12 +100,9 @@ public class Server extends Thread {
 			}
 		}
 
+		public void close() throws IOException {
+			socket.close();
+		}
 	}
 
-
 }
-
-
-
-
-
