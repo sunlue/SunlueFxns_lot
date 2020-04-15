@@ -1,15 +1,23 @@
 package com.sunlue.util;
 
 import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -17,9 +25,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
-
-import com.sunlue.gui.Index;
-
 
 public class Util {
 
@@ -81,13 +86,13 @@ public class Util {
 	public static Image getImageIcon(String name) {
 		return new ImageIcon(Util.getResource(name)).getImage();
 	}
-	
+
 	/**
 	 * 获取图片图标
 	 * 
 	 * @return
 	 */
-	public static ImageIcon getImageIcon(String name,int width,int height) {
+	public static ImageIcon getImageIcon(String name, int width, int height) {
 		ImageIcon imageIcon = new ImageIcon(Util.getResource(name));
 		imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
 		return imageIcon;
@@ -100,7 +105,7 @@ public class Util {
 	 */
 
 	public static Image getLogoIcon() {
-		return Util.getImageIcon("logo.square.transparent.png");
+		return Util.getImageIcon("logo200_200.png");
 	}
 
 	/**
@@ -164,7 +169,8 @@ public class Util {
 	public static int LogDebug = 3;
 
 	public static void log(String info, int type) {
-		Logger logger = Logger.getLogger(Index.class);
+		info = "[ message ] " + info + " [ message ]";
+		Logger logger = Logger.getLogger(Util.class);
 		switch (type) {
 		case 0:
 			logger.info(info);
@@ -180,4 +186,88 @@ public class Util {
 			break;
 		}
 	}
+
+	/**
+	 * 将消息写入文件
+	 * 
+	 * @param filename
+	 * @param message
+	 */
+	public static void setMsg(String filename, String message) {
+		String FILE_NAME = System.getProperty("ROOT_PATH") + "/msg/" + filename + ".log";
+		File writename = new File(FILE_NAME);
+		try {
+			writename.createNewFile();
+			BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+			out.write(message); // \r\n即为换行
+			out.flush(); // 把缓存区内容压入文件
+			out.close(); // 最后记得关闭文件
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 将消息写入文件
+	 * 
+	 * @param filename
+	 * @param message
+	 * @return
+	 */
+	@SuppressWarnings("resource")
+	public static String getMsg(String filename) {
+		String FILE_NAME = System.getProperty("ROOT_PATH") + "/msg/" + filename + ".log";
+		StringBuffer message = new StringBuffer();
+		try {
+			File file = new File(FILE_NAME);
+			InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
+			BufferedReader br = new BufferedReader(reader);
+			String tempMsg;
+			while ((tempMsg = br.readLine()) != null) {
+				message.append(tempMsg + "\r\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return message.toString();
+	}
+
+	public static String getDateTime(String pattern) {
+		long timemillis = System.currentTimeMillis();
+		SimpleDateFormat df = new SimpleDateFormat(pattern);
+		return df.format(new Date(timemillis));
+	}
+
+	public static String getDateTime() {
+		return getDateTime("yyyy-MM-dd HH:mm:ss");
+	}
+
+	static int flag = 1;// 用来判断文件是否删除成功
+
+	public static int deleteFile(File file) {
+		// 判断文件不为null或文件目录存在
+		if (file == null || !file.exists()) {
+			flag = 0;
+			System.out.println("文件删除失败,请检查文件路径是否正确");
+			return flag;
+		}
+		// 取得这个目录下的所有子文件对象
+		File[] files = file.listFiles();
+		// 遍历该目录下的文件对象
+		for (File f : files) {
+			// 打印文件名
+			String name = file.getName();
+			System.out.println(name);
+			// 判断子目录是否存在子目录,如果是文件则删除
+			if (f.isDirectory()) {
+				deleteFile(f);
+			} else {
+				f.delete();
+			}
+		}
+		// 删除空文件夹 for循环已经把上一层节点的目录清空。
+		file.delete();
+		return flag;
+	}
+
 }

@@ -5,35 +5,50 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import com.sunlue.page.TouristrFlow;
 
 public class ServerThread extends Thread {
+	private int maxClient;
 	private ServerSocket serverSocket;
-	private ArrayList<ClientThread> clients;
-	private int max;
+	public static ArrayList<ClientThread> clients;
 
-	// 服务器线程构造函数
-	public ServerThread(ServerSocket serverSocket, int max) {
+	public ServerThread(ServerSocket serverSocket, int maxClient) {
 		this.serverSocket = serverSocket;
-		this.max = max;
+		this.maxClient = maxClient;
 	}
 
 	public void run() {
 		while (true) {
+			if (Thread.currentThread().isInterrupted()) {
+				break;
+			}
 			try {
-				Socket socket = serverSocket.accept();
-				if (clients.size() == max) {
-					socket.close();
-					continue;
+				if (serverSocket.isClosed() == false) {
+					Socket socket = serverSocket.accept();
+					clients = new ArrayList<ClientThread>();
+					if (clients.size() == maxClient) {
+						socket.close();
+						continue;
+					}
+					ClientThread client = new ClientThread(socket);
+					client.start();
+					clients.add(client);
+					TouristrFlow.addClient(client);
 				}
-
-				ClientThread client = new ClientThread(socket);
-				client.start();
-				clients.add(client);
-				//allListModel.addElement(client.getClient().getName());// 更新在线列表
-				//contentArea.insert(client.getClient().getName() + "上线!\r\n",0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+
+	public void close() throws IOException {
+		if (clients.size() > 0) {
+			for (int i = clients.size() - 1; i >= 0; i--) {
+				clients.get(i).interrupt();
+				clients.get(i).socket.close();
+				clients.remove(i);
+			}
+		}
+	}
+
 }
