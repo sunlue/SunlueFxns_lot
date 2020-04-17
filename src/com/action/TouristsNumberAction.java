@@ -3,11 +3,17 @@ package com.action;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.service.TouristsNumberService;
 import com.util.Util;
-import com.view.page.TouristsNumberView;
-
+import com.view.hardware.page.TouristsNumberView;
+/**
+ * modbus协议处理数据
+ * @author xiebing
+ *
+ */
 public class TouristsNumberAction {
 	private static Socket socket;
 	private static int sendForWho;
@@ -142,7 +148,11 @@ public class TouristsNumberAction {
 			service.insert(num,in,out,time);
 		}
 
-		Util.setMsg("lastRepTime", new String(dateTime));
+		Map<String, String> data=new HashMap<String, String>();
+		data.put("lastRepTime", new String(dateTime));
+		Map<String, Map<String, String>> update=new HashMap<String, Map<String, String>>();
+		update.put("tourists_number", data);
+		Util.updateIni(update);
 
 		// 构建应答数据包
 		// 数据长度： 单元标识符1字节 + 功能码1字节 + 结果码1字节

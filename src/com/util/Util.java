@@ -19,10 +19,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+
+import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Profile.Section;
 
 public class Util {
 
@@ -37,7 +42,7 @@ public class Util {
 	}
 
 	/**
-	 * 读取配置问文�?
+	 * 读取ini配置文件
 	 * 
 	 * @param folder
 	 * @param filename
@@ -77,6 +82,79 @@ public class Util {
 	}
 
 	/**
+	 * 读取ini配置文件
+	 * 
+	 * @return
+	 */
+	public static Ini getIni() {
+		String filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + "config.ini";
+		return getIni(filename);
+	}
+
+	/**
+	 * 读取ini配置文件
+	 * 
+	 * @param pathname 文件路径（绝对路径）
+	 * @return
+	 */
+	public static Ini getIni(String pathname) {
+		File filename = new File(pathname);
+		Ini ini = new Ini();
+		try {
+			ini.load(filename);
+		} catch (InvalidFileFormatException e) {
+			Log.write("读取" + pathname + "错误：" + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.write("读取" + pathname + "错误：" + e.getMessage());
+			e.printStackTrace();
+		}
+		return ini;
+	}
+
+	/**
+	 * 修改ini文件
+	 * 
+	 * @param <E>
+	 * 
+	 * @param pathname
+	 * @param updateData
+	 * @throws IOException
+	 */
+	public static void updateIni(Map<String, Map<String, String>> data) {
+		String filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + "config.ini";
+		updateIni(filename, data);
+	}
+
+	/**
+	 * 修改ini文件
+	 * 
+	 * @param <E>
+	 * 
+	 * @param pathname
+	 * @param updateData
+	 * @throws IOException
+	 */
+	public static void updateIni(String pathname, Map<String, Map<String, String>> data) {
+		Ini ini = getIni(pathname);
+		Section section = null;
+		Map<String, String> dataMap = null;
+		for (String sect : data.keySet()) {
+			section = ini.get(sect);
+			dataMap = data.get(sect);
+			for (String key : dataMap.keySet()) {
+				section.put(key, dataMap.get(key) == null ? "" : dataMap.get(key));
+			}
+		}
+		try {
+			ini.store(new File(pathname));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.write("修改" + pathname + "错误：" + e.getMessage());
+		}
+	}
+
+	/**
 	 * 获取图片图标
 	 * 
 	 * @return
@@ -91,8 +169,12 @@ public class Util {
 	 * @return
 	 */
 	public static ImageIcon getImageIcon(String name, int width, int height) {
+		return getImageIcon(name, width, height, Image.SCALE_DEFAULT);
+	}
+
+	public static ImageIcon getImageIcon(String name, int width, int height, int hints) {
 		ImageIcon imageIcon = new ImageIcon(Util.getResource(name));
-		imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
+		imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, hints));
 		return imageIcon;
 	}
 
@@ -103,7 +185,7 @@ public class Util {
 	 */
 
 	public static Image getLogoIcon() {
-		return Util.getImageIcon("logo200_200.png");
+		return Util.getImageIcon("logo_200_200.png");
 	}
 
 	/**
@@ -167,11 +249,18 @@ public class Util {
 	 * @param message
 	 */
 	public static void setMsg(String filename, String message) {
-		String FILE_NAME = System.getProperty("ROOT_PATH") + "/msg/" + filename + ".log";
-		File writename = new File(FILE_NAME);
+		String DIR_NAME = System.getProperty("user.dir") + File.separator + "msg";
+		File dir = new File(DIR_NAME);
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
+		String FILE_NAME = DIR_NAME + File.separator + filename + ".log";
+		File file = new File(FILE_NAME);
 		try {
-			writename.createNewFile();
-			BufferedWriter out = new BufferedWriter(new FileWriter(writename));
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write(message); // \r\n即为换行
 			out.flush(); // 把缓存区内容压入文件
 			out.close(); // 最后记得关闭文件
@@ -189,7 +278,7 @@ public class Util {
 	 */
 	@SuppressWarnings("resource")
 	public static String getMsg(String filename) {
-		String FILE_NAME = System.getProperty("ROOT_PATH") + "/msg/" + filename + ".log";
+		String FILE_NAME = System.getProperty("user.dir") + File.separator + "msg" + File.separator + filename + ".log";
 		StringBuffer message = new StringBuffer();
 		try {
 			File file = new File(FILE_NAME);

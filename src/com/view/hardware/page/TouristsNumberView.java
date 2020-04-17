@@ -1,10 +1,9 @@
-package com.view.page;
+package com.view.hardware.page;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
@@ -14,13 +13,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -28,6 +28,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import org.ini4j.Profile.Section;
 
 import com.socket.tourists_number.Client;
 import com.socket.tourists_number.ClientThread;
@@ -47,13 +51,16 @@ import com.view.Main;
  */
 public class TouristsNumberView extends JPanel {
 	private static final long serialVersionUID = 1L;
+
+	public static Section ini =null;
+	public static int width = Container.width;
+	public static int height = Container.height - Main.headerHeight;
+	public static int clientWidth = 180;
+
 	public static JPanel headPanel;
 	public static JPanel clientPanel;
 	public static JPanel msgPanel;
 	public static JTextArea msgTxtArea;
-	public static int width = Container.width;
-	public static int height = Container.height - Main.headerHeight;
-	public static int clientWidth = 180;
 
 	public static JLabel portTxt;
 	public static JTextField portNum;
@@ -67,10 +74,11 @@ public class TouristsNumberView extends JPanel {
 	public static JLabel syncTimeTxt;
 	public static JTextField syncTimeVal;
 
-	public static JList<String> userList;
-	public static DefaultListModel<String> userListModel;
+	public static ArrayList<Panel> clientPanelList = new ArrayList<Panel>();
+	public static Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>();
 
 	public TouristsNumberView() {
+		ini=Util.getIni().get("tourists_number");
 		setLayout(new BorderLayout());
 		add(header(), BorderLayout.NORTH);
 		JSplitPane center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, client(), message());
@@ -82,27 +90,107 @@ public class TouristsNumberView extends JPanel {
 
 	private JPanel header() {
 		portTxt = new JLabel("端口");
+		portNum = new JTextField(ini.get("port", "8010"));
+		startBtn = new JButton("启动");
+		stopBtn = new JButton("停止");
+		clearBtn = new JButton("清空消息");
+		HbGapTxt = new JLabel("心跳时间");
+		HbGapNum = new JTextField(ini.get("HbGap", "30"));
+		lastRepTimeTxt = new JLabel("最后上传时间");
+		lastRepTimeVal = new JTextField();
+		syncTimeTxt = new JLabel("系统时间");
+		syncTimeVal = new JTextField();
+		
 		portTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		portNum = new JTextField("8050");
 		portNum.setPreferredSize(new Dimension(38, 26));
 		portNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		portNum.setHorizontalAlignment(SwingConstants.CENTER);
 		portNum.setBounds(0, 0, 50, 30);
 
-		startBtn = new JButton("启动");
-		startBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		stopBtn = new JButton("停止");
-		stopBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		clearBtn = new JButton("清空消息");
-		clearBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		portNum.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				try {
+					Integer value = Integer.parseInt(portNum.getText());
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("port", String.valueOf(value));
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+				} catch (Exception e2) {
+				}
+			}
 
-		HbGapTxt = new JLabel("心跳时间");
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				try {
+					Integer value = Integer.parseInt(portNum.getText());
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("port", String.valueOf(value));
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+				} catch (Exception e2) {
+				}
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
+		portNum.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char keyCh = e.getKeyChar();
+				if (keyCh < '0' || keyCh > '9') {
+					if (keyCh != ' ') {
+						e.setKeyChar('\0');
+					}
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
+		
 		HbGapTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		HbGapNum = new JTextField("30");
 		HbGapNum.setPreferredSize(new Dimension(38, 26));
 		HbGapNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		HbGapNum.setHorizontalAlignment(SwingConstants.CENTER);
 		HbGapNum.setBounds(0, 0, 50, 30);
+
+		HbGapNum.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				try {
+					Integer value = Integer.parseInt(HbGapNum.getText());
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("HbGap", String.valueOf(value));
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+				} catch (Exception e2) {
+				}
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				try {
+					Integer value = Integer.parseInt(HbGapNum.getText());
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("HbGap", String.valueOf(value));
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+				} catch (Exception e2) {
+				}
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+			}
+		});
 		HbGapNum.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
 				char keyCh = e.getKeyChar();
@@ -123,6 +211,8 @@ public class TouristsNumberView extends JPanel {
 		startBtn.setCursor(new Cursor(12));
 		startBtn.setFocusPainted(false);
 		startBtn.setPreferredSize(new Dimension(76, 26));
+		startBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		startBtn.setVisible(!Boolean.parseBoolean(ini.get("isStart")));
 		startBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -138,6 +228,11 @@ public class TouristsNumberView extends JPanel {
 					if (port <= 0) {
 						throw new Exception("端口号为正整数");
 					}
+					
+					if (port==Integer.parseInt(ini.get("port")) && ini.get("isStart")=="true") {
+						throw new Exception("服务器已启动！");
+					}
+					
 					new Server(port).start();
 
 					startBtn.setEnabled(false);
@@ -146,8 +241,15 @@ public class TouristsNumberView extends JPanel {
 					stopBtn.setText("停止");
 					stopBtn.setEnabled(true);
 					stopBtn.setVisible(true);
+					portNum.setEditable(false);
+
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("isStart", "true");
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+
 					Log.write("启动服务器成功");
-					insertMsg("启动成功");
+					insertMsg("服务器已启动");
 				} catch (Exception e1) {
 					Log.write("启动服务器错误：" + e1.getMessage(), Log.Error);
 					Layer.alert(e1.getMessage(), 260, 160);
@@ -156,11 +258,12 @@ public class TouristsNumberView extends JPanel {
 			}
 		});
 
+		System.out.println(ini.get("isStart"));
 		stopBtn.setCursor(new Cursor(12));
-		stopBtn.setEnabled(false);
-		stopBtn.setVisible(false);
 		stopBtn.setFocusPainted(false);
 		stopBtn.setPreferredSize(new Dimension(76, 26));
+		stopBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		stopBtn.setVisible(Boolean.parseBoolean(ini.get("isStart")));
 		stopBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -175,14 +278,20 @@ public class TouristsNumberView extends JPanel {
 					if (port <= 0) {
 						throw new Exception("端口号为正整数");
 					}
-					Server.stop();
+					new Server(port).stop();
 					stopBtn.setEnabled(false);
 					stopBtn.setText("已停止");
 					stopBtn.setVisible(false);
 					startBtn.setText("启动");
 					startBtn.setEnabled(true);
 					startBtn.setVisible(true);
-					insertMsg("已停止");
+					portNum.setEditable(true);
+					Map<String, String> data = new HashMap<String, String>();
+					data.put("isStart", "false");
+					update.put("tourists_number", data);
+					Util.updateIni(update);
+					Log.write("停止服务器成功");
+					insertMsg("服务器已停止");
 				} catch (Exception e2) {
 					Log.write("停止服务器错误：" + e2.getMessage(), Log.Error);
 					Layer.alert(e2.getMessage(), 260, 160);
@@ -192,28 +301,29 @@ public class TouristsNumberView extends JPanel {
 
 		clearBtn.setCursor(new Cursor(12));
 		clearBtn.setFocusPainted(false);
+		clearBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
 		clearBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clearMsg("");
 			}
 		});
-
-		lastRepTimeTxt = new JLabel("最后上传时间");
+		
 		lastRepTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		lastRepTimeVal = new JTextField();
+		
 		lastRepTimeVal.setPreferredSize(new Dimension(128, 26));
 		lastRepTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		lastRepTimeVal.setText(Util.getMsg("lastRepTime"));
-
-		syncTimeTxt = new JLabel("系统时间");
+		lastRepTimeVal.setText(ini.get("lastRepTime", ""));
+		lastRepTimeVal.setEditable(false);
+		lastRepTimeVal.setBackground(Color.white);
+		lastRepTimeVal.setForeground(Color.BLACK);
+		
 		syncTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		syncTimeVal = new JTextField();
 		syncTimeVal.setPreferredSize(new Dimension(128, 26));
 		syncTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		syncTimeVal.setText(Util.getDateTime());
 		syncTimeVal.setHorizontalAlignment(SwingConstants.CENTER);
-		syncTimeVal.setEnabled(false);
+		syncTimeVal.setEditable(false);
 		syncTimeVal.setBackground(Color.white);
 		syncTimeVal.setForeground(Color.BLACK);
 		// 定时器，自动刷新时间
@@ -244,20 +354,9 @@ public class TouristsNumberView extends JPanel {
 
 	private JScrollPane client() {
 		clientPanel = new JPanel();
-//		clientPanel.setBackground(new Color(236, 233, 231));
-		clientPanel.setBackground(Color.white);
-		clientPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
-		clientPanel.add(clientItem("192.168.110.174@123456"));
-		clientPanel.add(clientItem("192.168.110.174@123456"));
-		clientPanel.add(clientItem("192.168.110.174@123456"));
-
-		userListModel = new DefaultListModel<String>();
-		userList = new JList<String>(userListModel);
-		userListModel.addElement("192.168.110.174@123456");
-
-		JScrollPane ScrollPane = new JScrollPane(userList);
-
+		clientPanel.setBackground(new Color(245, 245, 245));
+		clientPanel.setLayout(null);
+		JScrollPane ScrollPane = new JScrollPane(clientPanel);
 		return ScrollPane;
 	}
 
@@ -271,7 +370,7 @@ public class TouristsNumberView extends JPanel {
 		msgTxtArea.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
 		msgTxtArea.setForeground(new Color(51, 51, 51));
 		msgTxtArea.setText(Util.getMsg("touristrFlow"));
-		msgTxtArea.setBackground(Color.white);
+		msgTxtArea.setBackground(new Color(245, 245, 245));
 		msgTxtArea.setLineWrap(true);
 		JScrollPane scrollPanel = new JScrollPane(msgTxtArea);
 
@@ -315,6 +414,7 @@ public class TouristsNumberView extends JPanel {
 		panel.setCursor(new Cursor(12));
 		panel.setBackground(new Color(236, 233, 231));
 		panel.setName(name);
+		panel.setBounds(0, clientPanelList.size() * 32, width, 32);
 
 		JLabel label = new JLabel(name);
 		label.setBounds(5, 0, width - 10, 32);
@@ -322,7 +422,6 @@ public class TouristsNumberView extends JPanel {
 		label.setVerticalAlignment(SwingConstants.CENTER);
 
 		panel.add(label);
-
 		panel.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -348,6 +447,7 @@ public class TouristsNumberView extends JPanel {
 			public void mouseExited(MouseEvent e) {
 			}
 		});
+		clientPanelList.add(panel);
 		return panel;
 	}
 

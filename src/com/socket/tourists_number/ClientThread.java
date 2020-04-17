@@ -5,8 +5,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.action.TouristsNumberAction;
-import com.view.page.TouristsNumberView;
+import com.util.Log;
 
 public class ClientThread extends Thread {
 	public Socket socket;
@@ -15,41 +14,47 @@ public class ClientThread extends Thread {
 
 	public ClientThread(Socket socket) {
 		this.socket = socket;
-		client = new Client(socket.getInetAddress().getHostAddress(), socket.getPort());
+		client = new Client(socket);
 	}
 
 	public void run() {
-		while (true) {
-			if (Thread.currentThread().isInterrupted()) {
-				break;
-			}
+
+		System.out.println(isInterrupted());
+		while (!isInterrupted()) {
 			try {
 				// 接收client数据
 				InputStream is = socket.getInputStream();
 				int length = is.read(b);
+				System.out.println(socket);
 				if (length > 0) {
-					// 协议解析
-					TouristsNumberAction.DataParse(this.getClient().getName(),b, length);
+					try {
+						new Action(socket, this.getClient(), b, length);
+					} catch (Exception e) {
+						Log.write(e.getMessage(),Log.Error);
+					}
 				} else if (length < 0) {
 					// client断开了
 					try {
 						socket.close();
 					} catch (IOException e1) {
+						Log.write(e1.getMessage(),Log.Error);
 						e1.printStackTrace();
 					} finally {
-						killThread();
+						killThread(socket);
 					}
 				} else {
 					continue;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
+				Log.write(e.getMessage(),Log.Error);
 				try {
 					socket.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
+					Log.write(e1.getMessage(),Log.Error);
 				} finally {
-					killThread();
+					killThread(socket);
 				}
 			}
 		}
@@ -59,17 +64,22 @@ public class ClientThread extends Thread {
 		return client;
 	}
 
-	private void killThread() {
+	private void killThread(Socket socket) {
 		ArrayList<ClientThread> clients = ServerThread.clients;
+		System.out.println(client);
 		for (int i = clients.size() - 1; i >= 0; i--) {
 			if (clients.get(i).getClient() == client) {
-				ClientThread temp = clients.get(i);
-				clients.remove(i);
-				temp.interrupt();
-				TouristsNumberView.removeClient(client);
+//				ClientThread temp = clients.get(i);
+//				clients.remove(i);
+//				temp.interrupt();
+				Action.offline(socket,client);
 				return;
 			}
 		}
 	}
 
 }
+
+
+
+

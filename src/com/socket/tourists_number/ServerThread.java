@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import com.view.page.TouristsNumberView;
+import com.view.hardware.page.TouristsNumberView;
 
 public class ServerThread extends Thread {
 	private int maxClient;

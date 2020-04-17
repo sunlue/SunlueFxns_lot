@@ -2,6 +2,7 @@ package com.view;
 
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.Point;
@@ -16,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -23,7 +25,9 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.PropertyConfigurator;
 
+import com.util.Layer;
 import com.util.Util;
+import com.util.Layer.LayerCallback;
 
 public class Frame {
 
@@ -34,6 +38,8 @@ public class Frame {
 	public static int oldX;
 	public static int oldY;
 	public static JFrame jf = new JFrame();
+	public static Component WEST;
+	public static Component CENTER;
 
 	public static int width = 900;
 	public static int height = 640;
@@ -48,26 +54,21 @@ public class Frame {
 				init();
 			}
 		});
-
 	}
 
 	protected void init() {
-
 		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - width / 2;
 		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - height / 2;
 
+		jf.setTitle("四川上略互动网络技术有限公司");
 		jf.setLocationRelativeTo(null);
 		jf.setResizable(false);
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setUndecorated(true);
 		jf.setBounds(x, y, width, height);
-		jf.setIconImage(Util.getLogoIcon());
+		jf.setIconImage(Util.getLogoIcon("logo_16_16.png"));
 
-		jf.setTitle("上略互动硬件对接系统");
-
-		jf.add(Module.init(jf), BorderLayout.WEST);
-//		jf.add(Menu.init(jf), BorderLayout.CENTER);
-//		jf.add(Content.init(jf), BorderLayout.EAST);
+		jf.add(Module.init(), BorderLayout.WEST);
 		jf.add(Main.init(jf), BorderLayout.CENTER);
 		jf.setVisible(true);
 
@@ -130,7 +131,7 @@ public class Frame {
 			SystemTray tray = SystemTray.getSystemTray();
 
 			// 加载一个图片用于托盘图标的显示
-			Image image = Toolkit.getDefaultToolkit().getImage(Util.getResource("logo200_200.png"));
+			Image image = Util.getLogoIcon("logo_16_16.png");
 
 			// 创建点击图标时的弹出菜单
 			PopupMenu popupMenu = new PopupMenu();
@@ -150,7 +151,25 @@ public class Frame {
 			exitItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					System.exit(0);
+					Layer.confirm("确认要退出并关闭程序吗?", 240, 160, new LayerCallback() {
+						@Override
+						public void clickBtn(String btn) {
+
+						}
+
+						@Override
+						public void clickOkBtn(boolean confirm) {
+							String DIR_PATH = System.getProperty("user.dir") + File.separator + "msg";
+							File file = new File(DIR_PATH);
+							file.delete();
+							System.exit(0);
+						}
+
+						@Override
+						public void clickCancelBtn() {
+
+						}
+					});
 				}
 			});
 
@@ -158,7 +177,7 @@ public class Frame {
 			popupMenu.add(exitItem);
 
 			// 创建一个托盘图标
-			TrayIcon trayIcon = new TrayIcon(image, "这是一个托盘图标", popupMenu);
+			TrayIcon trayIcon = new TrayIcon(image, jf.getTitle(), popupMenu);
 
 			// 托盘图标自适应尺寸
 			trayIcon.setImageAutoSize(true);

@@ -12,15 +12,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+
+import com.util.CyFont;
 import com.util.Layer;
 import com.util.Util;
 import com.util.Layer.LayerCallback;
@@ -33,7 +37,7 @@ public class Main {
 	public static int oldX;
 	public static int oldY;
 	public static JFrame jf;
-	private static JPanel container;
+	public static JPanel container;
 	public static int width = Frame.width - Module.width;
 	public static int headerHeight = 26;
 
@@ -46,7 +50,7 @@ public class Main {
 		container = new JPanel();
 		container.setLayout(new BorderLayout());
 		container.add(header(), BorderLayout.NORTH);
-		container.add(new Container(), BorderLayout.CENTER);
+		container.add(new Container("hardware"), BorderLayout.CENTER);
 
 		Border b1 = BorderFactory.createEmptyBorder(1, 0, 1, 1);
 		Border b2 = BorderFactory.createLineBorder(new Color(210, 210, 210), 0);
@@ -98,22 +102,18 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Layer.confirm("确认要退出并关闭程序吗?", 240, 160, new LayerCallback() {
-
 					@Override
 					public void clickBtn(String btn) {
-
 					}
 
 					@Override
 					public void clickOkBtn(boolean confirm) {
-//						String DIR_PATH = System.getProperty("ROOT_PATH") + "/msg";
-//						File file = new File(DIR_PATH);
-//						Util.deleteFile(file);
-//						if (Util.deleteFile(file) == 1) {
+						String DIR_PATH = System.getProperty("ROOT_PATH") + "\\msg";
+						System.out.println(DIR_PATH);
+						File file = new File(DIR_PATH);
+						file.delete();
 						System.exit(0);
-//						}
 					}
-
 					@Override
 					public void clickCancelBtn() {
 
@@ -122,11 +122,16 @@ public class Main {
 			}
 		});
 
+		JLabel title = new JLabel(Frame.jf.getTitle());
+		title.setBounds(5, 0, width - 100, headerHeight);
+		title.setFont(CyFont.PuHuiTi(CyFont.Medium, 14));
+
 		Panel header = new Panel();
 		header.setSize(width, headerHeight);
-		header.setBackground(new Color(245, 245, 245));
+		header.setBackground(new Color(236, 233, 231));
 		header.setCursor(new Cursor(12));
 		header.setLayout(null);
+		header.add(title);
 		header.add(closeBtn);
 		header.add(minBtn);
 
