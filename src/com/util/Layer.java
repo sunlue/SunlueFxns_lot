@@ -216,7 +216,6 @@ public class Layer extends JDialog {
 					callback.clickOkBtn(true);
 				}
 			});
-			System.out.println("start:"+System.currentTimeMillis());
 			break;
 		case "alert":
 			cancelBtn.setFocusPainted(false);

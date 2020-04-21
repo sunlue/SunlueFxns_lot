@@ -2,6 +2,7 @@ package com.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.Panel;
@@ -13,6 +14,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -23,10 +26,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-
 import com.util.CyFont;
 import com.util.Layer;
 import com.util.Util;
+import com.view.hardware.Hardware;
+import com.view.setting.Setting;
 import com.util.Layer.LayerCallback;
 
 public class Main {
@@ -50,7 +54,7 @@ public class Main {
 		container = new JPanel();
 		container.setLayout(new BorderLayout());
 		container.add(header(), BorderLayout.NORTH);
-		container.add(new Container("hardware"), BorderLayout.CENTER);
+		container.add(new Hardware(), BorderLayout.CENTER);
 
 		Border b1 = BorderFactory.createEmptyBorder(1, 0, 1, 1);
 		Border b2 = BorderFactory.createLineBorder(new Color(210, 210, 210), 0);
@@ -109,11 +113,17 @@ public class Main {
 					@Override
 					public void clickOkBtn(boolean confirm) {
 						String DIR_PATH = System.getProperty("ROOT_PATH") + "\\msg";
-						System.out.println(DIR_PATH);
 						File file = new File(DIR_PATH);
 						file.delete();
+						Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>();
+						Map<String, String> data = new HashMap<String, String>();
+						data.put("isStart", "false");
+						update.put("env_monitor", data);
+						update.put("tourists_number", data);
+						Util.updateIni(update);
 						System.exit(0);
 					}
+
 					@Override
 					public void clickCancelBtn() {
 
@@ -132,8 +142,8 @@ public class Main {
 		header.setCursor(new Cursor(12));
 		header.setLayout(null);
 		header.add(title);
-		header.add(closeBtn);
 		header.add(minBtn);
+		header.add(closeBtn);
 
 		header.addMouseListener(new MouseListener() {
 			@Override
@@ -186,6 +196,25 @@ public class Main {
 		});
 
 		return header;
+	}
+
+	public void cutPage(String name) {
+		if (name != null) {
+			Component view = null;
+			switch (name) {
+				case "hardware":
+					view = new Hardware();
+					break;
+				case "setting":
+					view = new Setting();
+					break;
+			default:
+				break;
+			}
+			container.remove(1);
+			container.add(view);
+			container.validate();
+		}
 	}
 
 }

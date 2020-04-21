@@ -86,6 +86,18 @@ public class Util {
 	 * 
 	 * @return
 	 */
+	public static Ini getIni(String filename,Boolean absolute) {
+		if (absolute==false) {
+			filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + filename;
+		}
+		return getIni(filename);
+	}
+	
+	/**
+	 * 读取ini配置文件
+	 * 
+	 * @return
+	 */
 	public static Ini getIni() {
 		String filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + "config.ini";
 		return getIni(filename);
@@ -313,7 +325,6 @@ public class Util {
 		// 判断文件不为null或文件目录存在
 		if (file == null || !file.exists()) {
 			flag = 0;
-			System.out.println("文件删除失败,请检查文件路径是否正确");
 			return flag;
 		}
 		// 取得这个目录下的所有子文件对象
@@ -321,8 +332,7 @@ public class Util {
 		// 遍历该目录下的文件对象
 		for (File f : files) {
 			// 打印文件名
-			String name = file.getName();
-			System.out.println(name);
+//			String name = file.getName();
 			// 判断子目录是否存在子目录,如果是文件则删除
 			if (f.isDirectory()) {
 				deleteFile(f);

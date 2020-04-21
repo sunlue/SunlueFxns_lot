@@ -25,26 +25,26 @@ import com.view.hardware.page.TouristsNumberView;
 public class Hardware extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-
+	public static JPanel container;
+	public static ArrayList<JButton> btnlist;
 	public static int width = Frame.width - com.view.Module.width;
 	public static int height = Frame.height - Main.headerHeight;
-	public static ArrayList<JButton> btnlist = new ArrayList<JButton>();
-	public static JPanel container;
 	public static String defaultView = Util.getIni().get("view", "default");
 
 	public Hardware() {
+		btnlist = new ArrayList<JButton>();
 		setPreferredSize(new Dimension(width, height));
 		setLayout(new BorderLayout());
 		add(MenuList(), BorderLayout.NORTH);
 		switch (defaultView) {
-			case "TouristsNumber":
-				add(new TouristsNumberView(), BorderLayout.CENTER);
+		case "TouristsNumber":
+			add(new TouristsNumberView(), BorderLayout.CENTER);
 			break;
-			case "EnvMonitor":
-				add(new EnvMonitorView(), BorderLayout.CENTER);
-				break;
-			default:
-				break;
+		case "EnvMonitor":
+			add(new EnvMonitorView(), BorderLayout.CENTER);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -55,7 +55,7 @@ public class Hardware extends JPanel {
 		panel.setLayout(null);
 		panel.add(MenuItem("tourists.png", "客流设备", "TouristsNumber"));
 		panel.add(MenuItem("env.png", "环境监测", "EnvMonitor"));
-		panel.add(MenuItem("alarm.png", "报警设备", "Alarm"));
+//		panel.add(MenuItem("alarm.png", "报警设备", "Alarm"));
 		return panel;
 	}
 

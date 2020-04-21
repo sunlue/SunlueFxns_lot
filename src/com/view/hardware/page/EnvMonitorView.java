@@ -8,13 +8,13 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,18 +23,20 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.ini4j.Profile.Section;
 
-import com.socket.tourists_number.Client;
-import com.socket.tourists_number.ClientThread;
-import com.socket.tourists_number.Server;
+import com.server.Client;
+import com.server.Server;
 import com.util.CyFont;
 import com.util.Layer;
 import com.util.Log;
 import com.util.Util;
-import com.view.Container;
+import com.view.Frame;
+import com.view.Main;
+import com.view.Module;
 
 /**
  * 环境检测仪页面
@@ -49,10 +51,11 @@ public class EnvMonitorView extends JPanel {
 	
 	public static JPanel headPanel;
 	public static JPanel clientPanel;
+	public static Box clientBox;
 	public static JPanel msgPanel;
 	public static JTextArea msgTxtArea;
-	public static int width = Container.width;
-	public static int height = Container.height;
+	public static int width = Frame.width - Module.width;
+	public static int height = Frame.height - Main.headerHeight;
 	public static int clientWidth = 180;
 
 	public static JLabel portTxt;
@@ -62,8 +65,9 @@ public class EnvMonitorView extends JPanel {
 	public static JButton clearBtn;
 	public static JLabel syncTimeTxt;
 	public static JTextField syncTimeVal;
-
-	public static ArrayList<Panel> clientPanelList = new ArrayList<Panel>();
+	
+	public static Map<String, Panel> clientComponent = new HashMap<String, Panel>();
+	public static Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>();
 
 	public EnvMonitorView() {
 		setLayout(new BorderLayout());
@@ -203,8 +207,9 @@ public class EnvMonitorView extends JPanel {
 
 	private JScrollPane client() {
 		clientPanel = new JPanel();
-		clientPanel.setBackground(new Color(245,245,245));
-		clientPanel.setLayout(null);
+		clientPanel.setBackground(new Color(245, 245, 245));
+		clientBox = Box.createVerticalBox();
+		clientPanel.add(clientBox);
 		JScrollPane ScrollPane = new JScrollPane(clientPanel);
 		return ScrollPane;
 	}
@@ -240,63 +245,33 @@ public class EnvMonitorView extends JPanel {
 		Util.setMsg("envMonitor", msgTxtArea.getText());
 	}
 
-	public static void addClient(ClientThread client) {
-		String name = client.getClient().getName();
-		insertMsg(name + "上线了");
-		clientPanel.add(clientItem(name));
-		clientPanel.revalidate();
+	public static void addClient(Client client) {
+		String name = client.getName();
+		insertMsg(name + "上线了!");
+		Panel clientPanel = clientItem(name);
+		clientComponent.put(name, clientPanel);
+		clientBox.add(clientPanel);
+		SwingUtilities.updateComponentTreeUI(clientBox);
 	}
 
 	public static void removeClient(Client client) {
-		System.out.println(client.getName() + "下线了");
 		String name = client.getName();
 		insertMsg(name + "下线了!");
-		for (int i = 0; i < clientPanel.getComponentCount(); i++) {
-			clientPanel.remove(clientPanel.getComponent(i));
-		}
+		Panel clientPanel = clientComponent.get(name);
+		clientBox.remove(clientPanel);
+		clientComponent.remove(name);
+		SwingUtilities.updateComponentTreeUI(clientBox);
 	}
 
 	protected static Panel clientItem(String name) {
-		Panel panel = new Panel();
-		panel.setPreferredSize(new Dimension(clientWidth - 6, 32));
-		panel.setLayout(null);
-		panel.setCursor(new Cursor(12));
-		panel.setBackground(new Color(236, 233, 231));
-		panel.setName(name);
-		panel.setBounds(0, clientPanelList.size()*32, width, 32);
-
 		JLabel label = new JLabel(name);
 		label.setBounds(5, 0, width - 10, 32);
 		label.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
 		label.setVerticalAlignment(SwingConstants.CENTER);
-
+		Panel panel = new Panel();
+		panel.setName(name);
+		panel.setCursor(new Cursor(12));
 		panel.add(label);
-		panel.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				for (int i = 0; i < clientPanel.getComponentCount(); i++) {
-					clientPanel.getComponent(i).setBackground(new Color(236, 233, 231));
-				}
-				panel.setBackground(new Color(222, 222, 222));
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-		});
-		clientPanelList.add(panel);
 		return panel;
 	}
 

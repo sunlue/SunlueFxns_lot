@@ -10,15 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,21 +25,22 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.ini4j.Profile.Section;
 
-import com.socket.tourists_number.Client;
-import com.socket.tourists_number.ClientThread;
-import com.socket.tourists_number.Server;
+import com.server.Client;
+import com.server.Server;
 import com.util.CyFont;
 import com.util.Layer;
 import com.util.Log;
 import com.util.Util;
-import com.view.Container;
+import com.view.Frame;
 import com.view.Main;
+import com.view.Module;
 
 /**
  * 环境检测仪页面
@@ -52,13 +51,14 @@ import com.view.Main;
 public class TouristsNumberView extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	public static Section ini =null;
-	public static int width = Container.width;
-	public static int height = Container.height - Main.headerHeight;
-	public static int clientWidth = 180;
+	public static Section ini = null;
+	public static int width = Frame.width - Module.width;
+	public static int height = Frame.height - Main.headerHeight;
+	public static int clientWidth = 188;
 
 	public static JPanel headPanel;
 	public static JPanel clientPanel;
+	public static Box clientBox;
 	public static JPanel msgPanel;
 	public static JTextArea msgTxtArea;
 
@@ -74,11 +74,11 @@ public class TouristsNumberView extends JPanel {
 	public static JLabel syncTimeTxt;
 	public static JTextField syncTimeVal;
 
-	public static ArrayList<Panel> clientPanelList = new ArrayList<Panel>();
+	public static Map<String, Panel> clientComponent = new HashMap<String, Panel>();
 	public static Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>();
 
 	public TouristsNumberView() {
-		ini=Util.getIni().get("tourists_number");
+		ini = Util.getIni().get("tourists_number");
 		setLayout(new BorderLayout());
 		add(header(), BorderLayout.NORTH);
 		JSplitPane center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, client(), message());
@@ -100,7 +100,7 @@ public class TouristsNumberView extends JPanel {
 		lastRepTimeVal = new JTextField();
 		syncTimeTxt = new JLabel("系统时间");
 		syncTimeVal = new JTextField();
-		
+
 		portTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
 		portNum.setPreferredSize(new Dimension(38, 26));
 		portNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -155,7 +155,7 @@ public class TouristsNumberView extends JPanel {
 			public void keyPressed(KeyEvent e) {
 			}
 		});
-		
+
 		HbGapTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
 		HbGapNum.setPreferredSize(new Dimension(38, 26));
 		HbGapNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -228,11 +228,11 @@ public class TouristsNumberView extends JPanel {
 					if (port <= 0) {
 						throw new Exception("端口号为正整数");
 					}
-					
-					if (port==Integer.parseInt(ini.get("port")) && ini.get("isStart")=="true") {
+
+					if (port == Integer.parseInt(ini.get("port")) && ini.get("isStart") == "true") {
 						throw new Exception("服务器已启动！");
 					}
-					
+
 					new Server(port).start();
 
 					startBtn.setEnabled(false);
@@ -258,7 +258,6 @@ public class TouristsNumberView extends JPanel {
 			}
 		});
 
-		System.out.println(ini.get("isStart"));
 		stopBtn.setCursor(new Cursor(12));
 		stopBtn.setFocusPainted(false);
 		stopBtn.setPreferredSize(new Dimension(76, 26));
@@ -308,16 +307,16 @@ public class TouristsNumberView extends JPanel {
 				clearMsg("");
 			}
 		});
-		
+
 		lastRepTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
-		
+
 		lastRepTimeVal.setPreferredSize(new Dimension(128, 26));
 		lastRepTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		lastRepTimeVal.setText(ini.get("lastRepTime", ""));
 		lastRepTimeVal.setEditable(false);
 		lastRepTimeVal.setBackground(Color.white);
 		lastRepTimeVal.setForeground(Color.BLACK);
-		
+
 		syncTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
 		syncTimeVal.setPreferredSize(new Dimension(128, 26));
 		syncTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -355,7 +354,8 @@ public class TouristsNumberView extends JPanel {
 	private JScrollPane client() {
 		clientPanel = new JPanel();
 		clientPanel.setBackground(new Color(245, 245, 245));
-		clientPanel.setLayout(null);
+		clientBox = Box.createVerticalBox();
+		clientPanel.add(clientBox);
 		JScrollPane ScrollPane = new JScrollPane(clientPanel);
 		return ScrollPane;
 	}
@@ -383,71 +383,54 @@ public class TouristsNumberView extends JPanel {
 	public static void insertMsg(String msg) {
 		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		msgTxtArea.insert("【" + date + "】" + msg + "\r\n", 0);
-		Util.setMsg("touristrFlow", msgTxtArea.getText());
+		Util.setMsg("touristrNumber", msgTxtArea.getText());
 	}
 
 	public static void clearMsg(String msg) {
 		msgTxtArea.setText("");
-		Util.setMsg("touristrFlow", msgTxtArea.getText());
+		Util.setMsg("touristrNumber", msgTxtArea.getText());
 	}
 
-	public static void addClient(ClientThread client) {
-		String name = client.getClient().getName();
-		insertMsg(name + "上线了");
-		clientPanel.add(clientItem(name));
-		clientPanel.revalidate();
+	/**
+	 * 添加一个客户端面板
+	 * @param client
+	 */
+	public static void addClient(Client client) {
+		String name = client.getName();
+		insertMsg(name + "上线了!");
+		Panel clientPanel = clientItem(name);
+		clientComponent.put(name, clientPanel);
+		clientBox.add(clientPanel);
+		SwingUtilities.updateComponentTreeUI(clientBox);
 	}
 
+	/**
+	 * 删除一个客户端面板
+	 * @param client
+	 */
 	public static void removeClient(Client client) {
-		System.out.println(client.getName() + "下线了");
 		String name = client.getName();
 		insertMsg(name + "下线了!");
-		for (int i = 0; i < clientPanel.getComponentCount(); i++) {
-			clientPanel.remove(clientPanel.getComponent(i));
-		}
+		Panel clientPanel = clientComponent.get(name);
+		clientBox.remove(clientPanel);
+		clientComponent.remove(name);
+		SwingUtilities.updateComponentTreeUI(clientBox);
 	}
 
+	/**
+	 * 生成一个客户端面板
+	 * @param name
+	 * @return
+	 */
 	protected static Panel clientItem(String name) {
-		Panel panel = new Panel();
-		panel.setPreferredSize(new Dimension(clientWidth - 6, 32));
-		panel.setLayout(null);
-		panel.setCursor(new Cursor(12));
-		panel.setBackground(new Color(236, 233, 231));
-		panel.setName(name);
-		panel.setBounds(0, clientPanelList.size() * 32, width, 32);
-
 		JLabel label = new JLabel(name);
 		label.setBounds(5, 0, width - 10, 32);
 		label.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
 		label.setVerticalAlignment(SwingConstants.CENTER);
-
+		Panel panel = new Panel();
+		panel.setName(name);
+		panel.setCursor(new Cursor(12));
 		panel.add(label);
-		panel.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				for (int i = 0; i < clientPanel.getComponentCount(); i++) {
-					clientPanel.getComponent(i).setBackground(new Color(236, 233, 231));
-				}
-				panel.setBackground(new Color(222, 222, 222));
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-		});
-		clientPanelList.add(panel);
 		return panel;
 	}
 
