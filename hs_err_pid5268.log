@@ -1,0 +1,196 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 201326592 bytes for Failed to commit area from 0x0000000740a00000 to 0x000000074ca00000 of length 201326592.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (t:/workspace/open/src/hotspot/os/windows/os_windows.cpp:3254), pid=5268, tid=12232
+#
+# JRE version:  (12.0.1+12) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (12.0.1+12, mixed mode, aot, sharing, tiered, compressed oops, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dfile.encoding=UTF-8 com.view.Index
+
+Host: Intel(R) Xeon(R) CPU E3-1231 v3 @ 3.40GHz, 8 cores, 11G,  Windows 10 , 64 bit Build 17763 (10.0.17763.475)
+Time: Fri Apr 24 15:04:58 2020 ?D1¨²¡À¨º¡Á?¨º¡À?? elapsed time: 0 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001e75667e000):  JavaThread "Unknown thread" [_thread_in_vm, id=12232, stack(0x0000001599800000,0x0000001599900000)]
+
+Stack: [0x0000001599800000,0x0000001599900000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x63948a]
+V  [jvm.dll+0x78b31f]
+V  [jvm.dll+0x78c9c1]
+V  [jvm.dll+0x78d013]
+V  [jvm.dll+0x262138]
+V  [jvm.dll+0x63698a]
+V  [jvm.dll+0x62b505]
+V  [jvm.dll+0x31d9bc]
+V  [jvm.dll+0x31d7ef]
+V  [jvm.dll+0x323526]
+V  [jvm.dll+0x370f76]
+V  [jvm.dll+0x370750]
+V  [jvm.dll+0x2f786a]
+V  [jvm.dll+0x2f8af2]
+V  [jvm.dll+0x7657b7]
+V  [jvm.dll+0x766e95]
+V  [jvm.dll+0x37f089]
+V  [jvm.dll+0x749b14]
+V  [jvm.dll+0x3ee48d]
+V  [jvm.dll+0x3f03c1]
+C  [jli.dll+0x51cf]
+C  [ucrtbase.dll+0x21ffa]
+C  [KERNEL32.DLL+0x17974]
+C  [ntdll.dll+0x6a261]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ff9fd8048e8, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x000001e7566ca800 GCTaskThread "GC Thread#0" [stack: 0x0000001599900000,0x0000001599a00000] [id=12880]
+  0x000001e7566df000 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000001599a00000,0x0000001599b00000] [id=14264]
+  0x000001e7566e4000 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000001599b00000,0x0000001599c00000] [id=11060]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ff9fd037a37]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x000001e75667bac0] Heap_lock - owner thread: 0x000001e75667e000
+
+Heap address: 0x0000000740a00000, size: 3062 MB, Compressed Oops mode: Non-zero based: 0x0000000740a00000
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff6d9960000 - 0x00007ff6d996f000 	C:\Program Files\Java\jdk-12.0.1\bin\javaw.exe
+0x00007ffa35be0000 - 0x00007ffa35dcd000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffa34970000 - 0x00007ffa34a23000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffa32c40000 - 0x00007ffa32ed3000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffa32b40000 - 0x00007ffa32c3a000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffa2e970000 - 0x00007ffa2e988000 	C:\Program Files\Java\jdk-12.0.1\bin\jli.dll
+0x00007ffa2df70000 - 0x00007ffa2df86000 	C:\Program Files\Java\jdk-12.0.1\bin\VCRUNTIME140.dll
+0x00007ffa34450000 - 0x00007ffa344f3000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffa34510000 - 0x00007ffa345ae000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffa348d0000 - 0x00007ffa3496e000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffa34a30000 - 0x00007ffa34b52000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffa358c0000 - 0x00007ffa35a57000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffa31f90000 - 0x00007ffa31fb0000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffa343f0000 - 0x00007ffa34419000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffa22c80000 - 0x00007ffa22ef9000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.17763.1039_none_de701650534c7021\COMCTL32.dll
+0x00007ffa32750000 - 0x00007ffa328e9000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffa34fe0000 - 0x00007ffa3530c000 	C:\WINDOWS\System32\combase.dll
+0x00007ffa32990000 - 0x00007ffa32a30000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffa32910000 - 0x00007ffa3298e000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffa2d7a0000 - 0x00007ffa2d7aa000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffa34420000 - 0x00007ffa3444e000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffa221a0000 - 0x00007ffa2224a000 	C:\Program Files\Java\jdk-12.0.1\bin\msvcp140.dll
+0x00007ff9fcd30000 - 0x00007ff9fd8a4000 	C:\Program Files\Java\jdk-12.0.1\bin\server\jvm.dll
+0x00007ffa32ee0000 - 0x00007ffa32ee8000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffa2e1c0000 - 0x00007ffa2e1c9000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffa25240000 - 0x00007ffa25264000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffa35b40000 - 0x00007ffa35bad000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffa216c0000 - 0x00007ffa216ed000 	C:\WINDOWS\SYSTEM32\winmmbase.dll
+0x00007ffa31fb0000 - 0x00007ffa31ffa000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x00007ffa31d60000 - 0x00007ffa31d71000 	C:\WINDOWS\System32\kernel.appcore.dll
+0x00007ffa1d180000 - 0x00007ffa1d191000 	C:\Program Files\Java\jdk-12.0.1\bin\verify.dll
+0x00007ffa209c0000 - 0x00007ffa20bad000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffa21570000 - 0x00007ffa2159a000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffa19450000 - 0x00007ffa19476000 	C:\Program Files\Java\jdk-12.0.1\bin\java.dll
+0x00007ffa19430000 - 0x00007ffa19447000 	C:\Program Files\Java\jdk-12.0.1\bin\zip.dll
+0x00007ffa2d020000 - 0x00007ffa2d02a000 	C:\Program Files\Java\jdk-12.0.1\bin\jimage.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Java\jdk-12.0.1\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.17763.1039_none_de701650534c7021;C:\Program Files\Java\jdk-12.0.1\bin\server
+
+VM Arguments:
+jvm_args: -Dfile.encoding=UTF-8 
+java_command: com.view.Index
+java_class_path (initial): D:\java\SunlueFxns_socket\bin;D:\java\SunlueFxns_socket\lib\commons-lang-2.0.jar;D:\java\SunlueFxns_socket\lib\fastjson-1.2.57.jar;D:\java\SunlueFxns_socket\lib\ini4j-0.5.4.jar;D:\java\SunlueFxns_socket\lib\mysql-connector-java-8.0.17.jar;D:\java\SunlueFxns_socket\lib\org.apache.log4j-1.2.15.v201012070815.jar;D:\java\SunlueFxns_socket\lib\sqlite-jdbc-3.30.1.jar;D:\java\SunlueFxns_socket\lib\jna.jar;D:\java\SunlueFxns_socket\lib\examples.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 2                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 8                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 201326592                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 3210739712                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5836300                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122910970                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122910970                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk-12.0.1
+PATH=C:/Program Files/Java/jdk-12.0.1/bin/server;C:/Program Files/Java/jdk-12.0.1/bin;D:\soft\xftp\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Microsoft\Web Platform Installer\;C:\Users\xiebing.EBYTE\AppData\Roaming\npm;C:\Users\xiebing.EBYTE\AppData\Local\Android\Sdk\platform-tools;D:\soft\go\bin;D:\soft\Php\php73;C:\composer;D:\soft\MinGW\bin;C:\Program Files\nodejs\;D:\soft\MySQL\MySQL 5.7\bin;C:\Program Files\TortoiseSVN\bin;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;D:\soft\kubectl;d:\soft\SQLServer\2008\database(x86)\100\Tools\Binn\;d:\soft\SQLServer\2008\database\100\Tools\Binn\;d:\soft\SQLServer\2008\database\100\DTS\Binn\;d:\soft\SQLServer\2008\database(x86)\100\Tools\Binn\VSShell\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PrivateAssemblies\;d:\soft\SQLServer\2008\database(x86)\100\DTS\Binn\;C:\Program Files\TortoiseGit\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Java\jdk-12.0.1\bin\bin;%M2_HOME%\bin;%MAVEN_HOME%\bin;C:\Users\xiebing.EBYTE\.windows-build-tools\python27\;C:\Users\xiebing.EBYTE\go\bin;D:\soft\composer;C:\Users\xiebing.EBYTE\AppData\Roaming\Composer\vendor\bin;D:\soft\VS Code\bin;C:\Users\xiebing.EBYTE\AppData\Roaming\npm;C:\Users\xiebing.EBYTE\AppData\Local\Microsoft\WindowsApps;;C:\Users\xiebing.EBYTE\Desktop;
+USERNAME=xiebing
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 60 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10 , 64 bit Build 17763 (10.0.17763.475)
+
+CPU:total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 60 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, fma
+
+Memory: 4k page, system-wide physical 12241M (4635M free)
+TotalPageFile size 16275M (AvailPageFile size 120M)
+current process WorkingSet (physical memory assigned to process): 10M, peak: 10M
+current process commit charge ("private bytes"): 60M, peak: 252M
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (12.0.1+12) for windows-amd64 JRE (12.0.1+12), built on Apr  2 2019 14:02:19 by "mach5one" with MS VC++ 15.5 (VS2017)
+
+END.

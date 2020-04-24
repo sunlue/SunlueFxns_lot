@@ -1,15 +1,14 @@
 package com.util;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,6 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
 import com.util.Util;
+import com.view.monitor.Monitor;
 
 /***
  * 定义的Dialog对话框
@@ -35,50 +35,6 @@ public class Layer extends JDialog {
 
 	private static JButton okBtn = new JButton("确定");
 	private static JButton cancelBtn = new JButton("取消");
-	
-
-    /**
-     * Type meaning Look and Feel should not supply any options -- only
-     * use the options from the <code>JOptionPane</code>.
-     */
-    public static final int         DEFAULT_OPTION = -1;
-    /** Type used for <code>showConfirmDialog</code>. */
-    public static final int         YES_NO_OPTION = 0;
-    /** Type used for <code>showConfirmDialog</code>. */
-    public static final int         YES_NO_CANCEL_OPTION = 1;
-    /** Type used for <code>showConfirmDialog</code>. */
-    public static final int         OK_CANCEL_OPTION = 2;
-
-    //
-    // Return values.
-    //
-    /** Return value from class method if YES is chosen. */
-    public static final int         YES_OPTION = 0;
-    /** Return value from class method if NO is chosen. */
-    public static final int         NO_OPTION = 1;
-    /** Return value from class method if CANCEL is chosen. */
-    public static final int         CANCEL_OPTION = 2;
-    /** Return value form class method if OK is chosen. */
-    public static final int         OK_OPTION = 0;
-    /** Return value from class method if user closes window without selecting
-     * anything, more than likely this should be treated as either a
-     * <code>CANCEL_OPTION</code> or <code>NO_OPTION</code>. */
-    public static final int         CLOSED_OPTION = -1;
-
-    //
-    // Message types. Used by the UI to determine what icon to display,
-    // and possibly what behavior to give based on the type.
-    //
-    /** Used for error messages. */
-    public static final int  ERROR_MESSAGE = 0;
-    /** Used for information messages. */
-    public static final int  INFORMATION_MESSAGE = 1;
-    /** Used for warning messages. */
-    public static final int  WARNING_MESSAGE = 2;
-    /** Used for questions. */
-    public static final int  QUESTION_MESSAGE = 3;
-    /** No icon is used. */
-    public static final int   PLAIN_MESSAGE = -1;
 
 	public int getWidth() {
 		return Layer.width;
@@ -108,20 +64,19 @@ public class Layer extends JDialog {
 		rootPane.add(content);
 		rootPane.add(bottom(type, callback));
 
+		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - width / 2;
+		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - height / 2;
 		pack();
+		setModal(true);
 		setTitle(title);
 		setSize(width, height);
-		setLayout(null);
-		setVisible(true);
 		setResizable(false);
+		setContentPane(rootPane);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setIconImage(Util.getLogoIcon());
-		setContentPane(rootPane);
-	}
-
-	public void close() {
-		this.dispose();
+		setIconImage(Util.getLogoIcon("logo_16_16.png"));
+		setLocation(x, y);
+		setVisible(true);
 	}
 
 	/*************************** 确认框 **************************/
@@ -160,18 +115,6 @@ public class Layer extends JDialog {
 		label.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
 		panel.add(label);
 		new Layer("提示", panel, "alert", null);
-	}
-
-	public static void alert(String content, Date time) {
-		alert(content);
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				new Layer().close();
-				timer.cancel();
-			}
-		}, time);
 	}
 
 	public static void alert(String content, int width, int height) {
@@ -213,7 +156,17 @@ public class Layer extends JDialog {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					callback.clickBtn("ok");
-					callback.clickOkBtn(true);
+					callback.clickOkBtn(new LayerConfirmCallback() {
+						@Override
+						public void destroy() {
+							dispose();
+						}
+
+						@Override
+						public void destroy(JDialog dialog) {
+							dialog.dispose();
+						}
+					});
 				}
 			});
 			break;
@@ -234,7 +187,7 @@ public class Layer extends JDialog {
 		cancelBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (callback!=null) {
+				if (callback != null) {
 					callback.clickBtn("cancel");
 				}
 				dispose();
@@ -243,12 +196,89 @@ public class Layer extends JDialog {
 		return bottom;
 	}
 
+	/**
+	 * 弹出自定义层
+	 * @param title
+	 * @param comp
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public static JDialog window(String title, Container comp, int width, int height) {
+		Layer.setWidth(width);
+		Layer.setHeight(height);
+		return Layer.window(title, comp);
+	}
+	/**
+	 * 弹出自定义层
+	 * @param title
+	 * @param comp
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	public static JDialog window(String title, Container contentPane) {
+		JDialog dialog = new JDialog(Monitor.getFrames()[0], true);
+		dialog.setTitle(title);
+		dialog.setResizable(false);
+		dialog.setSize(width, height);
+		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - width / 2;
+		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - height / 2;
+		dialog.setLocation(x, y);
+		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		dialog.setIconImage(Util.getLogoIcon("logo_16_16.png"));
+		dialog.setContentPane(contentPane);
+//		dialog.setVisible(true);
+		return dialog;
+	}
+
+	/**
+	 * 弹出加载层
+	 * @param callback
+	 */
+	public static void loading(LayerLoadingCallback callback) {
+
+		JLabel label = new JLabel("正在加载中...");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setVerticalAlignment(SwingConstants.CENTER);
+		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
+		
+//		JDialog dialog = new JDialog(Monitor.getFrames()[0], true);
+		JDialog dialog = new JDialog();
+		callback.handle(dialog);
+		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - 100;
+		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - 18;
+		dialog.setModal(true);
+		dialog.setTitle("加载中");
+		dialog.setLocation(x, y);
+		dialog.setSize(200, 36);
+		dialog.setContentPane(label);
+		dialog.setUndecorated(true);
+		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		dialog.setIconImage(Util.getLogoIcon("logo_16_16.png"));
+		
+		dialog.setVisible(true);
+	}
+
 	public interface LayerCallback {
 		void clickBtn(String btn);
 
-		void clickOkBtn(boolean confirm);
+		void clickOkBtn();
+
+		void clickOkBtn(LayerConfirmCallback dispose);
 
 		void clickCancelBtn();
+
+	}
+
+	public interface LayerConfirmCallback {
+		void destroy();
+
+		void destroy(JDialog dialog);
+	}
+
+	public interface LayerLoadingCallback {
+		void handle(JDialog dialog);
 	}
 
 }

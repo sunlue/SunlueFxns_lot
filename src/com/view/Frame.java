@@ -28,6 +28,7 @@ import org.apache.log4j.PropertyConfigurator;
 import com.util.Layer;
 import com.util.Util;
 import com.util.Layer.LayerCallback;
+import com.util.Layer.LayerConfirmCallback;
 
 public class Frame {
 
@@ -154,11 +155,10 @@ public class Frame {
 					Layer.confirm("确认要退出并关闭程序吗?", 240, 160, new LayerCallback() {
 						@Override
 						public void clickBtn(String btn) {
-
 						}
 
 						@Override
-						public void clickOkBtn(boolean confirm) {
+						public void clickOkBtn() {
 							String DIR_PATH = System.getProperty("user.dir") + File.separator + "msg";
 							File file = new File(DIR_PATH);
 							file.delete();
@@ -167,7 +167,10 @@ public class Frame {
 
 						@Override
 						public void clickCancelBtn() {
+						}
 
+						@Override
+						public void clickOkBtn(LayerConfirmCallback dispose) {
 						}
 					});
 				}

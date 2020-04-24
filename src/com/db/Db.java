@@ -28,7 +28,7 @@ public class Db {
 	}
 
 	public Db(String type) {
-		this.useDbType = (type == "mysql" ? DbType.SQLITE : DbType.MYSQL);
+		this.useDbType = (type == "mysql" ? DbType.MYSQL : DbType.SQLITE);
 	}
 
 	public Db(DbType type, boolean autoInit) {
@@ -78,10 +78,14 @@ public class Db {
 		return i;
 	}
 
-	public static ResultSet selectSql(String sql) {
+	public static ResultSet selectSql(String sql, DbType dbType) {
 		try {
 			ps = conn.prepareStatement(sql);
-			rs = ps.executeQuery(sql);
+			if (dbType.equals(DbType.MYSQL)) {
+				rs = ps.executeQuery(sql);
+			}else if (dbType.equals(DbType.SQLITE)) {
+				rs = ps.executeQuery();
+			}
 		} catch (SQLException e) {
 			Log.write("数据库查询异常:" + e.getMessage() + "\r\n【" + sql + "】", Log.Error);
 		}
@@ -215,14 +219,14 @@ public class Db {
 	 * @return
 	 */
 	public ResultSet select() {
-		return Db.selectSql(fetchSql());
+		return Db.selectSql(fetchSql(), this.useDbType);
 	}
 
 	/************** 聚合函数 ********************/
 	public int count() {
 		this.field = "count(*) as count";
 		this.limit = "";
-		ResultSet rSet = selectSql(fetchSql());
+		ResultSet rSet = selectSql(fetchSql(),this.useDbType);
 		try {
 			if (rSet.next()) {
 				int count = Integer.parseInt(rSet.getString("count"));

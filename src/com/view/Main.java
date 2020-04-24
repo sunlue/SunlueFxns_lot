@@ -32,6 +32,7 @@ import com.util.Util;
 import com.view.hardware.Hardware;
 import com.view.setting.Setting;
 import com.util.Layer.LayerCallback;
+import com.util.Layer.LayerConfirmCallback;
 
 public class Main {
 	public static int tempX;
@@ -111,7 +112,7 @@ public class Main {
 					}
 
 					@Override
-					public void clickOkBtn(boolean confirm) {
+					public void clickOkBtn() {
 						String DIR_PATH = System.getProperty("ROOT_PATH") + "\\msg";
 						File file = new File(DIR_PATH);
 						file.delete();
@@ -127,6 +128,10 @@ public class Main {
 					@Override
 					public void clickCancelBtn() {
 
+					}
+
+					@Override
+					public void clickOkBtn(LayerConfirmCallback dispose) {
 					}
 				});
 			}

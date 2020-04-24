@@ -88,7 +88,7 @@ public class TouristsNumberService {
 		return sendForWho;
 	}
 
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings("deprecation")
 	public int ResponseAuth(byte[] b) throws IOException {
 		// 解析收到的client端发送的数据
 		// 1.版本号4字节，大端字节序，高位在前
@@ -130,7 +130,7 @@ public class TouristsNumberService {
 		return 0;
 	}
 
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings("deprecation")
 	private int ResponseRepData(byte[] b) throws IOException {
 		// 解析收到的client端发送的数据
 		// 1.客流记录数量2字节，大端字节序，高位在前
