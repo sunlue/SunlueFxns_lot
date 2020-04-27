@@ -10,8 +10,9 @@ import com.util.Log;
 public class DeviceDaoImpl extends DaoImpl implements DeviceDao {
 
 	@Override
-	public void insert(String ip, int port, String username, String password) throws Exception {
+	public void insert(int type, String ip, int port, String username, String password) throws Exception {
 		Map<String, String> data = new HashMap<String, String>();
+		data.put("type", String.valueOf(type));
 		data.put("ip", ip);
 		data.put("port", String.valueOf(port));
 		data.put("username", username);
@@ -26,6 +27,11 @@ public class DeviceDaoImpl extends DaoImpl implements DeviceDao {
 	@Override
 	public ResultSet select() throws Exception {
 		return db.name("video_monitor").select();
+	}
+
+	@Override
+	public ResultSet find(String field, String data) {
+		return db.name("video_monitor").where(field + "='"+data+"'").find();
 	}
 
 }

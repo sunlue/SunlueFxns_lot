@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.util.Util;
+import com.view.monitor.Monitor;
 
 public class Module {
 	public static int width = 60;
@@ -33,7 +35,8 @@ public class Module {
 		int footerHeight = (int) footerPanel.getPreferredSize().getHeight();
 		menuPanel.setPreferredSize(new Dimension(width, Frame.height - logoBtn.getHeight() - footerHeight));
 		menuPanel.setOpaque(false);
-		menuPanel.add(button("硬件", "hardware.png"));
+		menuPanel.add(button("硬件", "hardware.png", "cut", "hardware"));
+		menuPanel.add(button("视频监控", "video_monitor.png", "open", "video_monitor"));
 
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, Frame.height));
@@ -41,11 +44,11 @@ public class Module {
 		panel.add(logoBtn);
 		panel.add(menuPanel);
 		panel.add(footerPanel);
-		
+
 		return panel;
 	}
 
-	protected static JButton button(String name, String icon) {
+	protected static JButton button(String name, String icon, String handle, String page) {
 
 		ImageIcon ImgIcon = Util.getImageIcon(icon, 32, 32);
 		ImageIcon _ImgIcon = Util.getImageIcon("_" + icon, 32, 32);
@@ -62,8 +65,21 @@ public class Module {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Main main = new Main();
-				main.cutPage("hardware");
+				if (handle == "cut") {
+					Main main = new Main();
+					main.cutPage(page);
+				} else if (handle == "open") {
+					if (page != null) {
+						switch (page) {
+						case "video_monitor":
+							new Monitor();
+							break;
+						default:
+							break;
+						}
+						Frame.jf.setExtendedState(JFrame.ICONIFIED);
+					}
+				}
 			}
 		});
 

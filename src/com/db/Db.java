@@ -83,7 +83,7 @@ public class Db {
 			ps = conn.prepareStatement(sql);
 			if (dbType.equals(DbType.MYSQL)) {
 				rs = ps.executeQuery(sql);
-			}else if (dbType.equals(DbType.SQLITE)) {
+			} else if (dbType.equals(DbType.SQLITE)) {
 				rs = ps.executeQuery();
 			}
 		} catch (SQLException e) {
@@ -222,11 +222,21 @@ public class Db {
 		return Db.selectSql(fetchSql(), this.useDbType);
 	}
 
+	/**
+	 * 查询
+	 * 
+	 * @return
+	 */
+	public ResultSet find() {
+		this.limit = " limit 0,1";
+		return Db.selectSql(fetchSql(), this.useDbType);
+	}
+
 	/************** 聚合函数 ********************/
 	public int count() {
 		this.field = "count(*) as count";
 		this.limit = "";
-		ResultSet rSet = selectSql(fetchSql(),this.useDbType);
+		ResultSet rSet = selectSql(fetchSql(), this.useDbType);
 		try {
 			if (rSet.next()) {
 				int count = Integer.parseInt(rSet.getString("count"));

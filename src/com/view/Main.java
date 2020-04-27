@@ -207,12 +207,12 @@ public class Main {
 		if (name != null) {
 			Component view = null;
 			switch (name) {
-				case "hardware":
-					view = new Hardware();
-					break;
-				case "setting":
-					view = new Setting();
-					break;
+			case "hardware":
+				view = new Hardware();
+				break;
+			case "setting":
+				view = new Setting();
+				break;
 			default:
 				break;
 			}

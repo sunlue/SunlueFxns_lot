@@ -1,8 +1,6 @@
 package com.util;
 
 import java.awt.Font;
-import java.io.File;
-import java.io.FileInputStream;
 
 public class CyFont {
 
@@ -17,8 +15,8 @@ public class CyFont {
 	public static Font PuHuiTi(String name, float fontSize) {
 //		String fontFileName = CyFont.class.getResource("/Alibaba-PuHuiTi-" + name + ".ttf").getPath();
 //		try {
-//			File file = new File(fontFileName);
-//			FileInputStream input = new FileInputStream(file);
+//			java.io.File file = new java.io.File(fontFileName);
+//			java.io.FileInputStream input = new java.io.FileInputStream(file);
 //			AlibabaPuHuiTi = Font.createFont(Font.TRUETYPE_FONT, input).deriveFont(fontSize);
 //			input.close();
 //			System.out.println(input);

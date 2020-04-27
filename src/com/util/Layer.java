@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -102,6 +103,11 @@ public class Layer extends JDialog {
 	}
 
 	/*************************** 提示框 **************************/
+	
+	public static void alert(Frame owner) {
+		
+	}
+	
 	public static void alert(String content) {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height - 78));
@@ -146,6 +152,12 @@ public class Layer extends JDialog {
 			cancelBtn.setFocusPainted(false);
 			cancelBtn.setBorderPainted(false);
 			cancelBtn.setBackground(Color.white);
+			cancelBtn.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					callback.clickCancelBtn();
+				}
+			});
 			bottom.add(cancelBtn);
 			okBtn.setFocusPainted(false);
 			okBtn.setBorderPainted(false);
@@ -156,6 +168,7 @@ public class Layer extends JDialog {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					callback.clickBtn("ok");
+					callback.clickOkBtn();
 					callback.clickOkBtn(new LayerConfirmCallback() {
 						@Override
 						public void destroy() {
@@ -198,6 +211,7 @@ public class Layer extends JDialog {
 
 	/**
 	 * 弹出自定义层
+	 * 
 	 * @param title
 	 * @param comp
 	 * @param width
@@ -209,8 +223,10 @@ public class Layer extends JDialog {
 		Layer.setHeight(height);
 		return Layer.window(title, comp);
 	}
+
 	/**
 	 * 弹出自定义层
+	 * 
 	 * @param title
 	 * @param comp
 	 * @param width
@@ -234,30 +250,29 @@ public class Layer extends JDialog {
 
 	/**
 	 * 弹出加载层
+	 * 
 	 * @param callback
 	 */
 	public static void loading(LayerLoadingCallback callback) {
-
+		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - 100;
+		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - 18;
+		callback.start();
 		JLabel label = new JLabel("正在加载中...");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
-		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
-		
-//		JDialog dialog = new JDialog(Monitor.getFrames()[0], true);
-		JDialog dialog = new JDialog();
+//		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
+
+		JDialog dialog = new JDialog(Monitor.getFrames()[0], true);
 		callback.handle(dialog);
-		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - 100;
-		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - 18;
-		dialog.setModal(true);
 		dialog.setTitle("加载中");
 		dialog.setLocation(x, y);
-		dialog.setSize(200, 36);
 		dialog.setContentPane(label);
+		dialog.setResizable(false);
+		dialog.setSize(200, 36);
 		dialog.setUndecorated(true);
-		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		dialog.setIconImage(Util.getLogoIcon("logo_16_16.png"));
-		
-		dialog.setVisible(true);
+		callback.end(dialog);
 	}
 
 	public interface LayerCallback {
@@ -278,7 +293,12 @@ public class Layer extends JDialog {
 	}
 
 	public interface LayerLoadingCallback {
+		void start();
+
+		void end(JDialog dialog);
+
 		void handle(JDialog dialog);
+
 	}
 
 }
