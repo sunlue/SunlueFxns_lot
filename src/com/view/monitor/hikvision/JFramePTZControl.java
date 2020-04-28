@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
  ****************************************************************************/
 public class JFramePTZControl extends javax.swing.JFrame {
 
+	private static final long serialVersionUID = 1L;
 	/************ 成员变量 *****************/
 	static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;
 	private NativeLong m_lRealHandle;// 预览句柄

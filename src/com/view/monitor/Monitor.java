@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -32,12 +33,6 @@ import com.util.Layer;
 import com.util.Util;
 import com.util.Layer.LayerLoadingCallback;
 import com.view.monitor.DeviceMgr.DeviceMgrCallback;
-import com.view.monitor.hikvision.JDialogHideAlarm;
-import com.view.monitor.hikvision.JDialogHideArea;
-import com.view.monitor.hikvision.JDialogMotionDetect;
-import com.view.monitor.hikvision.JDialogRecordSchedule;
-import com.view.monitor.hikvision.JDialogShowString;
-import com.view.monitor.hikvision.JDialogVideoInLost;
 
 public class Monitor extends JFrame {
 
@@ -117,35 +112,17 @@ public class Monitor extends JFrame {
 	}
 
 	public static NativeLong g_lVoiceHandle;
-
-	public static void centerWindow(JDialogHideArea dlg) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void centerWindow(JDialogVideoInLost dlg) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void centerWindow(JDialogMotionDetect dlg) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void centerWindow(JDialogHideAlarm dlg) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void centerWindow(JDialogShowString dialogShowString) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public static void centerWindow(JDialogRecordSchedule dialogRecordSchedule) {
-		// TODO Auto-generated method stub
-
+	
+	/*************************************************
+	 * 函数: centerWindow 函数描述:窗口置中
+	 *************************************************/
+	public static void centerWindow(java.awt.Container window) {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		int w = window.getSize().width;
+		int h = window.getSize().height;
+		int x = (dim.width - w) / 2;
+		int y = (dim.height - h) / 2;
+		window.setLocation(x, y);
 	}
 
 }

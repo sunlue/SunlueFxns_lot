@@ -1,10 +1,14 @@
 package com.view.monitor;
 
+import java.awt.Panel;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -16,6 +20,8 @@ import javax.swing.tree.TreePath;
 
 import com.alibaba.fastjson.JSONObject;
 import com.server.monitor.hikvision.Hikvision;
+import com.server.monitor.hikvision.RealPlay.RealPlayCallback;
+import com.sun.jna.NativeLong;
 import com.util.Layer;
 
 public class DeviceTree extends JTree {
@@ -56,26 +62,45 @@ public class DeviceTree extends JTree {
 		rootTree.addTreeSelectionListener(new TreeSelectionListener() {
 			@Override
 			public void valueChanged(TreeSelectionEvent e) {
-				String node = e.getPath().getLastPathComponent().toString();
-				JSONObject rSet = deviceList.get(node);
-				if (rSet == null) {
-					try {
-						rSet = new com.action.Device().find("ip", node);
-					} catch (Exception e1) {
-						e1.printStackTrace();
+				if (!rootTree.isSelectionEmpty()) {
+					String node = e.getPath().getLastPathComponent().toString();
+					JSONObject rSet = deviceList.get(node);
+					if (rSet == null) {
+						try {
+							rSet = new com.action.Device().find("ip", node);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 					}
-				}
-				String ip = rSet.getString("ip");
-				short port = Short.parseShort(rSet.getString("port"));
-				String username = rSet.getString("username");
-				String password = rSet.getString("password");
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						new Hikvision(ip, port, username, password, Container.RealplayPanel);
-					}
-				}).start();
+					String ip = rSet.getString("ip");
+					short port = Short.parseShort(rSet.getString("port"));
+					String username = rSet.getString("username");
+					String password = rSet.getString("password");
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							Panel playPanel = Container.RealplayPanel;
+							new Hikvision(ip, port, username, password, playPanel).handle(new RealPlayCallback() {
+								@Override
+								public void success(Map<String, Object> data,NativeLong RealHandle) {
+									JPanel parantPanel = (JPanel) playPanel.getParent();
+									parantPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+									parantPanel.setName(ip);
+									playPanel.setName(ip);
+									JPanel setPanel = (JPanel)parantPanel.getComponent(0);
+									JLabel nameLabel = (JLabel)setPanel.getComponent(0);
+									nameLabel.setText(ip);
+									Container.console(parantPanel,RealHandle);
+								}
 
+								@Override
+								public void fail(NativeLong lPreviewHandle) {
+//									
+								}
+							});
+						}
+					}).start();
+				}
 			}
 		});
 		// 设置树显示根节点句柄

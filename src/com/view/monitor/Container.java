@@ -3,8 +3,9 @@ package com.view.monitor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -22,7 +24,10 @@ import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 
 import com.server.monitor.hikvision.HCNetSDK;
+import com.server.monitor.hikvision.RealPlay;
+import com.sun.jna.NativeLong;
 import com.util.CyFont;
+import com.view.monitor.hikvision.JFramePTZControl;
 
 /**
  * 视频监控容器类
@@ -51,49 +56,63 @@ public class Container extends JSplitPane implements MouseListener {
 		GridLayout layout = new GridLayout(cell, cell, 1, 1);
 		RealplayPanelArea.setLayout(layout);
 		for (int i = 0; i < grid; i++) {
-			Panel cellPanel = new Panel();
-			cellPanel.setCursor(new Cursor(12));
-			cellPanel.setName(String.valueOf(i));
-			cellPanel.setBackground(Color.WHITE);
+			JPanel cellJPanel = new JPanel();
+			cellJPanel.setLayout(new BorderLayout());
+			cellJPanel.setName(String.valueOf(i));
+
+			JPanel setPanel = new JPanel();
+			setPanel.setLayout(new BorderLayout());
+			setPanel.setBackground(new Color(51, 51, 51));
+			
+			JLabel nameLabel = new JLabel(String.valueOf(i));
+			nameLabel.setForeground(Color.white);
+			nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+			setPanel.add(nameLabel, BorderLayout.WEST);
+
+			Panel palyPanel = new Panel();
+			palyPanel.setCursor(new Cursor(12));
+			palyPanel.setName(String.valueOf(i));
+			palyPanel.setBackground(Color.WHITE);
 			if (i == 0) {
-				JMenuItem menuItem = new JMenuItem("打开云台");
-				menuItem.setHorizontalAlignment(SwingConstants.CENTER);
-				menuItem.setVerticalAlignment(SwingConstants.CENTER);
-				menuItem.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
-				menuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						System.out.println("点击了云台");
-					}
-				});
-				JPopupMenu popup = new JPopupMenu();
-				popup.add(menuItem);
-				cellPanel.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						super.mouseClicked(e);
-						if (e.getButton() == MouseEvent.BUTTON3) {
-							popup.show(e.getComponent(), e.getX(), e.getY());
-						}
-					}
-				});
-				RealplayPanel = cellPanel;
+				RealplayPanel = palyPanel;
+				cellJPanel.setBorder(BorderFactory.createLineBorder(new Color(51,51,51), 2));
 			} else {
-				cellPanel.setLayout(new BorderLayout());
 				JLabel label = new JLabel("<html><body>暂无视频源或<br>没有视频信号<body></html>");
 				label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
 				label.setHorizontalAlignment(SwingConstants.CENTER);
 				label.setVerticalAlignment(SwingConstants.CENTER);
 				label.setBackground(Color.white);
 				label.setOpaque(true);
-				cellPanel.add(label, BorderLayout.CENTER);
+				palyPanel.setLayout(new BorderLayout());
+				palyPanel.add(label, BorderLayout.CENTER);
 			}
+			palyPanel.addMouseListener(this);
+			cellJPanel.add(setPanel, BorderLayout.NORTH);
+			cellJPanel.add(palyPanel, BorderLayout.CENTER);
 
-			cellPanel.addMouseListener(this);
-			RealplayPanelArea.add(cellPanel);
+			RealplayPanelArea.add(cellJPanel);
 		}
 
 		return RealplayPanelArea;
+	}
+
+	public static void console(JPanel parantPanel,NativeLong RealHandle) {
+		JPanel setPanel = (JPanel)parantPanel.getComponent(0);
+		JButton holder = new JButton("云台");
+		holder.setContentAreaFilled(false);
+		holder.setCursor(new Cursor(12));
+		holder.setBorderPainted(false);
+		holder.setFocusPainted(false);
+		holder.setPreferredSize(new Dimension(40, 20));
+		holder.setMargin(new Insets(0, 0, 0, 0));
+		holder.setForeground(Color.white);
+		setPanel.add(holder, BorderLayout.EAST);
+		holder.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new JFramePTZControl(RealHandle);
+			}
+		});
 	}
 
 	private JPanel setting() {
@@ -130,15 +149,22 @@ public class Container extends JSplitPane implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		int count = RealplayPanelArea.getComponentCount();
-		for (int i = 0; i < count; i++) {
-			RealplayPanelArea.getComponent(i).setBackground(Color.WHITE);
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			Panel currPanel = (Panel) e.getComponent();
+			JPanel parentPanel = (JPanel) e.getComponent().getParent();
+			
+			System.out.println(e.getComponent().getParent());
+			
+			int count = RealplayPanelArea.getComponentCount();
+			for (int i = 0; i < count; i++) {
+				((JPanel)RealplayPanelArea.getComponent(i)).setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			}
+			parentPanel.setBorder(BorderFactory.createLineBorder(new Color(51,51,51), 2));
+			RealplayPanel = currPanel;
+			RealplayPanel.setBackground(Color.white);
+			RealplayPanel.removeAll();
+			RealplayPanel.setLayout(null);
 		}
-
-		RealplayPanel = (Panel) e.getComponent();
-		RealplayPanel.setBackground(new Color(51, 51, 51));
-		RealplayPanel.removeAll();
-		RealplayPanel.setLayout(new FlowLayout());
 	}
 
 	@Override
@@ -147,7 +173,7 @@ public class Container extends JSplitPane implements MouseListener {
 		 * 函数: "播放窗口" 双击响应函数 函数描述: 双击全屏预览当前预览通道
 		 *************************************************/
 		if (e.getClickCount() == 2) {
-//			Hikvision.FullScreen(e);
+			RealPlay.FullScreen(e);
 		}
 	}
 

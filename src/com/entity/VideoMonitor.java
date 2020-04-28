@@ -1,5 +1,8 @@
 package com.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class VideoMonitor {
 	public int id;
 	public int type;
@@ -7,6 +10,7 @@ public class VideoMonitor {
 	public int port;
 	public String username;
 	public String password;
+	private static Map<String, Map<String, Object>> DeviceHikvisionRealPlay= new HashMap<String, Map<String, Object>>();
 
 	public int getId() {
 		return id;
@@ -54,6 +58,14 @@ public class VideoMonitor {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public static Map<String, Object> getDeviceHikvisionRealPlay(String key) {
+		return DeviceHikvisionRealPlay.get(key);
+	}
+	
+	public static void setDeviceHikvisionRealPlay(String key,Map<String, Object> value) {
+		DeviceHikvisionRealPlay.put(key, value);
 	}
 
 }
