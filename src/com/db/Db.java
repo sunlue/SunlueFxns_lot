@@ -214,6 +214,21 @@ public class Db {
 	}
 
 	/**
+	 * 增加数据
+	 * 
+	 * @return 执行成功条数
+	 */
+	public int update(Map<String, String> data) {
+		ArrayList<String> arr = new ArrayList<String>();
+		for (String key : data.keySet()) {
+			arr.add(key + "='" + data.get(key).toString() + "'");
+		}
+		String str = String.join(",", arr);
+		sql = "update " + name + " set " + str + " " + where;
+		return Db.exce(sql);
+	}
+
+	/**
 	 * 查询
 	 * 
 	 * @return

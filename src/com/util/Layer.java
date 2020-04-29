@@ -1,16 +1,17 @@
 package com.util;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
+import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -103,41 +104,28 @@ public class Layer extends JDialog {
 	}
 
 	/*************************** 提示框 **************************/
-	
-	public static void alert(Frame owner) {
-		
-	}
-	
+
 	public static void alert(String content) {
 		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(width, height - 78));
-		panel.setBounds(0, 0, width, height - 78);
+		panel.setSize(width - 16, height - 78);
+		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		panel.setLayout(new BorderLayout());
 
-		JLabel label = new JLabel(content);
+		JLabel label = new JLabel();
+		label.setSize(panel.getWidth() - 10, panel.getHeight() - 10);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
-		label.setFont(new Font("宋体", 0, 14));
 		label.setOpaque(true);
-		label.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
-		panel.add(label);
+		labelTextLine(label, content);
+
+		panel.add(label, BorderLayout.CENTER);
 		new Layer("提示", panel, "alert", null);
 	}
 
 	public static void alert(String content, int width, int height) {
 		Layer.setWidth(width);
 		Layer.setHeight(height);
-
-		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(width, height - 78));
-		panel.setBounds(0, 0, width, height - 78);
-
-		JLabel label = new JLabel(content);
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setVerticalAlignment(SwingConstants.CENTER);
-		label.setOpaque(true);
-		label.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
-		panel.add(label);
-		new Layer("提示", panel, "alert", null);
+		alert(content);
 	}
 
 	/**************************************************************************/
@@ -251,20 +239,20 @@ public class Layer extends JDialog {
 	/**
 	 * 弹出加载层
 	 * 
+	 * @param text
 	 * @param callback
 	 */
-	public static void loading(LayerLoadingCallback callback) {
+	public static void loading(String text, LayerLoadingCallback callback) {
 		int x = ((Toolkit.getDefaultToolkit().getScreenSize().width) / 2) - 100;
 		int y = ((Toolkit.getDefaultToolkit().getScreenSize().height) / 2) - 18;
 		callback.start();
-		JLabel label = new JLabel("正在加载中...");
+		JLabel label = new JLabel(text);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
 //		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
 
-		JDialog dialog = new JDialog(Monitor.getFrames()[0], true);
-		callback.handle(dialog);
-		dialog.setTitle("加载中");
+		JDialog dialog = new JDialog();
+		dialog.setTitle(text);
 		dialog.setLocation(x, y);
 		dialog.setContentPane(label);
 		dialog.setResizable(false);
@@ -272,7 +260,43 @@ public class Layer extends JDialog {
 		dialog.setUndecorated(true);
 		dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		dialog.setIconImage(Util.getLogoIcon("logo_16_16.png"));
+		callback.handle(dialog);
 		callback.end(dialog);
+	}
+
+	/**
+	 * 弹出加载层
+	 * 
+	 * @param callback
+	 */
+	public static void loading(LayerLoadingCallback callback) {
+		loading("正在加载中...", callback);
+	}
+
+	/************************ 公共方法 ***************************/
+
+	static void labelTextLine(JLabel jLabel, String longString) {
+		StringBuilder builder = new StringBuilder("<html>");
+		char[] chars = longString.toCharArray();
+		FontMetrics fontMetrics = jLabel.getFontMetrics(jLabel.getFont());
+		int start = 0;
+		int len = 0;
+		while (start + len < longString.length()) {
+			while (true) {
+				len++;
+				if (start + len > longString.length())
+					break;
+				if (fontMetrics.charsWidth(chars, start, len) > jLabel.getWidth()) {
+					break;
+				}
+			}
+			builder.append(chars, start, len - 1).append("<br/>");
+			start = start + len - 1;
+			len = 0;
+		}
+		builder.append(chars, start, longString.length() - start);
+		builder.append("</html>");
+		jLabel.setText(builder.toString());
 	}
 
 	public interface LayerCallback {

@@ -46,6 +46,10 @@ public class Device {
 		dao.insert(type, ip, port, username, password);
 	}
 
+	public void update(int id) throws Exception {
+		dao.update(id,type, ip, port, username, password);
+	}
+
 	public ArrayList<JSONObject> select() throws Exception {
 		ResultSet rSet = dao.select();
 		ArrayList<JSONObject> rData = new ArrayList<JSONObject>();
@@ -66,8 +70,8 @@ public class Device {
 		return rData;
 	}
 
-	public JSONObject find(String field,String data) throws Exception {
-		ResultSet rSet = dao.find(field,data);
+	public JSONObject find(String field, String data) throws Exception {
+		ResultSet rSet = dao.find(field, data);
 		JSONObject result = new JSONObject();
 		try {
 			while (rSet.next()) {
@@ -83,6 +87,5 @@ public class Device {
 		}
 		return result;
 	}
+
 }
-
-

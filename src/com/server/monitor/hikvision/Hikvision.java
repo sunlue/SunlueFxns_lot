@@ -38,16 +38,19 @@ public class Hikvision {
 	}
 
 	public void handle(RealPlayCallback callback) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
+		boolean initSuc = HCNetSDK.INSTANCE.NET_DVR_Init();
+		if (initSuc != true) {
+			callback.fail();
+			Layer.alert("海康威视SDK初始化失败", 180, 140);
+			return;
+		}
+		new Thread(new Runnable() {
 			public void run() {
-				boolean initSuc = HCNetSDK.INSTANCE.NET_DVR_Init();
-				if (initSuc != true) {
-					Layer.alert("海康威视SDK初始化失败", 180, 140);
-				}
 				new Login(ip, port, username, password).handle(new LoginCallback() {
 					@Override
-					public void fail() {
-						Layer.alert("注册失败");
+					public void fail(int errCode) {
+						callback.fail();
+						Layer.alert("注册失败【" + new Error().Hikvision(errCode) + "】", 200, 140);
 					}
 
 					@Override
@@ -57,7 +60,7 @@ public class Hikvision {
 					}
 				});
 			}
-		});
+		}).start();
 	}
 
 	/**

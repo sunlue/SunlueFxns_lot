@@ -9,16 +9,13 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
@@ -27,7 +24,7 @@ import com.server.monitor.hikvision.HCNetSDK;
 import com.server.monitor.hikvision.RealPlay;
 import com.sun.jna.NativeLong;
 import com.util.CyFont;
-import com.view.monitor.hikvision.JFramePTZControl;
+import com.util.Layer;
 
 /**
  * 视频监控容器类
@@ -63,8 +60,8 @@ public class Container extends JSplitPane implements MouseListener {
 			JPanel setPanel = new JPanel();
 			setPanel.setLayout(new BorderLayout());
 			setPanel.setBackground(new Color(51, 51, 51));
-			
-			JLabel nameLabel = new JLabel(String.valueOf(i));
+
+			JLabel nameLabel = new JLabel();
 			nameLabel.setForeground(Color.white);
 			nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 			setPanel.add(nameLabel, BorderLayout.WEST);
@@ -75,7 +72,7 @@ public class Container extends JSplitPane implements MouseListener {
 			palyPanel.setBackground(Color.WHITE);
 			if (i == 0) {
 				RealplayPanel = palyPanel;
-				cellJPanel.setBorder(BorderFactory.createLineBorder(new Color(51,51,51), 2));
+				cellJPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
 			} else {
 				JLabel label = new JLabel("<html><body>暂无视频源或<br>没有视频信号<body></html>");
 				label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
@@ -96,8 +93,8 @@ public class Container extends JSplitPane implements MouseListener {
 		return RealplayPanelArea;
 	}
 
-	public static void console(JPanel parantPanel,NativeLong RealHandle) {
-		JPanel setPanel = (JPanel)parantPanel.getComponent(0);
+	public static void console(JPanel parantPanel, NativeLong RealHandle) {
+		JPanel setPanel = (JPanel) parantPanel.getComponent(0);
 		JButton holder = new JButton("云台");
 		holder.setContentAreaFilled(false);
 		holder.setCursor(new Cursor(12));
@@ -110,7 +107,7 @@ public class Container extends JSplitPane implements MouseListener {
 		holder.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new JFramePTZControl(RealHandle);
+				Layer.alert("暂未开放", 200, 100);
 			}
 		});
 	}
@@ -152,14 +149,11 @@ public class Container extends JSplitPane implements MouseListener {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			Panel currPanel = (Panel) e.getComponent();
 			JPanel parentPanel = (JPanel) e.getComponent().getParent();
-			
-			System.out.println(e.getComponent().getParent());
-			
 			int count = RealplayPanelArea.getComponentCount();
 			for (int i = 0; i < count; i++) {
-				((JPanel)RealplayPanelArea.getComponent(i)).setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				((JPanel) RealplayPanelArea.getComponent(i)).setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 			}
-			parentPanel.setBorder(BorderFactory.createLineBorder(new Color(51,51,51), 2));
+			parentPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
 			RealplayPanel = currPanel;
 			RealplayPanel.setBackground(Color.white);
 			RealplayPanel.removeAll();

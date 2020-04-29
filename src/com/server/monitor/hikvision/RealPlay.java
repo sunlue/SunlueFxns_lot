@@ -136,6 +136,8 @@ public class RealPlay {
 
 		void fail(NativeLong lPreviewHandle);
 
+		void fail();
+
 	}
 	
 

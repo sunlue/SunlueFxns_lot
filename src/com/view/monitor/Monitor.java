@@ -135,7 +135,6 @@ class DevicePanel extends JPanel {
 	public DevicePanel() {
 		setLayout(new BorderLayout());
 		setBackground(Color.white);
-		add(new JLabel("设备"));
 		add(action(), BorderLayout.SOUTH);
 		add(new DeviceTree().panel(), BorderLayout.CENTER);
 	}

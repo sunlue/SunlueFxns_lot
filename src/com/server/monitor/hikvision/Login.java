@@ -45,7 +45,7 @@ public class Login {
 		m_DeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
 		UserID = hCNetSDK.NET_DVR_Login_V30(ip, port, username, password, m_DeviceInfo);
 		if (UserID.longValue() == -1) {
-			callback.fail();
+			callback.fail(hCNetSDK.NET_DVR_GetLastError());
 		} else {
 			callback.success(m_DeviceInfo, UserID);
 		}
@@ -55,7 +55,7 @@ public class Login {
 
 		void success(NET_DVR_DEVICEINFO_V30 m_DeviceInfo, NativeLong userID);
 
-		void fail();
+		void fail(int errorCode);
 
 	}
 

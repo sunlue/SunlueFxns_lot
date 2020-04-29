@@ -19,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,6 +43,7 @@ public class DeviceMgr {
 
 	private static DefaultTableModel tableModel;
 	private ArrayList<JSONObject> rSet;
+	private JDialog editDeviceDialog;
 
 	public DeviceMgr() {
 	}
@@ -58,8 +60,8 @@ public class DeviceMgr {
 	 */
 	public JPanel mngComp(DeviceMgrCallback callback) {
 		// 表头（列名）
-		Object[] columnNames = { "", "设备类型", "IP地址", "端口", "用户名", "密码" };
-		Object[] columnField = { "", "type", "ip", "port", "account", "password" };
+		Object[] columnNames = { "", "KEY", "设备类型", "IP地址", "端口", "用户名", "密码" };
+		Object[] columnField = { "", "id", "type", "ip", "port", "account", "password" };
 
 		// 表格所有行数据
 		Object[][] rowData = {};
@@ -78,7 +80,7 @@ public class DeviceMgr {
 		table.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
 		table.setForeground(new Color(51, 51, 51));
 		table.setGridColor(Color.GRAY);
-		table.setRowHeight(26);
+		table.setRowHeight(32);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setDefaultRenderer(Object.class, tableRender);
 
@@ -88,6 +90,7 @@ public class DeviceMgr {
 		table.getTableHeader().setReorderingAllowed(true);
 
 		table.getColumnModel().getColumn(0).setMaxWidth(26);
+		table.getColumnModel().getColumn(1).setMaxWidth(32);
 		JCheckBox box = new JCheckBox();
 		table.getColumnModel().getColumn(0).setCellRenderer(new TableCellRenderer() {
 			@Override
@@ -131,7 +134,20 @@ public class DeviceMgr {
 						String value = String.valueOf(table.getValueAt(row, j));
 						data.put(field, value);
 					}
-					System.out.println(row + ":" + data);
+
+					JPanel container = editComp(row, data, new DeviceMgrCallback() {
+						@Override
+						public void handle(String action) {
+							if (action == "success") {
+								Layer.alert("修改成功", 200, 120);
+								editDeviceDialog.dispose();
+							} else if (action == "close") {
+								editDeviceDialog.dispose();
+							}
+						}
+					});
+					editDeviceDialog = Layer.window("修改设备", container, 428, 268);
+					editDeviceDialog.setVisible(true);
 				}
 			}
 		});
@@ -139,18 +155,20 @@ public class DeviceMgr {
 		// 动态给表格增加数据
 		tableModel = (DefaultTableModel) table.getModel();
 		for (int i = 0; i < rSet.size(); i++) {
+			String id = rSet.get(i).getString("id");
 			String type = DevicetypeListData[Integer.parseInt(rSet.get(i).getString("type"))];
 			String ip = rSet.get(i).getString("ip");
 			String port = rSet.get(i).getString("port");
 			String username = rSet.get(i).getString("username");
 			String password = rSet.get(i).getString("password");
-			tableModel.addRow(new Object[] { "", type, ip, port, username, password });
+			tableModel.addRow(new Object[] { "", id, type, ip, port, username, password });
 		}
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(0, 36, 800, 526);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		JLabel label = new JLabel("<html><body>" + "<p>&nbsp;&nbsp;* 双击行可进行修改操作，按住ctrl可多选行进行操作</p>" + "</body></html>");
+		JLabel label = new JLabel("* 双击行可进行修改操作，按住ctrl可多选行进行操作");
+		label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		label.setForeground(Color.RED);
 		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
 
@@ -355,6 +373,122 @@ public class DeviceMgr {
 
 		JButton cancelBtn = new JButton();
 		cancelBtn.setText("取消并关闭");
+		cancelBtn.setCursor(new Cursor(12));
+		cancelBtn.setContentAreaFilled(false);
+		cancelBtn.setFocusPainted(false);
+		cancelBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				callback.handle("close");
+			}
+		});
+		container.add(cancelBtn);
+
+		return container;
+	}
+
+	/***
+	 * 修改设备面板
+	 * 
+	 * @param data
+	 * 
+	 * @return
+	 */
+	public JPanel editComp(int row, Map<String, Object> data, DeviceMgrCallback callback) {
+
+		JPanel container = new JPanel();
+		container.setLayout(new FlowLayout());
+
+		JLabel typeText = new JLabel("设备类型");
+		typeText.setPreferredSize(new Dimension(80, 32));
+		typeText.setHorizontalAlignment(SwingConstants.RIGHT);
+		container.add(typeText);
+		JComboBox<String> typeComboBox = new JComboBox<String>(DevicetypeListData);
+		typeComboBox.setPreferredSize(new Dimension(292, 32));
+		typeComboBox.setBackground(Color.white);
+		typeComboBox.setSelectedItem(data.get("type"));
+		container.add(typeComboBox);
+
+		JLabel ipText = new JLabel("设备IP地址");
+		ipText.setPreferredSize(new Dimension(80, 32));
+		ipText.setHorizontalAlignment(SwingConstants.RIGHT);
+		container.add(ipText);
+		JTextField ipInput = new JTextField();
+		ipInput.setPreferredSize(new Dimension(292, 32));
+		ipInput.setMargin(new Insets(0, 5, 0, 5));
+		ipInput.setText(data.get("ip").toString());
+		container.add(ipInput);
+
+		JLabel portText = new JLabel("设备端口");
+		portText.setPreferredSize(new Dimension(80, 32));
+		portText.setHorizontalAlignment(SwingConstants.RIGHT);
+		container.add(portText);
+		JTextField portInput = new JTextField("8000");
+		portInput.setPreferredSize(new Dimension(292, 32));
+		portInput.setMargin(new Insets(0, 5, 0, 5));
+		portInput.setText(data.get("port").toString());
+		container.add(portInput);
+
+		JLabel accessText = new JLabel("用户名");
+		accessText.setPreferredSize(new Dimension(80, 32));
+		accessText.setHorizontalAlignment(SwingConstants.RIGHT);
+		container.add(accessText);
+		JTextField accessInput = new JTextField("admin");
+		accessInput.setPreferredSize(new Dimension(292, 32));
+		accessInput.setMargin(new Insets(0, 5, 0, 5));
+		accessInput.setText(data.get("account").toString());
+		container.add(accessInput);
+
+		JLabel passwordText = new JLabel("密码");
+		passwordText.setPreferredSize(new Dimension(80, 32));
+		passwordText.setHorizontalAlignment(SwingConstants.RIGHT);
+		container.add(passwordText);
+		JTextField passwordInput = new JTextField();
+		passwordInput.setPreferredSize(new Dimension(292, 32));
+		passwordInput.setMargin(new Insets(0, 5, 0, 5));
+		passwordInput.setText(data.get("password").toString());
+		container.add(passwordInput);
+
+		JLabel emptyText = new JLabel();
+		emptyText.setPreferredSize(new Dimension(80, 32));
+		container.add(emptyText);
+
+		JButton saveBtn = new JButton();
+		saveBtn.setText("保存");
+		saveBtn.setCursor(new Cursor(12));
+		saveBtn.setContentAreaFilled(false);
+		saveBtn.setFocusPainted(false);
+		saveBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int type = typeComboBox.getSelectedIndex();
+				String typename = typeComboBox.getSelectedItem().toString();
+				String ip = ipInput.getText();
+				String port = portInput.getText();
+				String username = accessInput.getText();
+				String password = passwordInput.getText();
+				int id = Integer.valueOf(data.get("id").toString());
+				try {
+					new com.action.Device(type, ip, port, username, password).update(id);
+					tableModel.setValueAt(typename, row, 2);
+					tableModel.setValueAt(ip, row, 3);
+					tableModel.setValueAt(port, row, 4);
+					tableModel.setValueAt(username, row, 5);
+					tableModel.setValueAt(password, row, 6);
+					tableModel.fireTableDataChanged();
+					// 刷新树节点
+					DeviceTree.reload(data.get("ip").toString(), ip, type, port, username, password);
+					callback.handle("success");
+				} catch (Exception e1) {
+					Layer.alert(e1.getMessage(), 240, 140);
+				}
+
+			}
+		});
+		container.add(saveBtn);
+
+		JButton cancelBtn = new JButton();
+		cancelBtn.setText("取消");
 		cancelBtn.setCursor(new Cursor(12));
 		cancelBtn.setContentAreaFilled(false);
 		cancelBtn.setFocusPainted(false);
