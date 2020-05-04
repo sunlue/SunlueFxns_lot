@@ -11,6 +11,7 @@ public class CyFont {
 	public static String Regular = "Regular";
 
 	static Font AlibabaPuHuiTi = null;
+	static Font IconFont = null;
 
 	public static Font PuHuiTi(String name, float fontSize) {
 //		String fontFileName = CyFont.class.getResource("/Alibaba-PuHuiTi-" + name + ".ttf").getPath();
@@ -24,23 +25,20 @@ public class CyFont {
 //		} catch (Exception e) {
 //			return new java.awt.Font("宋体", Font.PLAIN, 12);
 //		}
-		return new java.awt.Font("宋体", Font.PLAIN, 12);
+		return new java.awt.Font("微软雅黑", Font.PLAIN, (int) fontSize);
+	}
+
+	public static Font icon(float fontSize) {
+		String fontFileName = CyFont.class.getResource("/iconfont.woff2").getPath();
+		try {
+			java.io.File file = new java.io.File(fontFileName);
+			java.io.FileInputStream input = new java.io.FileInputStream(file);
+			IconFont = Font.createFont(Font.TRUETYPE_FONT, input).deriveFont(fontSize);
+			input.close();
+			return IconFont;
+		} catch (Exception e) {
+		}
+		return IconFont;
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,4 +7,6 @@ public class Index {
 //		new com.view.monitor.Monitor();
 		new com.view.datav.DataV();
 	}
+
+
 }

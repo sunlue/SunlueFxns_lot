@@ -2,7 +2,6 @@ package com.view.datav;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -19,34 +18,29 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 import com.util.Util;
+import com.view.datav.main.Container;
 
 public class DataV extends JWindow {
 
 	private static final long serialVersionUID = 1L;
-	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 	public DataV() {
 		setSize(screenSize);
+
 		setLayout(new BorderLayout());
 		add(Header(), BorderLayout.NORTH);
 		add(Menu(), BorderLayout.WEST);
-		add(Center(), BorderLayout.CENTER);
+		add(new Container(), BorderLayout.CENTER);
 		setVisible(true);
 		addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mousePressed(java.awt.event.MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
-					dispose();
+//					dispose();
+					System.exit(0);
 				}
 			}
 		});
-	}
-
-	private JPanel Center() {
-		JPanel panel = new JPanel();
-		
-		new WebView();
-		
-		return panel;
 	}
 
 	private JPanel Header() {
@@ -115,4 +109,6 @@ public class DataV extends JWindow {
 
 		return panel;
 	}
+
 }
+
