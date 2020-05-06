@@ -8,55 +8,65 @@ import com.sun.jna.NativeLong;
 
 /**
  * 设备注册类
- * 
- * @author xiebing
  *
+ * @author xiebing
  */
 public class Login {
 
-	static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;
+    static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;
 
-	public String ip;
-	public Short port;
-	public String username;
-	public String password;
+    public String ip;
+    public Short port;
+    public String username;
+    public String password;
 
-	public NativeLong UserID;
-	public HCNetSDK.NET_DVR_DEVICEINFO_V30 m_DeviceInfo;
+    public NativeLong userId;
+    public HCNetSDK.NET_DVR_DEVICEINFO_V30 mDeviceInfo;
 
-	public static Map<String, Map<String, Object>> DeviceLoginList = new HashMap<String, Map<String, Object>>();
+    public static Map<String, Map<String, Object>> DeviceLoginList = new HashMap<String, Map<String, Object>>();
 
-	public NativeLong getUserID() {
-		return UserID;
-	}
+    public NativeLong getUserId() {
+        return userId;
+    }
 
-	public HCNetSDK.NET_DVR_DEVICEINFO_V30 getM_DeviceInfo() {
-		return m_DeviceInfo;
-	}
+    public HCNetSDK.NET_DVR_DEVICEINFO_V30 getDeviceInfo() {
+        return mDeviceInfo;
+    }
 
-	public Login(String ip, short port, String username, String password) {
-		this.ip = ip;
-		this.port = port;
-		this.username = username;
-		this.password = password;
-	}
+    public Login(String ip, short port, String username, String password) {
+        this.ip = ip;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+    }
 
-	public void handle(LoginCallback callback) {
-		m_DeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
-		UserID = hCNetSDK.NET_DVR_Login_V30(ip, port, username, password, m_DeviceInfo);
-		if (UserID.longValue() == -1) {
-			callback.fail(hCNetSDK.NET_DVR_GetLastError());
-		} else {
-			callback.success(m_DeviceInfo, UserID);
-		}
-	}
+    public void handle(LoginCallback callback) {
+        mDeviceInfo = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
+        userId = hCNetSDK.NET_DVR_Login_V30(ip, port, username, password, mDeviceInfo);
+        if (userId.longValue() == -1) {
+            callback.fail(hCNetSDK.NET_DVR_GetLastError());
+        } else {
+            callback.success(mDeviceInfo, userId);
+        }
+    }
 
-	public interface LoginCallback {
+    public interface LoginCallback {
 
-		void success(NET_DVR_DEVICEINFO_V30 m_DeviceInfo, NativeLong userID);
+        /**
+         * 成功
+         *
+         * @param mDeviceInfo
+         * @param userId
+         */
+        void success(NET_DVR_DEVICEINFO_V30 mDeviceInfo, NativeLong userId);
 
-		void fail(int errorCode);
+        /**
+         * 失败
+         *
+         * @param errorCode
+         */
+        void fail(int errorCode);
 
-	}
+    }
 
 }

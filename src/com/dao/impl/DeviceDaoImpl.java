@@ -7,11 +7,15 @@ import java.util.Map;
 import com.dao.DeviceDao;
 import com.util.Log;
 
+/**
+ * 实现设备管理接口
+ * @author
+ */
 public class DeviceDaoImpl extends DaoImpl implements DeviceDao {
 
 	@Override
 	public void insert(int type, String ip, int port, String username, String password) throws Exception {
-		Map<String, String> data = new HashMap<String, String>();
+		Map<String, String> data = new HashMap<String, String>(5);
 		data.put("type", String.valueOf(type));
 		data.put("ip", ip);
 		data.put("port", String.valueOf(port));
@@ -26,7 +30,7 @@ public class DeviceDaoImpl extends DaoImpl implements DeviceDao {
 
 	@Override
 	public void update(int id, int type, String ip, int port, String username, String password) throws Exception {
-		Map<String, String> data = new HashMap<String, String>();
+		Map<String, String> data = new HashMap<String, String>(5);
 		data.put("type", String.valueOf(type));
 		data.put("ip", ip);
 		data.put("port", String.valueOf(port));

@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+/**
+ * 套接字客户端管理类
+ * @author xiebing
+ */
 public class LongServer extends Thread {
 	Socket socket = null;
 	ServerSocket server = null;
@@ -31,7 +34,7 @@ public class LongServer extends Thread {
 				socket = server.accept();
 				System.out.println("-start【" + socket.getInetAddress().getHostAddress() + "】-");
 				System.out.println("客户端连接成功");
-				new Thread(new MyRuns(socket)).start();
+				new MyRuns(socket).start();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -46,14 +49,14 @@ public class LongServer extends Thread {
 		}
 	}
 
-	class MyRuns implements Runnable {
+	class MyRuns extends Thread implements Runnable {
 		Socket socket;
 
 		public MyRuns(Socket socket) {
 			super();
 			this.socket = socket;
 		}
-
+		@Override
 		public void run() {
 			try {
 				InputStream in = socket.getInputStream();
@@ -61,11 +64,11 @@ public class LongServer extends Thread {
 				byte[] buf = new byte[1024];
 				while ((len = in.read(buf)) != -1) {
 					System.out.println("收到数据：[" + new String(buf, 0, len) + "]");
-					String data_t = new String(buf, 0, len);
-					if (!data_t.matches("^[A-Fa-f0-9]+$")) {
+					String data = new String(buf, 0, len);
+					if (!data.matches("^[A-Fa-f0-9]+$")) {
 						System.out.println("数据非法");
 					} else {
-						System.out.println("处理数据：" + data_t);
+						System.out.println("处理数据：" + data);
 					}
 					System.out.println("-stop【" + socket.getInetAddress().getHostAddress() + "】-");
 				}

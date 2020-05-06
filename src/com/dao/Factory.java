@@ -1,5 +1,9 @@
 package com.dao;
 
+/**
+ * dao层工厂类
+ * @author xiebing
+ */
 public class Factory {
 	public static Object dao(String name) {
 		try {

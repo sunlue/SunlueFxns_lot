@@ -10,7 +10,10 @@ import org.ini4j.Profile.Section;
 
 import com.util.Log;
 import com.util.Util;
-
+/**
+ * SQLite数据库操作类
+ * @author xiebing
+ */
 public class Sqlite {
 
 	static Connection conn = null;

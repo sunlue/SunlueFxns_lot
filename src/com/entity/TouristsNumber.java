@@ -1,5 +1,8 @@
 package com.entity;
-
+/**
+ * 客流量实体类
+ * @author xiebing
+ */
 public class TouristsNumber {
 	public int id;
 	public int in;

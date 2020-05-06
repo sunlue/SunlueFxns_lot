@@ -1,9 +1,12 @@
 package com.dao;
 
-
+/**
+ * 环境监测仪接口
+ * @author xiebing
+ */
 public interface EnvMonitorDao{
 	/**
-	 * 
+	 * 写入环境监测仪心跳数据
 	 * @param wendu 温度
 	 * @param shidu 湿度
 	 * @param yuliang 雨量

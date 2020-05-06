@@ -17,8 +17,14 @@ import java.util.Vector;
 public class Serie implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String name;// 名字
-	private Vector<Object> data;// 数据值
+	/**
+	 * 名字
+	 */
+	private String name;
+	/**
+	 * 数据值
+	 */
+	private Vector<Object> data;
 
 	public Serie() {
 

@@ -9,6 +9,10 @@ import com.dao.DeviceDao;
 import com.dao.Factory;
 import com.dao.impl.DeviceDaoImpl;
 
+/**
+ * 处理设备数据
+ * @author xiebing
+ */
 public class Device {
 
 	private DeviceDao dao = (DeviceDao) Factory.dao(DeviceDaoImpl.class.getName());

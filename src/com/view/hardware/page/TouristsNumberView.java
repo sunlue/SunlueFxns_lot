@@ -43,7 +43,7 @@ import com.view.Main;
 import com.view.Module;
 
 /**
- * 环境检测仪页面
+ * 环境检测仪视图
  * 
  * @author xiebing
  *
@@ -101,7 +101,7 @@ public class TouristsNumberView extends JPanel {
 		syncTimeTxt = new JLabel("系统时间");
 		syncTimeVal = new JTextField();
 
-		portTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		portTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		portNum.setPreferredSize(new Dimension(38, 26));
 		portNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		portNum.setHorizontalAlignment(SwingConstants.CENTER);
@@ -112,7 +112,7 @@ public class TouristsNumberView extends JPanel {
 			public void removeUpdate(DocumentEvent e) {
 				try {
 					Integer value = Integer.parseInt(portNum.getText());
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("port", String.valueOf(value));
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -124,7 +124,7 @@ public class TouristsNumberView extends JPanel {
 			public void insertUpdate(DocumentEvent e) {
 				try {
 					Integer value = Integer.parseInt(portNum.getText());
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("port", String.valueOf(value));
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -156,7 +156,7 @@ public class TouristsNumberView extends JPanel {
 			}
 		});
 
-		HbGapTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		HbGapTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		HbGapNum.setPreferredSize(new Dimension(38, 26));
 		HbGapNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		HbGapNum.setHorizontalAlignment(SwingConstants.CENTER);
@@ -167,7 +167,7 @@ public class TouristsNumberView extends JPanel {
 			public void removeUpdate(DocumentEvent e) {
 				try {
 					Integer value = Integer.parseInt(HbGapNum.getText());
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("HbGap", String.valueOf(value));
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -179,7 +179,7 @@ public class TouristsNumberView extends JPanel {
 			public void insertUpdate(DocumentEvent e) {
 				try {
 					Integer value = Integer.parseInt(HbGapNum.getText());
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("HbGap", String.valueOf(value));
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -192,6 +192,7 @@ public class TouristsNumberView extends JPanel {
 			}
 		});
 		HbGapNum.addKeyListener(new KeyListener() {
+			@Override
 			public void keyTyped(KeyEvent e) {
 				char keyCh = e.getKeyChar();
 				if (keyCh < '0' || keyCh > '9') {
@@ -200,10 +201,10 @@ public class TouristsNumberView extends JPanel {
 					}
 				}
 			}
-
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
-
+			@Override
 			public void keyReleased(KeyEvent e) {
 			}
 		});
@@ -211,7 +212,7 @@ public class TouristsNumberView extends JPanel {
 		startBtn.setCursor(new Cursor(12));
 		startBtn.setFocusPainted(false);
 		startBtn.setPreferredSize(new Dimension(76, 26));
-		startBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		startBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		startBtn.setVisible(!Boolean.parseBoolean(ini.get("isStart")));
 		startBtn.addActionListener(new ActionListener() {
 			@Override
@@ -243,7 +244,7 @@ public class TouristsNumberView extends JPanel {
 					stopBtn.setVisible(true);
 					portNum.setEditable(false);
 
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("isStart", "true");
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -261,7 +262,7 @@ public class TouristsNumberView extends JPanel {
 		stopBtn.setCursor(new Cursor(12));
 		stopBtn.setFocusPainted(false);
 		stopBtn.setPreferredSize(new Dimension(76, 26));
-		stopBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		stopBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		stopBtn.setVisible(Boolean.parseBoolean(ini.get("isStart")));
 		stopBtn.addActionListener(new ActionListener() {
 			@Override
@@ -285,7 +286,7 @@ public class TouristsNumberView extends JPanel {
 					startBtn.setEnabled(true);
 					startBtn.setVisible(true);
 					portNum.setEditable(true);
-					Map<String, String> data = new HashMap<String, String>();
+					Map<String, String> data = new HashMap<String, String>(1);
 					data.put("isStart", "false");
 					update.put("tourists_number", data);
 					Util.updateIni(update);
@@ -300,7 +301,7 @@ public class TouristsNumberView extends JPanel {
 
 		clearBtn.setCursor(new Cursor(12));
 		clearBtn.setFocusPainted(false);
-		clearBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		clearBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		clearBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -308,7 +309,7 @@ public class TouristsNumberView extends JPanel {
 			}
 		});
 
-		lastRepTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		lastRepTimeTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 
 		lastRepTimeVal.setPreferredSize(new Dimension(128, 26));
 		lastRepTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -317,7 +318,7 @@ public class TouristsNumberView extends JPanel {
 		lastRepTimeVal.setBackground(Color.white);
 		lastRepTimeVal.setForeground(Color.BLACK);
 
-		syncTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		syncTimeTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		syncTimeVal.setPreferredSize(new Dimension(128, 26));
 		syncTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		syncTimeVal.setText(Util.getDateTime());
@@ -327,6 +328,7 @@ public class TouristsNumberView extends JPanel {
 		syncTimeVal.setForeground(Color.BLACK);
 		// 定时器，自动刷新时间
 		Timer timer = new Timer(1000, new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				syncTimeVal.setText(Util.getDateTime());
 			}
@@ -356,8 +358,7 @@ public class TouristsNumberView extends JPanel {
 		clientPanel.setBackground(new Color(245, 245, 245));
 		clientBox = Box.createVerticalBox();
 		clientPanel.add(clientBox);
-		JScrollPane ScrollPane = new JScrollPane(clientPanel);
-		return ScrollPane;
+		return new JScrollPane(clientPanel);
 	}
 
 	private JPanel message() {
@@ -367,7 +368,7 @@ public class TouristsNumberView extends JPanel {
 
 		msgTxtArea.setEditable(false);
 		msgTxtArea.setMargin(new Insets(5, 5, 5, 5));
-		msgTxtArea.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		msgTxtArea.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		msgTxtArea.setForeground(new Color(51, 51, 51));
 		msgTxtArea.setText(Util.getMsg("touristrFlow"));
 		msgTxtArea.setBackground(new Color(245, 245, 245));
@@ -425,7 +426,7 @@ public class TouristsNumberView extends JPanel {
 	protected static Panel clientItem(String name) {
 		JLabel label = new JLabel(name);
 		label.setBounds(5, 0, width - 10, 32);
-		label.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
+		label.setFont(CyFont.puHuiTi(CyFont.Bold, 12));
 		label.setVerticalAlignment(SwingConstants.CENTER);
 		Panel panel = new Panel();
 		panel.setName(name);

@@ -10,8 +10,11 @@ import org.ini4j.Profile.Section;
 
 import com.util.Log;
 import com.util.Util;
-
-public class MySQL {
+/**
+ * MYSQL数据库操作类
+ * @author xiebing
+ */
+public class Mysql {
 
 	String host = "";
 	String port = "3306";
@@ -23,7 +26,7 @@ public class MySQL {
 	ResultSet rs = null;
 	PreparedStatement ps = null;
 
-	public MySQL() {
+	public Mysql() {
 		Section ini = Util.getIni("jdbc.ini", false).get("mysql");
 		host = ini.get("host");
 		port = ini.get("port");

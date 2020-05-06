@@ -9,6 +9,10 @@ import com.util.Util;
 import com.view.hardware.page.EnvMonitorView;
 import com.view.hardware.page.TouristsNumberView;
 
+/**
+ * 处理套接字数据
+ * @author xiebing
+ */
 public class Action {
 	static int EnvMonitorViewPort = Integer.valueOf(Util.getIni().get("env_monitor","port"));
 	static int TouristsNumberPort = Integer.valueOf(Util.getIni().get("tourists_number","port"));

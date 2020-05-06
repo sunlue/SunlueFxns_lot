@@ -13,13 +13,25 @@ import org.ini4j.Profile.Section;
 import com.util.Log;
 import com.util.Util;
 
+/**
+ * 数据库基类
+ * @author xiebing
+ */
 public class Db {
+
 	public enum DbType {
-		MYSQL, SQLITE
+		/**
+		 * 数据库类型（Mysql）
+		 */
+		MYSQL,
+		/**
+		 * 数据库类型（SQLite）
+		 */
+		SQLITE
 	};
 
 	static Connection conn = null;
-	private MySQL mysql;
+	private Mysql mysql;
 	private Sqlite sqlite;
 	private DbType useDbType;
 
@@ -54,7 +66,7 @@ public class Db {
 
 	public Db init() {
 		if (this.useDbType.equals(DbType.MYSQL)) {
-			this.mysql = new MySQL();
+			this.mysql = new Mysql();
 			conn = this.mysql.connection();
 		} else if (this.useDbType.equals(DbType.SQLITE)) {
 			this.sqlite = new Sqlite();

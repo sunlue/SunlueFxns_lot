@@ -46,12 +46,15 @@ public class StackedBarChart {
 		// 2：创建Chart[创建不同图形]
 		JFreeChart chart = ChartFactory.createStackedBarChart("Monthly Average Rainfall", "", "Rainfall (mm)", createDataset());
 		// 3:设置抗锯齿，防止字体显示不清楚
-		Util.setAntiAlias(chart);// 抗锯齿
+		// 抗锯齿
+		Util.setAntiAlias(chart);
 		// 4:对柱子进行渲染[创建不同图形]
 		Util.setStackBarRender(chart.getCategoryPlot());
 		// 5:对其他部分进行渲染
-		Util.setXAixs(chart.getCategoryPlot());// X坐标轴渲染
-		Util.setYAixs(chart.getCategoryPlot());// Y坐标轴渲染
+		// X坐标轴渲染
+		Util.setXaixs(chart.getCategoryPlot());
+		// Y坐标轴渲染
+		Util.setYaixs(chart.getCategoryPlot());
 		// 设置标注无边框
 		chart.getLegend().setFrame(new BlockBorder(Color.WHITE));
 		// 6:使用chartPanel接收

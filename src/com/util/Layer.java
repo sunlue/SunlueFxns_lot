@@ -25,7 +25,7 @@ import com.view.monitor.Monitor;
 /***
  * 定义的Dialog对话框
  * 
- * @author WXW
+ * @author xiebing
  *
  */
 public class Layer extends JDialog {
@@ -37,7 +37,7 @@ public class Layer extends JDialog {
 
 	private static JButton okBtn = new JButton("确定");
 	private static JButton cancelBtn = new JButton("取消");
-
+	@Override
 	public int getWidth() {
 		return Layer.width;
 	}
@@ -45,7 +45,7 @@ public class Layer extends JDialog {
 	public static void setWidth(int width) {
 		Layer.width = width;
 	}
-
+	@Override
 	public int getHeight() {
 		return Layer.height;
 	}
@@ -90,7 +90,7 @@ public class Layer extends JDialog {
 		JLabel label = new JLabel(content);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
-		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 14));
+		label.setFont(CyFont.puHuiTi(CyFont.Medium, 14));
 		label.setOpaque(true);
 		label.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
 		panel.add(label);
@@ -214,11 +214,8 @@ public class Layer extends JDialog {
 
 	/**
 	 * 弹出自定义层
-	 * 
 	 * @param title
-	 * @param comp
-	 * @param width
-	 * @param height
+	 * @param contentPane
 	 * @return
 	 */
 	public static JDialog window(String title, Container contentPane) {
@@ -232,7 +229,6 @@ public class Layer extends JDialog {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.setIconImage(Util.getLogoIcon("logo_16_16.png"));
 		dialog.setContentPane(contentPane);
-//		dialog.setVisible(true);
 		return dialog;
 	}
 
@@ -249,7 +245,6 @@ public class Layer extends JDialog {
 		JLabel label = new JLabel(text);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
-//		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
 
 		JDialog dialog = new JDialog();
 		dialog.setTitle(text);
@@ -284,8 +279,9 @@ public class Layer extends JDialog {
 		while (start + len < longString.length()) {
 			while (true) {
 				len++;
-				if (start + len > longString.length())
+				if (start + len > longString.length()){
 					break;
+				}
 				if (fontMetrics.charsWidth(chars, start, len) > jLabel.getWidth()) {
 					break;
 				}
@@ -300,27 +296,59 @@ public class Layer extends JDialog {
 	}
 
 	public interface LayerCallback {
+		/**
+		 * 点击按钮回调
+		 * @param btn
+		 */
 		void clickBtn(String btn);
 
+		/**
+		 * 点击确定按钮
+		 */
 		void clickOkBtn();
 
+		/**
+		 * 点击确定按钮
+		 * @param dispose
+		 */
 		void clickOkBtn(LayerConfirmCallback dispose);
 
+		/**
+		 * 点击取消回调
+		 */
 		void clickCancelBtn();
 
 	}
 
 	public interface LayerConfirmCallback {
+		/**
+		 * 销毁
+		 */
 		void destroy();
 
+		/**
+		 * 销毁
+		 * @param dialog
+		 */
 		void destroy(JDialog dialog);
 	}
 
 	public interface LayerLoadingCallback {
+		/**
+		 * 开始
+		 */
 		void start();
 
+		/**
+		 * 结束
+		 * @param dialog
+		 */
 		void end(JDialog dialog);
 
+		/**
+		 * 执行
+		 * @param dialog
+		 */
 		void handle(JDialog dialog);
 
 	}

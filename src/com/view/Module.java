@@ -13,7 +13,9 @@ import javax.swing.JPanel;
 
 import com.util.Util;
 import com.view.monitor.Monitor;
-
+/**
+ * @author xiebing
+ */
 public class Module {
 	public static int width = 60;
 
@@ -50,15 +52,15 @@ public class Module {
 
 	protected static JButton button(String name, String icon, String handle, String page) {
 
-		ImageIcon ImgIcon = Util.getImageIcon(icon, 32, 32);
-		ImageIcon _ImgIcon = Util.getImageIcon("_" + icon, 32, 32);
+		ImageIcon imgIcon = Util.getImageIcon(icon, 32, 32);
+		ImageIcon sImgIcon = Util.getImageIcon("_" + icon, 32, 32);
 
-		JButton button = new JButton(ImgIcon);
+		JButton button = new JButton(imgIcon);
 		button.setBorderPainted(false);
 		button.setPreferredSize(new Dimension(width, width));
 		button.setFocusPainted(false);
 		button.setCursor(new Cursor(12));
-		button.setPressedIcon(_ImgIcon);
+		button.setPressedIcon(sImgIcon);
 		button.setContentAreaFilled(false);
 		button.setToolTipText(name);
 
@@ -87,8 +89,8 @@ public class Module {
 	}
 
 	protected static JButton setting(String name, String icon) {
-		ImageIcon ImgIcon = Util.getImageIcon(icon, 32, 32);
-		JButton button = new JButton(ImgIcon);
+		ImageIcon imgIcon = Util.getImageIcon(icon, 32, 32);
+		JButton button = new JButton(imgIcon);
 		button.setBorderPainted(false);
 		button.setPreferredSize(new Dimension(width, width));
 		button.setFocusPainted(false);

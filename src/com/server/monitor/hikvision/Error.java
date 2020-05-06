@@ -18,7 +18,7 @@ public class Error {
 		hikvisionMsg.put("13", "无此权限。");
 	}
 
-	public String Hikvision(int i) {
+	public String hikvision(int i) {
 		return hikvisionMsg.get(String.valueOf(i)).toString();
 	}
 }

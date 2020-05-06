@@ -17,9 +17,15 @@ import com.util.Layer;
 import com.view.monitor.DeviceTree;
 
 public class Hikvision {
-
-	int m_iHikvisionTreeNodeNum;// 通道树节点数目
-	DefaultMutableTreeNode m_DeviceHikvisionRoot = DeviceTree.liveTree;// 通道树根节点
+	/**
+	 * 通道树节点数目
+	 */
+	static int mHikvisionTreeNodeNum;
+	/**
+	 * 通道树根节点
+	 */
+	static DefaultMutableTreeNode mDeviceHikvisionRoot = DeviceTree.liveTree;
+	
 	private String ip;
 	private short port;
 	private String username;
@@ -44,72 +50,97 @@ public class Hikvision {
 			Layer.alert("海康威视SDK初始化失败", 180, 140);
 			return;
 		}
-		new Thread(new Runnable() {
-			public void run() {
-				new Login(ip, port, username, password).handle(new LoginCallback() {
-					@Override
-					public void fail(int errCode) {
-						callback.fail();
-						Layer.alert("注册失败【" + new Error().Hikvision(errCode) + "】", 200, 140);
-					}
-
-					@Override
-					public void success(NET_DVR_DEVICEINFO_V30 m_DeviceInfo, NativeLong userID) {
-						CreateDeviceTree(ip, userID, m_DeviceInfo);
-						new RealPlay(ip, userID, 1, playPanel).handle(callback);
-					}
-				});
-			}
-		}).start();
+		new HikvisionHandleThread(ip,port,username,password,playPanel,callback).start();
 	}
 
 	/**
 	 * 生成设备树
 	 * 
-	 * @param sDVRIP
-	 * @param lUserID
-	 * @param m_DeviceInfo
+	 * @param sDvrIp
+	 * @param userId
+	 * @param mDeviceInfo
 	 */
-	private void CreateDeviceTree(String sDVRIP, NativeLong lUserID, NET_DVR_DEVICEINFO_V30 m_DeviceInfo) {
-
-		IntByReference ibrBytesReturned = new IntByReference(0);// 获取IP接入配置参数
+	static void createDeviceTree(String sDvrIp, NativeLong userId, NET_DVR_DEVICEINFO_V30 mDeviceInfo) {
+		// 获取IP接入配置参数
+		IntByReference ibrBytesReturned = new IntByReference(0);
 		boolean bRet = false;
 
-//		// IP参数
-		HCNetSDK.NET_DVR_IPPARACFG m_strIpparaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
-		m_strIpparaCfg.write();
-		Pointer lpIpParaConfig = m_strIpparaCfg.getPointer();
-		bRet = HCNetSDK.INSTANCE.NET_DVR_GetDVRConfig(lUserID, HCNetSDK.NET_DVR_GET_IPPARACFG, new NativeLong(0),
-				lpIpParaConfig, m_strIpparaCfg.size(), ibrBytesReturned);
-		m_strIpparaCfg.read();
-		DefaultTreeModel deciveTreeModel = ((DefaultTreeModel) DeviceTree.rootTree.getModel());// 获取树模型
+		// IP参数
+		HCNetSDK.NET_DVR_IPPARACFG mStrIpParaCfg = new HCNetSDK.NET_DVR_IPPARACFG();
+		mStrIpParaCfg.write();
+		Pointer lpIpParaConfig = mStrIpParaCfg.getPointer();
+		bRet = HCNetSDK.INSTANCE.NET_DVR_GetDVRConfig(userId, HCNetSDK.NET_DVR_GET_IPPARACFG, new NativeLong(0),
+				lpIpParaConfig, mStrIpParaCfg.size(), ibrBytesReturned);
+		mStrIpParaCfg.read();
+		// 获取树模型
+		DefaultTreeModel deciveTreeModel = ((DefaultTreeModel) DeviceTree.rootTree.getModel());
 		if (!bRet) {
 			// 设备不支持,则表示没有IP通道
-			for (int iChannum = 0; iChannum < m_DeviceInfo.byChanNum; iChannum++) {
-				int channum = (iChannum + m_DeviceInfo.byStartChan);
-				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(sDVRIP + "@" + channum);
-				deciveTreeModel.insertNodeInto(newNode, m_DeviceHikvisionRoot, iChannum);
+			for (int iChannum = 0; iChannum < mDeviceInfo.byChanNum; iChannum++) {
+				int channum = (iChannum + mDeviceInfo.byStartChan);
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(sDvrIp + "@" + channum);
+				deciveTreeModel.insertNodeInto(newNode, mDeviceHikvisionRoot, iChannum);
 			}
 		} else {
 			// 设备支持IP通道
-			for (int iChannum = 0; iChannum < m_DeviceInfo.byChanNum; iChannum++) {
-				if (m_strIpparaCfg.byAnalogChanEnable[iChannum] == 1) {
-					int channum = (iChannum + m_DeviceInfo.byStartChan);
-					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("C@" + sDVRIP + ":" + channum);
-					deciveTreeModel.insertNodeInto(newNode, m_DeviceHikvisionRoot, m_iHikvisionTreeNodeNum);
-					m_iHikvisionTreeNodeNum++;
+			for (int iChannum = 0; iChannum < mDeviceInfo.byChanNum; iChannum++) {
+				if (mStrIpParaCfg.byAnalogChanEnable[iChannum] == 1) {
+					int channum = (iChannum + mDeviceInfo.byStartChan);
+					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("C@" + sDvrIp + ":" + channum);
+					deciveTreeModel.insertNodeInto(newNode, mDeviceHikvisionRoot, mHikvisionTreeNodeNum);
+					mHikvisionTreeNodeNum++;
 				}
 			}
-			for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++)
-				if (m_strIpparaCfg.struIPChanInfo[iChannum].byEnable == 1) {
-					int channum = (iChannum + m_DeviceInfo.byStartChan);
-					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("I@" + sDVRIP + ":" + channum);
-					deciveTreeModel.insertNodeInto(newNode, m_DeviceHikvisionRoot, m_iHikvisionTreeNodeNum);
+			for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++){
+				if (mStrIpParaCfg.struIPChanInfo[iChannum].byEnable == 1) {
+					int channum = (iChannum + mDeviceInfo.byStartChan);
+					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("I@" + sDvrIp + ":" + channum);
+					deciveTreeModel.insertNodeInto(newNode, mDeviceHikvisionRoot, mHikvisionTreeNodeNum);
 				}
+			}
 		}
-		deciveTreeModel.reload();// 将添加的节点显示到界面
+		// 将添加的节点显示到界面
+		deciveTreeModel.reload();
 		TreeNode root = (TreeNode) DeviceTree.rootTree.getModel().getRoot();
 		DeviceTree.expandAll(DeviceTree.rootTree, new TreePath(root));
 	}
 
+}
+
+class HikvisionHandleThread extends Thread{
+	
+	
+	private String ip;
+	private short port;
+	private String username;
+	private String password;
+	private Panel playPanel;
+	private RealPlayCallback callback;
+
+	public HikvisionHandleThread(String ip, short port, String username, String password, Panel playPanel,
+			RealPlayCallback callback) {
+		this.ip=ip;
+		this.port=port;
+		this.username=username;
+		this.password=password;
+		this.playPanel=playPanel;
+		this.callback=callback;
+	}
+
+	@Override
+	public void run() {
+		new Login(ip, port, username, password).handle(new LoginCallback() {
+			@Override
+			public void fail(int errCode) {
+				callback.fail();
+				Layer.alert("注册失败【" + new Error().hikvision(errCode) + "】", 200, 140);
+			}
+
+			@Override
+			public void success(NET_DVR_DEVICEINFO_V30 mDeviceInfo, NativeLong userId) {
+				Hikvision.createDeviceTree(ip, userId, mDeviceInfo);
+				new RealPlay(ip, userId, 1, playPanel).handle(callback);
+			}
+		});
+	}
 }

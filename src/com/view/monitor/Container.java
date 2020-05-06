@@ -1,12 +1,6 @@
 package com.view.monitor;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Panel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -36,8 +30,8 @@ public class Container extends JSplitPane implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;
 
-	public static JPanel RealplayPanelArea = new JPanel();
-	public static Panel RealplayPanel = new Panel();
+	public static JPanel RealPlayPanelArea = new JPanel();
+	public static Panel RealPlayPanel = new Panel();
 
 	public Container() {
 		setTopComponent(setting());
@@ -51,11 +45,11 @@ public class Container extends JSplitPane implements MouseListener {
 		int grid = 9;
 		int cell = (int) Math.sqrt(grid);
 		GridLayout layout = new GridLayout(cell, cell, 1, 1);
-		RealplayPanelArea.setLayout(layout);
+		RealPlayPanelArea.setLayout(layout);
 		for (int i = 0; i < grid; i++) {
-			JPanel cellJPanel = new JPanel();
-			cellJPanel.setLayout(new BorderLayout());
-			cellJPanel.setName(String.valueOf(i));
+			JPanel cellPanel = new JPanel();
+			cellPanel.setLayout(new BorderLayout());
+			cellPanel.setName(String.valueOf(i));
 
 			JPanel setPanel = new JPanel();
 			setPanel.setLayout(new BorderLayout());
@@ -71,11 +65,11 @@ public class Container extends JSplitPane implements MouseListener {
 			palyPanel.setName(String.valueOf(i));
 			palyPanel.setBackground(Color.WHITE);
 			if (i == 0) {
-				RealplayPanel = palyPanel;
-				cellJPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
+				RealPlayPanel = palyPanel;
+				cellPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
 			} else {
 				JLabel label = new JLabel("<html><body>暂无视频源或<br>没有视频信号<body></html>");
-				label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
+				label.setFont(CyFont.puHuiTi(CyFont.Medium, 12));
 				label.setHorizontalAlignment(SwingConstants.CENTER);
 				label.setVerticalAlignment(SwingConstants.CENTER);
 				label.setBackground(Color.white);
@@ -84,17 +78,16 @@ public class Container extends JSplitPane implements MouseListener {
 				palyPanel.add(label, BorderLayout.CENTER);
 			}
 			palyPanel.addMouseListener(this);
-			cellJPanel.add(setPanel, BorderLayout.NORTH);
-			cellJPanel.add(palyPanel, BorderLayout.CENTER);
-
-			RealplayPanelArea.add(cellJPanel);
+			cellPanel.add(setPanel, BorderLayout.NORTH);
+			cellPanel.add(palyPanel, BorderLayout.CENTER);
+			RealPlayPanelArea.add(cellPanel);
 		}
 
-		return RealplayPanelArea;
+		return RealPlayPanelArea;
 	}
 
-	public static void console(JPanel parantPanel, NativeLong RealHandle) {
-		JPanel setPanel = (JPanel) parantPanel.getComponent(0);
+	public static void console(JPanel parentPanel, NativeLong realHandle) {
+		JPanel setPanel = (JPanel) parentPanel.getComponent(0);
 		JButton holder = new JButton("云台");
 		holder.setContentAreaFilled(false);
 		holder.setCursor(new Cursor(12));
@@ -126,10 +119,11 @@ public class Container extends JSplitPane implements MouseListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final JWindow window = new JWindow();
-//				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-				window.setSize(800, 600);
-				window.setContentPane(RealplayPanelArea);
+				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+				window.setSize(screenSize);
+				window.setContentPane(RealPlayPanelArea);
 				window.addMouseListener(new java.awt.event.MouseAdapter() {
+					@Override
 					public void mousePressed(java.awt.event.MouseEvent evt) {
 						if (evt.getClickCount() == 2) {
 							window.dispose();
@@ -149,15 +143,15 @@ public class Container extends JSplitPane implements MouseListener {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			Panel currPanel = (Panel) e.getComponent();
 			JPanel parentPanel = (JPanel) e.getComponent().getParent();
-			int count = RealplayPanelArea.getComponentCount();
+			int count = RealPlayPanelArea.getComponentCount();
 			for (int i = 0; i < count; i++) {
-				((JPanel) RealplayPanelArea.getComponent(i)).setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				((JPanel) RealPlayPanelArea.getComponent(i)).setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 			}
 			parentPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
-			RealplayPanel = currPanel;
-			RealplayPanel.setBackground(Color.white);
-			RealplayPanel.removeAll();
-			RealplayPanel.setLayout(null);
+			RealPlayPanel = currPanel;
+			RealPlayPanel.setBackground(Color.white);
+			RealPlayPanel.removeAll();
+			RealPlayPanel.setLayout(null);
 		}
 	}
 
@@ -167,7 +161,7 @@ public class Container extends JSplitPane implements MouseListener {
 		 * 函数: "播放窗口" 双击响应函数 函数描述: 双击全屏预览当前预览通道
 		 *************************************************/
 		if (e.getClickCount() == 2) {
-			RealPlay.FullScreen(e);
+			RealPlay.fullScreen(e);
 		}
 	}
 

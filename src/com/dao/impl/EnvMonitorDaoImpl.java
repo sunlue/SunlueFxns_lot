@@ -6,12 +6,16 @@ import java.util.Map;
 import com.dao.EnvMonitorDao;
 import com.util.Log;
 
+/**
+ * 实现环境监测仪接口
+ * @author xiebing
+ */
 public class EnvMonitorDaoImpl extends DaoImpl implements EnvMonitorDao {
 
 	@Override
 	public int insert(String wendu, String shidu, String yuliang, String fengxiang, String fengsu, String co,
 			String pm25, String pm10, String qiya, String fulizi, String addTime,String original) {
-		Map<String, String> data = new HashMap<String, String>();
+		Map<String, String> data = new HashMap<String, String>(12);
 		data.put("wendu", wendu);
 		data.put("shidu", wendu);
 		data.put("yuliang", yuliang);

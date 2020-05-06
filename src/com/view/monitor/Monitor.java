@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,36 +27,33 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.jna.NativeLong;
 import com.util.Layer;
 import com.util.Util;
 import com.util.Layer.LayerLoadingCallback;
 import com.view.monitor.DeviceMgr.DeviceMgrCallback;
+import com.view.monitor.Monitor.InitThreadCallback;
 
+/**
+ * @author xiebing
+ */
 public class Monitor extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-
-	public static final JDesktopPane desktopPane = new JDesktopPane();
 
 	public static int width = 1278;
 	public static int height = 818;
 
 	public Monitor() {
-		Thread view = new Thread(new Runnable() {
+
+		InitThread init = new InitThread(new InitThreadCallback() {
 			@Override
-			public void run() {
-				JSplitPane SplitPane = new JSplitPane();
-				SplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-				SplitPane.setLeftComponent(new DevicePanel());
-				SplitPane.setRightComponent(new Container());
-				SplitPane.setDividerSize(6);
-				SplitPane.setDividerLocation(200);
-				setContentPane(SplitPane);
+			public void complete(JSplitPane splitPane) {
+				setContentPane(splitPane);
 				validate();
 			}
 		});
-		view.start();
+		init.start();
+
 		JLabel loading = new JLabel("正在加载中,请稍后...");
 		loading.setFont(new Font("微软雅黑", 1, 20));
 		loading.setHorizontalAlignment(SwingConstants.CENTER);
@@ -96,6 +92,7 @@ public class Monitor extends JFrame {
 		JMenuItem menuItem = new JMenuItem();
 		menuItem.setText(text);
 		menuItem.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent evt) {
 				menuItemClick(evt);
 			}
@@ -111,8 +108,6 @@ public class Monitor extends JFrame {
 		jf.setSize(200, 300);
 	}
 
-	public static NativeLong g_lVoiceHandle;
-	
 	/*************************************************
 	 * 函数: centerWindow 函数描述:窗口置中
 	 *************************************************/
@@ -123,6 +118,10 @@ public class Monitor extends JFrame {
 		int x = (dim.width - w) / 2;
 		int y = (dim.height - h) / 2;
 		window.setLocation(x, y);
+	}
+
+	public interface InitThreadCallback {
+		void complete(JSplitPane splitPane);
 	}
 
 }
@@ -158,42 +157,8 @@ class DevicePanel extends JPanel {
 					@Override
 					public void handle(JDialog dialog) {
 						// 启用一个线程来获取数据并渲染到视图，关闭加载层
-						new Thread(new Runnable() {
-							public void run() {
-								ArrayList<JSONObject> rSet;
-								try {
-									String name = deviceMngBtn.getText();
-									rSet = new com.action.Device().select();
-									JPanel container = new DeviceMgr(rSet).mngComp(new DeviceMgrCallback() {
-										@Override
-										public void handle(String action) {
-											if (action == "add") {
-												JPanel container = new DeviceMgr().addComp(new DeviceMgrCallback() {
-													@Override
-													public void handle(String action) {
-														if (action == "success") {
-															Layer.alert("添加成功", 200, 120);
-															addDeviceDialog.dispose();
-														} else if (action == "close") {
-															addDeviceDialog.dispose();
-														}
-													}
-												});
-												addDeviceDialog = Layer.window("添加设备", container, 428, 268);
-												addDeviceDialog.setVisible(true);
-											} else if (action == "") {
+						new deviceMngThread(deviceMngBtn, addDeviceDialog, mngDeviceDialog, dialog).start();
 
-											}
-										}
-									});
-									mngDeviceDialog = Layer.window(name, container, 815, 600);
-									dialog.dispose();
-									mngDeviceDialog.setVisible(true);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-						}).start();
 					}
 
 					@Override
@@ -209,7 +174,6 @@ class DevicePanel extends JPanel {
 		/********************* end设备管理 **********************/
 
 		/********************* start 添加设备 **********************/
-
 		JButton addDeviceBtn = new JButton();
 		addDeviceBtn.setText("添加设备");
 		addDeviceBtn.setCursor(new Cursor(12));
@@ -241,4 +205,75 @@ class DevicePanel extends JPanel {
 		return panel;
 	}
 
+}
+
+class InitThread extends Thread {
+
+	private InitThreadCallback callback;
+
+	public InitThread(InitThreadCallback callback) {
+		this.callback = callback;
+	}
+
+	@Override
+	public void run() {
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setLeftComponent(new DevicePanel());
+		splitPane.setRightComponent(new Container());
+		splitPane.setDividerSize(6);
+		splitPane.setDividerLocation(200);
+		callback.complete(splitPane);
+	}
+}
+
+class deviceMngThread extends Thread {
+
+	private JButton deviceMngBtn;
+	private JDialog addDeviceDialog;
+	private JDialog mngDeviceDialog;
+	private JDialog dialog;
+
+	public deviceMngThread(JButton deviceMngBtn, JDialog addDeviceDialog, JDialog mngDeviceDialog, JDialog dialog) {
+		this.deviceMngBtn = deviceMngBtn;
+		this.addDeviceDialog = addDeviceDialog;
+		this.mngDeviceDialog = mngDeviceDialog;
+		this.dialog = dialog;
+	}
+
+	@Override
+	public void run() {
+		ArrayList<JSONObject> rSet;
+		try {
+			String name = deviceMngBtn.getText();
+			rSet = new com.action.Device().select();
+			JPanel container = new DeviceMgr(rSet).mngComp(new DeviceMgrCallback() {
+				@Override
+				public void handle(String action) {
+					if (action == "add") {
+						JPanel container = new DeviceMgr().addComp(new DeviceMgrCallback() {
+							@Override
+							public void handle(String action) {
+								if (action == "success") {
+									Layer.alert("添加成功", 200, 120);
+									addDeviceDialog.dispose();
+								} else if (action == "close") {
+									addDeviceDialog.dispose();
+								}
+							}
+						});
+						addDeviceDialog = Layer.window("添加设备", container, 428, 268);
+						addDeviceDialog.setVisible(true);
+					} else if (action == "") {
+
+					}
+				}
+			});
+			mngDeviceDialog = Layer.window(name, container, 815, 600);
+			dialog.dispose();
+			mngDeviceDialog.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

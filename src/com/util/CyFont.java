@@ -1,7 +1,10 @@
 package com.util;
 
 import java.awt.Font;
-
+/**
+ * 字体扩展类
+ * @author xiebing
+ */
 public class CyFont {
 
 	public static String Bold = "Bold";
@@ -10,10 +13,9 @@ public class CyFont {
 	public static String Medium = "Medium";
 	public static String Regular = "Regular";
 
-	static Font AlibabaPuHuiTi = null;
 	static Font IconFont = null;
 
-	public static Font PuHuiTi(String name, float fontSize) {
+	public static Font puHuiTi(String name, float fontSize) {
 //		String fontFileName = CyFont.class.getResource("/Alibaba-PuHuiTi-" + name + ".ttf").getPath();
 //		try {
 //			java.io.File file = new java.io.File(fontFileName);

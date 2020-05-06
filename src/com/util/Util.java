@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,6 +31,11 @@ import org.ini4j.Ini;
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Profile.Section;
 
+/**
+ * 工具类
+ * 
+ * @author xiebing
+ */
 public class Util {
 
 	private static JFrame currFrame;
@@ -43,8 +50,7 @@ public class Util {
 
 	/**
 	 * 读取ini配置文件
-	 * 
-	 * @param folder
+	 *
 	 * @param filename
 	 * @return
 	 */
@@ -64,7 +70,7 @@ public class Util {
 
 	/**
 	 * 生成资源路径
-	 * 
+	 *
 	 * @return
 	 */
 	public static URL getResource() {
@@ -73,7 +79,7 @@ public class Util {
 
 	/**
 	 * 生成资源路径
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -83,19 +89,19 @@ public class Util {
 
 	/**
 	 * 读取ini配置文件
-	 * 
+	 *
 	 * @return
 	 */
-	public static Ini getIni(String filename,Boolean absolute) {
-		if (absolute==false) {
+	public static Ini getIni(String filename, Boolean absolute) {
+		if (absolute == false) {
 			filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + filename;
 		}
 		return getIni(filename);
 	}
-	
+
 	/**
 	 * 读取ini配置文件
-	 * 
+	 *
 	 * @return
 	 */
 	public static Ini getIni() {
@@ -105,7 +111,7 @@ public class Util {
 
 	/**
 	 * 读取ini配置文件
-	 * 
+	 *
 	 * @param pathname 文件路径（绝对路径）
 	 * @return
 	 */
@@ -126,12 +132,8 @@ public class Util {
 
 	/**
 	 * 修改ini文件
-	 * 
-	 * @param <E>
-	 * 
-	 * @param pathname
-	 * @param updateData
-	 * @throws IOException
+	 *
+	 * @param data
 	 */
 	public static void updateIni(Map<String, Map<String, String>> data) {
 		String filename = System.getProperty("user.dir") + File.separator + "config" + File.separator + "config.ini";
@@ -140,12 +142,9 @@ public class Util {
 
 	/**
 	 * 修改ini文件
-	 * 
-	 * @param <E>
-	 * 
+	 *
 	 * @param pathname
-	 * @param updateData
-	 * @throws IOException
+	 * @param data
 	 */
 	public static void updateIni(String pathname, Map<String, Map<String, String>> data) {
 		Ini ini = getIni(pathname);
@@ -168,7 +167,7 @@ public class Util {
 
 	/**
 	 * 获取图片图标
-	 * 
+	 *
 	 * @return
 	 */
 	public static Image getImageIcon(String name) {
@@ -177,7 +176,7 @@ public class Util {
 
 	/**
 	 * 获取图片图标
-	 * 
+	 *
 	 * @return
 	 */
 	public static ImageIcon getImageIcon(String name, int width, int height) {
@@ -192,7 +191,7 @@ public class Util {
 
 	/**
 	 * 获取logo图标
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -202,7 +201,7 @@ public class Util {
 
 	/**
 	 * 获取logo图标
-	 * 
+	 *
 	 * @return
 	 */
 
@@ -212,7 +211,7 @@ public class Util {
 
 	/**
 	 * MD5加密
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -225,11 +224,11 @@ public class Util {
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("没有md5这个算法�?");
 		}
-
 		// 将加密后的数据转换为16进制数字
-		String md5code = new BigInteger(1, secretBytes).toString(16);// 16进制数字
+		String md5code = new BigInteger(1, secretBytes).toString(16);
+		int length = 32 - md5code.length();
 		// 如果生成数字未满32位，�?要前面补0
-		for (int i = 0; i < 32 - md5code.length(); i++) {
+		for (int i = 0; i < length; i++) {
 			md5code = "0" + md5code;
 		}
 		return md5code;
@@ -237,45 +236,46 @@ public class Util {
 
 	/**
 	 * 生成密码
-	 * 
+	 *
 	 * @param account
 	 * @param password
 	 * @param key
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static String setPassword(String account, String password, String key) {
-		@SuppressWarnings("rawtypes")
-		List arr = new ArrayList();
+		List<String> arr = new ArrayList<String>();
 		arr.add("0=" + account);
 		arr.add("1=" + password);
 		arr.add("2=" + key);
 		String q = String.join("&", arr);
-		return md5encode(URLDecoder.decode(q)).toUpperCase();
+		return md5encode(URLDecoder.decode(q, StandardCharsets.UTF_8)).toUpperCase();
 	}
 
 	/**
 	 * 将消息写入文件
-	 * 
+	 *
 	 * @param filename
 	 * @param message
 	 */
 	public static void setMsg(String filename, String message) {
-		String DIR_NAME = System.getProperty("user.dir") + File.separator + "msg";
-		File dir = new File(DIR_NAME);
+		String dirName = System.getProperty("user.dir") + File.separator + "msg";
+		File dir = new File(dirName);
 		if (!dir.exists()) {
 			dir.mkdir();
 		}
-		String FILE_NAME = DIR_NAME + File.separator + filename + ".log";
-		File file = new File(FILE_NAME);
+		String fileName = dirName + File.separator + filename + ".log";
+		File file = new File(fileName);
 		try {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(message); // \r\n即为换行
-			out.flush(); // 把缓存区内容压入文件
-			out.close(); // 最后记得关闭文件
+			// \r\n即为换行
+			out.write(message);
+			// 把缓存区内容压入文件
+			out.flush();
+			// 最后记得关闭文件
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -283,17 +283,16 @@ public class Util {
 
 	/**
 	 * 将消息写入文件
-	 * 
+	 *
 	 * @param filename
-	 * @param message
 	 * @return
 	 */
 	@SuppressWarnings("resource")
 	public static String getMsg(String filename) {
-		String FILE_NAME = System.getProperty("user.dir") + File.separator + "msg" + File.separator + filename + ".log";
+		String fileName = System.getProperty("user.dir") + File.separator + "msg" + File.separator + filename + ".log";
 		StringBuffer message = new StringBuffer();
 		try {
-			File file = new File(FILE_NAME);
+			File file = new File(fileName);
 			if (!file.exists()) {
 				return "";
 			}
@@ -310,30 +309,27 @@ public class Util {
 	}
 
 	public static String getDateTime(String pattern) {
-		long timemillis = System.currentTimeMillis();
+		long timeMillis = System.currentTimeMillis();
 		SimpleDateFormat df = new SimpleDateFormat(pattern);
-		return df.format(new Date(timemillis));
+		return df.format(new Date(timeMillis));
 	}
 
 	public static String getDateTime() {
 		return getDateTime("yyyy-MM-dd HH:mm:ss");
 	}
 
-	static int flag = 1;// 用来判断文件是否删除成功
-
+	/**
+	 * 用来判断文件是否删除成功
+	 */
 	public static int deleteFile(File file) {
 		// 判断文件不为null或文件目录存在
 		if (file == null || !file.exists()) {
-			flag = 0;
-			return flag;
+			return 0;
 		}
 		// 取得这个目录下的所有子文件对象
 		File[] files = file.listFiles();
 		// 遍历该目录下的文件对象
 		for (File f : files) {
-			// 打印文件名
-//			String name = file.getName();
-			// 判断子目录是否存在子目录,如果是文件则删除
 			if (f.isDirectory()) {
 				deleteFile(f);
 			} else {
@@ -342,7 +338,19 @@ public class Util {
 		}
 		// 删除空文件夹 for循环已经把上一层节点的目录清空。
 		file.delete();
-		return flag;
+		return 1;
+	}
+
+	/**
+	 * 产生一个随机数
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static int random(int min,int max) {
+		Random r = new Random();
+		int number = (r.nextInt(max - min + 1) + min);
+		return number;
 	}
 
 }

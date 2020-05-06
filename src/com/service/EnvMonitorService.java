@@ -10,7 +10,10 @@ import com.dao.EnvMonitorDao;
 import com.dao.impl.EnvMonitorDaoImpl;
 import com.server.Client;
 import com.view.hardware.page.EnvMonitorView;
-
+/**
+ * 套接字服务端环境监测仪数据处理类
+ * @author xiebing
+ */
 public class EnvMonitorService {
 	private EnvMonitorDao dao = (EnvMonitorDao) Factory.dao(EnvMonitorDaoImpl.class.getName());
 
@@ -32,8 +35,7 @@ public class EnvMonitorService {
 			char cc = string.charAt(i);
 			if (cc == '0' || cc == '1' || cc == '2' || cc == '3' || cc == '4' || cc == '5' || cc == '6' || cc == '7'
 					|| cc == '8' || cc == '9' || cc == 'A' || cc == 'B' || cc == 'C' || cc == 'D' || cc == 'E'
-					|| cc == 'F' || cc == 'a' || cc == 'b' || cc == 'c' || cc == 'c' || cc == 'd' || cc == 'e'
-					|| cc == 'f') {
+					|| cc == 'F' || cc == 'a' || cc == 'b' || cc == 'c' || cc == 'd' || cc == 'e' || cc == 'f') {
 				continue;
 			} else {
 				flag = false;

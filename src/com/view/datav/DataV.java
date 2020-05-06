@@ -20,6 +20,10 @@ import javax.swing.Timer;
 import com.util.Util;
 import com.view.datav.main.Container;
 
+/**
+ * 数据可视化底层类
+ * @author xiebing
+ */
 public class DataV extends JWindow {
 
 	private static final long serialVersionUID = 1L;
@@ -29,11 +33,12 @@ public class DataV extends JWindow {
 		setSize(screenSize);
 
 		setLayout(new BorderLayout());
-		add(Header(), BorderLayout.NORTH);
-		add(Menu(), BorderLayout.WEST);
+		add(header(), BorderLayout.NORTH);
+		add(menu(), BorderLayout.WEST);
 		add(new Container(), BorderLayout.CENTER);
 		setVisible(true);
 		addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
 			public void mousePressed(java.awt.event.MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
 //					dispose();
@@ -43,7 +48,7 @@ public class DataV extends JWindow {
 		});
 	}
 
-	private JPanel Header() {
+	private JPanel header() {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(100, 60));
 		panel.setBackground(new Color(7, 10, 85));
@@ -56,6 +61,7 @@ public class DataV extends JWindow {
 		currTime.setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 0));
 		currTime.setIconTextGap(16);
 		Timer timer = new Timer(1000, new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				currTime.setText(Util.getDateTime());
 			}
@@ -82,7 +88,7 @@ public class DataV extends JWindow {
 		return panel;
 	}
 
-	private JPanel Menu() {
+	private JPanel menu() {
 
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(80, 100));

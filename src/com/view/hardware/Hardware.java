@@ -21,7 +21,10 @@ import com.view.Frame;
 import com.view.Main;
 import com.view.hardware.page.EnvMonitorView;
 import com.view.hardware.page.TouristsNumberView;
-
+/**
+ * 硬件页面视图
+ * @author xiebing
+ */
 public class Hardware extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -35,7 +38,7 @@ public class Hardware extends JPanel {
 		btnlist = new ArrayList<JButton>();
 		setPreferredSize(new Dimension(width, height));
 		setLayout(new BorderLayout());
-		add(MenuList(), BorderLayout.NORTH);
+		add(menuList(), BorderLayout.NORTH);
 		switch (defaultView) {
 		case "TouristsNumber":
 			add(new TouristsNumberView(), BorderLayout.CENTER);
@@ -48,24 +51,24 @@ public class Hardware extends JPanel {
 		}
 	}
 
-	private JPanel MenuList() {
+	private JPanel menuList() {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, 60));
 		panel.setBackground(new Color(245, 245, 245));
 		panel.setLayout(null);
-		panel.add(MenuItem("tourists.png", "客流设备", "TouristsNumber"));
-		panel.add(MenuItem("env.png", "环境监测", "EnvMonitor"));
+		panel.add(menuItem("tourists.png", "客流设备", "TouristsNumber"));
+		panel.add(menuItem("env.png", "环境监测", "EnvMonitor"));
 //		panel.add(MenuItem("alarm.png", "报警设备", "Alarm"));
 		return panel;
 	}
 
-	private JButton MenuItem(String img, String title, String name) {
+	private JButton menuItem(String img, String title, String name) {
 		ImageIcon icon = new ImageIcon(Util.getResource(img));
 		icon.setImage(icon.getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT));
 		JButton button = new JButton(title, icon);
 		button.setCursor(new Cursor(12));
 		button.setForeground(new Color(51, 51, 51));
-		button.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
+		button.setFont(CyFont.puHuiTi(CyFont.Bold, 12));
 		button.setBorder(null);
 		button.setBorderPainted(false);
 		button.setFocusPainted(false);

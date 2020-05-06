@@ -8,16 +8,20 @@ import java.util.ArrayList;
 import com.action.Action;
 import com.util.Log;
 
+/**
+ * 客户端线程池 类
+ * @author xiebing
+ */
 public class ClientThread extends Thread {
 	public Socket socket;
 	private Client client;
-	private byte b[] = new byte[1024];
+	private byte[] b = new byte[1024];
 
 	public ClientThread(Socket socket) {
 		this.socket = socket;
 		client = new Client(socket);
 	}
-
+	@Override
 	public void run() {
 		while (!isInterrupted()) {
 			try {

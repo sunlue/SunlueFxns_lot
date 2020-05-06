@@ -6,8 +6,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import com.action.Action;
-
-
+/**
+ * 套接字服务端线程池
+ * @author xiebing
+ */
 public class ServerThread extends Thread {
 	private int maxClient;
 	private ServerSocket serverSocket;
@@ -16,7 +18,7 @@ public class ServerThread extends Thread {
 		this.serverSocket = serverSocket;
 		this.maxClient = maxClient;
 	}
-
+	@Override
 	public void run() {
 		while (!interrupted()) {
 			try {

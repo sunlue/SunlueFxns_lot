@@ -6,7 +6,9 @@ import javax.swing.JPanel;
 
 import com.view.Frame;
 import com.view.Main;
-
+/**
+ * @author xiebing
+ */
 public class Setting extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public static int width = Frame.width - com.view.Module.width;

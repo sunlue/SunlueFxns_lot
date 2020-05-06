@@ -33,7 +33,9 @@ import com.view.hardware.Hardware;
 import com.view.setting.Setting;
 import com.util.Layer.LayerCallback;
 import com.util.Layer.LayerConfirmCallback;
-
+/**
+ * @author xiebing
+ */
 public class Main {
 	public static int tempX;
 	public static int tempY;
@@ -113,11 +115,11 @@ public class Main {
 
 					@Override
 					public void clickOkBtn() {
-						String DIR_PATH = System.getProperty("ROOT_PATH") + "\\msg";
-						File file = new File(DIR_PATH);
+						String dirPath = System.getProperty("ROOT_PATH") + "\\msg";
+						File file = new File(dirPath);
 						file.delete();
-						Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>();
-						Map<String, String> data = new HashMap<String, String>();
+						Map<String, Map<String, String>> update = new HashMap<String, Map<String, String>>(2);
+						Map<String, String> data = new HashMap<String, String>(1);
 						data.put("isStart", "false");
 						update.put("env_monitor", data);
 						update.put("tourists_number", data);
@@ -139,7 +141,7 @@ public class Main {
 
 		JLabel title = new JLabel(Frame.jf.getTitle());
 		title.setBounds(5, 0, width - 100, headerHeight);
-		title.setFont(CyFont.PuHuiTi(CyFont.Medium, 14));
+		title.setFont(CyFont.puHuiTi(CyFont.Medium, 14));
 
 		Panel header = new Panel();
 		header.setSize(width, headerHeight);

@@ -58,11 +58,12 @@ public class DualaxisChart {
 
 		DefaultCategoryDataset datasetNetProfit = Util.createDefaultCategoryDataset(seriesNetProfit, categories);
 		JFreeChart chart = ChartFactory.createBarChart("", "", "净利润(万元)", datasetNetProfit);
-		Util.setAntiAlias(chart);// 抗锯齿
+		// 抗锯齿
+		Util.setAntiAlias(chart);
 		Util.setBarRenderer(chart.getCategoryPlot(), false);
 		// 设置坐标轴
-		Util.setXAixs(chart.getCategoryPlot());
-		Util.setYAixs(chart.getCategoryPlot());
+		Util.setXaixs(chart.getCategoryPlot());
+		Util.setYaixs(chart.getCategoryPlot());
 		// linechart
 		CategoryPlot categoryplot = (CategoryPlot) chart.getPlot();
 		DefaultCategoryDataset datasetPayoutRatio = Util.createDefaultCategoryDataset(seriesPayoutRatio, categories);
@@ -81,11 +82,13 @@ public class DualaxisChart {
 		// 设置折线图样式
 		LineAndShapeRenderer lineRenderer = new LineAndShapeRenderer();
 		lineRenderer.setSeriesPaint(0, new Color(255, 185, 1));
-		lineRenderer.setDefaultShapesVisible(true);// 数据点绘制形状
+		// 数据点绘制形状
+		lineRenderer.setDefaultShapesVisible(true);
 		categoryplot.setRenderer(1, lineRenderer);
-		
-		categoryplot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);// 绘制Z-index, 将折线图在前面
-		chart.getLegend().setPosition(RectangleEdge.TOP);//标注在顶部
+		// 绘制Z-index, 将折线图在前面
+		categoryplot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+		//标注在顶部
+		chart.getLegend().setPosition(RectangleEdge.TOP);
 		chart.getLegend().setFrame(new BlockBorder(Color.WHITE));
 		ChartPanel chartPanel = new ChartPanel(chart);
 		return chartPanel;

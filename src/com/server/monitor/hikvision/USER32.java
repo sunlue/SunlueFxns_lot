@@ -4,7 +4,10 @@ import com.sun.jna.Native;
 import com.sun.jna.examples.win32.W32API;
 import com.sun.jna.examples.win32.GDI32.RECT;
 
-//windows user32接口,user32.dll in system32 folder, 在设置遮挡区域,移动侦测区域等情况下使用
+/**
+ * windows user32接口,user32.dll in system32 folder, 在设置遮挡区域,移动侦测区域等情况下使用
+ * @author xiebing
+ */
 public interface USER32 extends W32API {
 
 	USER32 INSTANCE = (USER32) Native.loadLibrary("user32", USER32.class, DEFAULT_OPTIONS);
@@ -16,7 +19,22 @@ public interface USER32 extends W32API {
 	public static final int BDR_SUNKENOUTER = 0x0002;
 	public static final int BF_RECT = (BF_LEFT | BF_TOP | BF_RIGHT | BF_BOTTOM);
 
-	boolean DrawEdge(HDC hdc, RECT qrc, int edge, int grfFlags);
+	/**
+	 *
+	 * @param hdc
+	 * @param qrc
+	 * @param edge
+	 * @param grfFlags
+	 * @return
+	 */
+	boolean drawEdge(HDC hdc, RECT qrc, int edge, int grfFlags);
 
-	int FillRect(HDC hDC, RECT lprc, HANDLE hbr);
+	/**
+	 *
+	 * @param hDc
+	 * @param lprc
+	 * @param hbr
+	 * @return
+	 */
+	int fillRect(HDC hDc, RECT lprc, HANDLE hbr);
 }

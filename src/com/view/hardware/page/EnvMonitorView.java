@@ -39,7 +39,7 @@ import com.view.Main;
 import com.view.Module;
 
 /**
- * 环境检测仪页面
+ * 环境检测仪视图
  * 
  * @author xiebing
  *
@@ -87,13 +87,13 @@ public class EnvMonitorView extends JPanel {
 		clearBtn = new JButton("清空消息");
 		syncTimeTxt = new JLabel("系统时间");
 		
-		portTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		portTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		portNum.setPreferredSize(new Dimension(38, 26));
 		portNum.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		portNum.setHorizontalAlignment(SwingConstants.CENTER);
 		portNum.setBounds(0, 0, 50, 30);
 		
-		startBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		startBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		startBtn.setCursor(new Cursor(12));
 		startBtn.setFocusPainted(false);
 		startBtn.setPreferredSize(new Dimension(76, 26));
@@ -130,7 +130,7 @@ public class EnvMonitorView extends JPanel {
 			}
 		});
 
-		stopBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		stopBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		stopBtn.setCursor(new Cursor(12));
 		stopBtn.setFocusPainted(false);
 		stopBtn.setPreferredSize(new Dimension(76, 26));
@@ -164,7 +164,7 @@ public class EnvMonitorView extends JPanel {
 			}
 		});
 		
-		clearBtn.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		clearBtn.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		clearBtn.setCursor(new Cursor(12));
 		clearBtn.setFocusPainted(false);
 		clearBtn.addActionListener(new ActionListener() {
@@ -174,7 +174,7 @@ public class EnvMonitorView extends JPanel {
 			}
 		});
 		
-		syncTimeTxt.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		syncTimeTxt.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		syncTimeVal = new JTextField();
 		syncTimeVal.setPreferredSize(new Dimension(138, 26));
 		syncTimeVal.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -185,6 +185,7 @@ public class EnvMonitorView extends JPanel {
 		syncTimeVal.setForeground(Color.BLACK);
 		// 定时器，自动刷新时间
 		Timer timer = new Timer(1000, new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				syncTimeVal.setText(Util.getDateTime());
 			}
@@ -210,8 +211,8 @@ public class EnvMonitorView extends JPanel {
 		clientPanel.setBackground(new Color(245, 245, 245));
 		clientBox = Box.createVerticalBox();
 		clientPanel.add(clientBox);
-		JScrollPane ScrollPane = new JScrollPane(clientPanel);
-		return ScrollPane;
+		JScrollPane scrollPane = new JScrollPane(clientPanel);
+		return scrollPane;
 	}
 
 	private JPanel message() {
@@ -221,7 +222,7 @@ public class EnvMonitorView extends JPanel {
 
 		msgTxtArea.setEditable(false);
 		msgTxtArea.setMargin(new Insets(5, 5, 5, 5));
-		msgTxtArea.setFont(CyFont.PuHuiTi(CyFont.Regular, 12));
+		msgTxtArea.setFont(CyFont.puHuiTi(CyFont.Regular, 12));
 		msgTxtArea.setForeground(new Color(51, 51, 51));
 		msgTxtArea.setText(Util.getMsg("envMonitor"));
 		msgTxtArea.setBackground(new Color(245,245,245));
@@ -266,7 +267,7 @@ public class EnvMonitorView extends JPanel {
 	protected static Panel clientItem(String name) {
 		JLabel label = new JLabel(name);
 		label.setBounds(5, 0, width - 10, 32);
-		label.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
+		label.setFont(CyFont.puHuiTi(CyFont.Bold, 12));
 		label.setVerticalAlignment(SwingConstants.CENTER);
 		Panel panel = new Panel();
 		panel.setName(name);

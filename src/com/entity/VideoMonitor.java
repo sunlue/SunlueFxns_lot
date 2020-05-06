@@ -2,7 +2,10 @@ package com.entity;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * 环境监测实体类
+ * @author xiebing
+ */
 public class VideoMonitor {
 	public int id;
 	public int type;

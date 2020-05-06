@@ -44,7 +44,8 @@ public class PieChart {
 		// 2：创建Chart[创建不同图形]
 		JFreeChart chart = ChartFactory.createPieChart("Contents of Highsoft's weekly fruit delivery", createDataset());
 		// 3:设置抗锯齿，防止字体显示不清楚
-		Util.setAntiAlias(chart);// 抗锯齿
+		// 抗锯齿
+		Util.setAntiAlias(chart);
 		// 4:对柱子进行渲染[创建不同图形]
 		Util.setPieRender(chart.getPlot());
 		chart.setBorderVisible(false);

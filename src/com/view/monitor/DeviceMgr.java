@@ -37,6 +37,9 @@ import com.util.Layer;
 import com.util.Layer.LayerCallback;
 import com.util.Layer.LayerConfirmCallback;
 
+/**
+ * @author xiebing
+ */
 public class DeviceMgr {
 
 	private static String[] DevicetypeListData = new String[] { "海康威视", "大华监控", "TP-LINK" };
@@ -54,8 +57,7 @@ public class DeviceMgr {
 
 	/**
 	 * 设备管理面板
-	 * 
-	 * @param rSet ArrayList<JSONObject>
+	 * @param callback
 	 * @return
 	 */
 	public JPanel mngComp(DeviceMgrCallback callback) {
@@ -68,7 +70,7 @@ public class DeviceMgr {
 
 		JTable table = new JTable(new DefaultTableModel(rowData, columnNames) {
 			private static final long serialVersionUID = 1L;
-
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return column == 0;
 			}
@@ -77,14 +79,14 @@ public class DeviceMgr {
 		DefaultTableCellRenderer tableRender = new DefaultTableCellRenderer();
 		tableRender.setHorizontalAlignment(SwingConstants.CENTER);
 
-		table.setFont(CyFont.PuHuiTi(CyFont.Bold, 12));
+		table.setFont(CyFont.puHuiTi(CyFont.Bold, 12));
 		table.setForeground(new Color(51, 51, 51));
 		table.setGridColor(Color.GRAY);
 		table.setRowHeight(32);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setDefaultRenderer(Object.class, tableRender);
 
-		table.getTableHeader().setFont(CyFont.PuHuiTi(CyFont.Bold, 14));
+		table.getTableHeader().setFont(CyFont.puHuiTi(CyFont.Bold, 14));
 		table.getTableHeader().setForeground(Color.RED);
 		table.getTableHeader().setResizingAllowed(true);
 		table.getTableHeader().setReorderingAllowed(true);
@@ -128,7 +130,7 @@ public class DeviceMgr {
 				if (e.getClickCount() == 2) {
 					int row = table.getSelectedRow();
 					int col = table.getColumnCount();
-					Map<String, Object> data = new HashMap<String, Object>();
+					Map<String, Object> data = new HashMap<String, Object>(16);
 					for (int j = 1; j < col; j++) {
 						String field = String.valueOf(columnField[j]);
 						String value = String.valueOf(table.getValueAt(row, j));
@@ -170,7 +172,7 @@ public class DeviceMgr {
 		JLabel label = new JLabel("* 双击行可进行修改操作，按住ctrl可多选行进行操作");
 		label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 		label.setForeground(Color.RED);
-		label.setFont(CyFont.PuHuiTi(CyFont.Medium, 12));
+		label.setFont(CyFont.puHuiTi(CyFont.Medium, 12));
 
 		JButton addBtn = new JButton("添加设备");
 		addBtn.setFocusPainted(false);
@@ -194,8 +196,8 @@ public class DeviceMgr {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int SelecRowCount = table.getSelectedRowCount();
-				if (SelecRowCount < 1) {
+				int selectRowCount = table.getSelectedRowCount();
+				if (selectRowCount < 1) {
 					Layer.alert("请选择要删除的设备", 300, 160);
 				} else {
 					Layer.confirm("确认要删除选中的设备数据吗?", 300, 160, new LayerCallback() {
@@ -207,16 +209,16 @@ public class DeviceMgr {
 						@Override
 						public void clickOkBtn(LayerConfirmCallback dispose) {
 							int col = table.getColumnCount();
-							for (int i = 0; i < SelecRowCount; i++) {
+							for (int i = 0; i < selectRowCount; i++) {
 								int row = table.getSelectedRows()[i];
-								Map<String, Object> data = new HashMap<String, Object>();
+								Map<String, Object> data = new HashMap<String, Object>(16);
 								for (int j = 1; j < col; j++) {
 									String field = String.valueOf(columnField[j]);
 									String value = String.valueOf(table.getValueAt(row, j));
 									data.put(field, value);
 								}
 							}
-							for (int j = 0; j < SelecRowCount; j++) {
+							for (int j = 0; j < selectRowCount; j++) {
 								tableModel.removeRow(j);
 							}
 							dispose.destroy();
@@ -505,6 +507,10 @@ public class DeviceMgr {
 
 	public interface DeviceMgrCallback {
 
+		/**
+		 * 设备管理执行回调
+		 * @param string
+		 */
 		void handle(String string);
 
 	}

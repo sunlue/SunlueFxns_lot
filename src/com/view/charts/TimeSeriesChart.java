@@ -65,24 +65,27 @@ public class TimeSeriesChart {
 		TimeSeriesCollection dataset = createDataset();
 		JFreeChart chart = ChartFactory.createTimeSeriesChart("股东总户数", "", "", dataset);
 		// 3:设置抗锯齿，防止字体显示不清楚
-		Util.setAntiAlias(chart);// 抗锯齿
+		// 抗锯齿
+		Util.setAntiAlias(chart);
 		// 4:对柱子进行渲染[创建不同图形]
 		Util.setTimeSeriesRender(chart.getPlot(), true, true);
 		// 5:对其他部分进行渲染
 		XYPlot xyplot = (XYPlot) chart.getPlot();
-		Util.setXY_XAixs(xyplot);
-		Util.setXY_YAixs(xyplot);
+		Util.setXyXaixs(xyplot);
+		Util.setXyYaixs(xyplot);
 		// 日期X坐标轴
 		DateAxis domainAxis = (DateAxis) xyplot.getDomainAxis();
 		domainAxis.setAutoTickUnitSelection(false);
 		DateTickUnit dateTickUnit = null;
 		if (dataset.getItemCount(0) < 16) {
 			//刻度单位月,半年为间隔
-			dateTickUnit = new DateTickUnit(DateTickUnitType.MONTH, 6, new SimpleDateFormat("yyyy-MM")); // 第二个参数是时间轴间距
+			// 第二个参数是时间轴间距
+			dateTickUnit = new DateTickUnit(DateTickUnitType.MONTH, 6, new SimpleDateFormat("yyyy-MM"));
 		} else {// 数据过多,不显示数据
 			XYLineAndShapeRenderer xyRenderer = (XYLineAndShapeRenderer) xyplot.getRenderer();
 			xyRenderer.setDefaultItemLabelsVisible(false);
-			dateTickUnit = new DateTickUnit(DateTickUnitType.YEAR, 1, new SimpleDateFormat("yyyy")); // 第二个参数是时间轴间距
+			// 第二个参数是时间轴间距
+			dateTickUnit = new DateTickUnit(DateTickUnitType.YEAR, 1, new SimpleDateFormat("yyyy"));
 		}
 		// 设置时间单位
 		domainAxis.setTickUnit(dateTickUnit);

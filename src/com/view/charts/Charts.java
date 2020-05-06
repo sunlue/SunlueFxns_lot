@@ -22,9 +22,9 @@ public class Charts {
 
 	public Charts() {
 		standardChartTheme = new StandardChartTheme("CN");
-		standardChartTheme.setExtraLargeFont(CyFont.PuHuiTi(CyFont.Medium, 20));
-		standardChartTheme.setRegularFont(CyFont.PuHuiTi(CyFont.Medium, 15));
-		standardChartTheme.setLargeFont(CyFont.PuHuiTi(CyFont.Medium, 15));
+		standardChartTheme.setExtraLargeFont(CyFont.puHuiTi(CyFont.Medium, 20));
+		standardChartTheme.setRegularFont(CyFont.puHuiTi(CyFont.Medium, 15));
+		standardChartTheme.setLargeFont(CyFont.puHuiTi(CyFont.Medium, 15));
 		ChartFactory.setChartTheme(standardChartTheme);
 	}
 

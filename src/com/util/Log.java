@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
- * 日志类
+ * 日志处理类
  * 
  * @author xiebing
  *
@@ -45,6 +45,8 @@ public class Log {
 		case 3:
 			logger.debug(info);
 			break;
+			default:
+				break;
 		}
 	}
 }

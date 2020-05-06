@@ -1,7 +1,10 @@
 package com.server;
 
 import java.net.Socket;
-
+/**
+ * 套接字客户端管理类
+ * @author xiebing
+ */
 public class Client {
 	private String name;
 	private String ip;
@@ -10,7 +13,7 @@ public class Client {
 	public Client(String ip, int port) {
 		this.ip = ip;
 		this.port = port;
-		this.name = ip + "@" + String.valueOf(port);
+		this.name = ip + "@" + Integer.toString(port);
 	}
 
 	public Client(Socket socket) {

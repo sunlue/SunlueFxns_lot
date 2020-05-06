@@ -29,7 +29,9 @@ import com.util.Layer;
 import com.util.Util;
 import com.util.Layer.LayerCallback;
 import com.util.Layer.LayerConfirmCallback;
-
+/**
+ * @author xiebing
+ */
 public class Frame {
 
 	public static int tempX;
@@ -39,7 +41,6 @@ public class Frame {
 	public static int oldX;
 	public static int oldY;
 	public static JFrame jf = new JFrame();
-	public static Component WEST;
 	public static Component CENTER;
 
 	public static int width = 900;
@@ -73,7 +74,7 @@ public class Frame {
 		jf.add(Main.init(jf), BorderLayout.CENTER);
 		jf.setVisible(true);
 
-		Tray();
+		tray();
 
 		jf.addMouseListener(new MouseListener() {
 			@Override
@@ -126,7 +127,7 @@ public class Frame {
 		});
 	}
 
-	private void Tray() {
+	private void tray() {
 		if (java.awt.SystemTray.isSupported()) {
 			// 获取当前平台的系统托盘
 			SystemTray tray = SystemTray.getSystemTray();
@@ -159,8 +160,8 @@ public class Frame {
 
 						@Override
 						public void clickOkBtn() {
-							String DIR_PATH = System.getProperty("user.dir") + File.separator + "msg";
-							File file = new File(DIR_PATH);
+							String dirPath = System.getProperty("user.dir") + File.separator + "msg";
+							File file = new File(dirPath);
 							file.delete();
 							System.exit(0);
 						}

@@ -46,10 +46,10 @@ public class DeviceTree extends JTree {
 			for (int i = 0; i < rSet.size(); i++) {
 				String type = rSet.get(i).getString("type");
 				String ip = rSet.get(i).getString("ip");
-				if (type.equals("0")) {
+				if ("0".equals(type)) {
 					hikvisionTree.add(new DefaultMutableTreeNode(ip));
 				}
-				if (type.equals("1")) {
+				if ("1".equals(type)) {
 					dahuaTree.add(new DefaultMutableTreeNode(ip));
 				}
 				deviceList.put(ip, rSet.get(i));
@@ -83,7 +83,7 @@ public class DeviceTree extends JTree {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				TreePath node = rootTree.getSelectionPath();
-				JtreeChange(node);
+				jTreeChange(node);
 			}
 		});
 		// 设置树显示根节点句柄
@@ -92,13 +92,13 @@ public class DeviceTree extends JTree {
 		DeviceTree.expandAll(rootTree, new TreePath(root));
 	}
 
-	protected void JtreeChange(TreePath node) {
+	protected void jTreeChange(TreePath node) {
 		if (!rootTree.isSelectionEmpty()) {
-			String CurrNode = node.getLastPathComponent().toString();
-			JSONObject rSet = deviceList.get(CurrNode);
+			String currNode = node.getLastPathComponent().toString();
+			JSONObject rSet = deviceList.get(currNode);
 			if (rSet == null) {
 				try {
-					rSet = new com.action.Device().find("ip", CurrNode);
+					rSet = new com.action.Device().find("ip", currNode);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -116,35 +116,7 @@ public class DeviceTree extends JTree {
 
 				@Override
 				public void handle(JDialog dialog) {
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							Panel playPanel = Container.RealplayPanel;
-							new Hikvision(ip, port, username, password, playPanel).handle(new RealPlayCallback() {
-								@Override
-								public void success(Map<String, Object> data, NativeLong RealHandle) {
-									JPanel parantPanel = (JPanel) playPanel.getParent();
-									parantPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-									parantPanel.setName(ip);
-									playPanel.setName(ip);
-									JPanel setPanel = (JPanel) parantPanel.getComponent(0);
-									JLabel nameLabel = (JLabel) setPanel.getComponent(0);
-									nameLabel.setText(ip);
-									Container.console(parantPanel, RealHandle);
-								}
-
-								@Override
-								public void fail(NativeLong lPreviewHandle) {
-
-								}
-
-								@Override
-								public void fail() {
-									dialog.dispose();
-								}
-							});
-						}
-					}).start();
+					new DevionTreeChangeThread(ip, port, username, password, dialog).start();
 				}
 
 				@Override
@@ -215,4 +187,49 @@ public class DeviceTree extends JTree {
 		tree.expandPath(parent);
 	}
 
+}
+
+class DevionTreeChangeThread extends Thread {
+
+	private String ip;
+	private short port;
+	private String username;
+	private String password;
+	private JDialog dialog;
+
+	public DevionTreeChangeThread(String ip, short port, String username, String password, JDialog dialog) {
+		this.ip = ip;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+		this.dialog = dialog;
+	}
+
+	@Override
+	public void run() {
+		Panel playPanel = Container.RealPlayPanel;
+		new Hikvision(ip, port, username, password, playPanel).handle(new RealPlayCallback() {
+			@Override
+			public void success(Map<String, Object> data, NativeLong realHandle) {
+				JPanel parentPanel = (JPanel) playPanel.getParent();
+				parentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+				parentPanel.setName(ip);
+				playPanel.setName(ip);
+				JPanel setPanel = (JPanel) parentPanel.getComponent(0);
+				JLabel nameLabel = (JLabel) setPanel.getComponent(0);
+				nameLabel.setText(ip);
+				Container.console(parentPanel, realHandle);
+			}
+
+			@Override
+			public void fail(NativeLong lPreviewHandle) {
+
+			}
+
+			@Override
+			public void fail() {
+				dialog.dispose();
+			}
+		});
+	}
 }
