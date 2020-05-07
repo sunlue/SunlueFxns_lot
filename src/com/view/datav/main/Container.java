@@ -2,21 +2,22 @@ package com.view.datav.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
-import org.jfree.data.general.DefaultPieDataset;
+import javax.swing.Timer;
 
 import com.util.CyFont;
 import com.util.Util;
-import com.view.charts.Charts;
 import com.view.datav.DataV;
 
 /**
@@ -31,8 +32,8 @@ public class Container extends JPanel {
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		add(left(), BorderLayout.WEST);
-//		add(center(), BorderLayout.CENTER);
-//		add(right(), BorderLayout.EAST);
+		add(center(), BorderLayout.CENTER);
+		add(right(), BorderLayout.EAST);
 	}
 
 	private JPanel left() {
@@ -41,10 +42,10 @@ public class Container extends JPanel {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);
-		panel.setLayout(new GridLayout(3, 1));
+		panel.setLayout(new GridLayout(3, 1, 0, 5));
 		panel.add(new Env(width, height / 3));
 		panel.add(new FeedBack(width, height / 3));
-		panel.add(new Access (width, height / 3));
+		panel.add(new Access(width, height / 3));
 		return panel;
 	}
 
@@ -52,39 +53,54 @@ public class Container extends JPanel {
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		panel.setLayout(new BorderLayout());
-		panel.add(new RealTimeTourists("2580"));
-		DefaultPieDataset data = new DefaultPieDataset();
-		data.setValue("key", 10);
-		JPanel chartPanel = new Charts().title("MAP").pie(data, true, true, false).size(460, 460).handle();
-		panel.add(chartPanel);
+		panel.add(new RealTimeTourists("2580").handle());
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				new Timer(3000, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						RealTimeTourists.change(Integer.toString(Util.random(10000, 99999)));
+					}
+				}).start();
+			}
+		}).start();
+
 		return panel;
 	}
 
 	private JPanel right() {
-
+		int width = 460;
+		int height = ((int) DataV.screenSize.getHeight()) - 70;
 		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(460, 200));
+		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);
-		DefaultPieDataset data = new DefaultPieDataset();
-		data.setValue("key", 10);
-		JPanel chartPanel = new Charts().title("MAP").pie(data, true, true, false).size(460, 460).handle();
-		panel.add(chartPanel);
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
+		panel.add(new Traffic(width, 220));
+		panel.add(new Parking(width, 220));
+		panel.add(new Event(width, height - 680));
+		panel.add(new Monitor(width, 220));
 		return panel;
 	}
+
 	@Override
 	public void paintComponent(Graphics g) {
 		int x = 0, y = 0;
-		g.drawImage(Util.getImageIcon("bg.png"), x, y, getSize().width, getSize().height, this);
+		g.drawImage(Util.getImage("bg.png"), x, y, getSize().width, getSize().height, this);
 	}
 }
 
-class RealTimeTourists extends JPanel {
-	private static final long serialVersionUID = 1L;
+class RealTimeTourists {
+	private static String[] numArr;
+	private static JPanel panel= new JPanel();
 
 	public RealTimeTourists(String number) {
-		String[] numArr = calculate(number);
-		setOpaque(false);
-		setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+		numArr = calculate(number);
+	}
+
+	public Component handle() {
+		panel.setOpaque(false);
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		for (int i = 0; i < numArr.length; i++) {
 			JLabel label = new JLabel();
 			label.setForeground(Color.white);
@@ -104,7 +120,7 @@ class RealTimeTourists extends JPanel {
 				label.setBackground(new Color(250, 250, 250, 20));
 			}
 
-			add(label);
+			panel.add(label);
 		}
 		JLabel unit = new JLabel("人");
 		unit.setForeground(Color.white);
@@ -112,11 +128,19 @@ class RealTimeTourists extends JPanel {
 		unit.setHorizontalAlignment(SwingConstants.CENTER);
 		unit.setVerticalAlignment(SwingConstants.BOTTOM);
 		unit.setPreferredSize(new Dimension(20, 80));
-
-		add(unit);
+		panel.add(unit);
+		return panel;
 	}
 
-	private String[] calculate(String num) {
+	public static void change(String num) {
+		numArr = calculate(num);
+		for (int i = 0; i < numArr.length; i++) {
+			JLabel label=(JLabel) panel.getComponent(i);
+			label.setText(numArr[i]);
+		}
+	}
+
+	private static String[] calculate(String num) {
 		if (num.length() < 6) {
 			int size = 6 - num.length();
 			for (int i = 0; i < size; i++) {

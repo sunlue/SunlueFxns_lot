@@ -2,6 +2,7 @@ package com.view.datav;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -15,15 +16,15 @@ import javax.swing.JPanel;
 public class Cpanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	public Cpanel(JPanel mainPanel) {
+	public Cpanel(Component mainPanel) {
 		this.handle("", "", mainPanel);
 	}
 
-	public Cpanel(String tit, String subTit, JPanel mainPanel) {
+	public Cpanel(String tit, String subTit, Component mainPanel) {
 		this.handle(tit, subTit, mainPanel);
 	}
 
-	private void handle(String tit, String subTit, JPanel mainPanel) {
+	private void handle(String tit, String subTit, Component mainPanel) {
 		JLabel titleLabel = new JLabel(tit);
 		titleLabel.setForeground(Color.white);
 		titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 16));

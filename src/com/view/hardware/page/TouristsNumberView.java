@@ -54,7 +54,7 @@ public class TouristsNumberView extends JPanel {
 	public static Section ini = null;
 	public static int width = Frame.width - Module.width;
 	public static int height = Frame.height - Main.headerHeight;
-	public static int clientWidth = 188;
+	public static int clientWidth = 180;
 
 	public static JPanel headPanel;
 	public static JPanel clientPanel;

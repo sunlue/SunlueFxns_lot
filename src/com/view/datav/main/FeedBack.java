@@ -73,7 +73,6 @@ public class FeedBack extends JPanel {
 
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
 

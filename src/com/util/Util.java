@@ -165,13 +165,27 @@ public class Util {
 		}
 	}
 
+	public static Image getImage(String name) {
+		return new ImageIcon(Util.getResource(name)).getImage();
+	}
+
+	public static Image getImage(String name, int width, int height) {
+		return getImage(name, width, height, Image.SCALE_DEFAULT);
+	}
+
+	public static Image getImage(String name, int width, int height, int hints) {
+		ImageIcon imageIcon = new ImageIcon(Util.getResource(name));
+		imageIcon.setImage(imageIcon.getImage().getScaledInstance(width, height, hints));
+		return imageIcon.getImage();
+	}
+
 	/**
 	 * 获取图片图标
 	 *
 	 * @return
 	 */
-	public static Image getImageIcon(String name) {
-		return new ImageIcon(Util.getResource(name)).getImage();
+	public static ImageIcon getImageIcon(String name) {
+		return new ImageIcon(Util.getResource(name));
 	}
 
 	/**
@@ -196,7 +210,7 @@ public class Util {
 	 */
 
 	public static Image getLogoIcon() {
-		return Util.getImageIcon("logo_200_200.png");
+		return Util.getImage("logo_200_200.png");
 	}
 
 	/**
@@ -206,7 +220,7 @@ public class Util {
 	 */
 
 	public static Image getLogoIcon(String name) {
-		return Util.getImageIcon(name);
+		return Util.getImage(name);
 	}
 
 	/**
@@ -343,11 +357,12 @@ public class Util {
 
 	/**
 	 * 产生一个随机数
+	 * 
 	 * @param min
 	 * @param max
 	 * @return
 	 */
-	public static int random(int min,int max) {
+	public static int random(int min, int max) {
 		Random r = new Random();
 		int number = (r.nextInt(max - min + 1) + min);
 		return number;

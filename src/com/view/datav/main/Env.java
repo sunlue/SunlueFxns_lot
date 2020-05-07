@@ -48,7 +48,6 @@ public class Env extends JPanel {
 
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
 
@@ -114,7 +113,6 @@ public class Env extends JPanel {
 			cellPan.add(linePanel, BorderLayout.SOUTH);
 
 			new Thread(new Runnable() {
-
 				@Override
 				public void run() {
 					new Timer(3000, new ActionListener() {

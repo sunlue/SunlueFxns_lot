@@ -45,7 +45,6 @@ public class Access extends JPanel {
 
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new GridLayout(2, 1));
 		add(topPanel);
 		add(bottomPanel);

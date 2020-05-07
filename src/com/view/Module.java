@@ -12,7 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.util.Util;
+import com.view.datav.DataV;
 import com.view.monitor.Monitor;
+
 /**
  * @author xiebing
  */
@@ -39,6 +41,7 @@ public class Module {
 		menuPanel.setOpaque(false);
 		menuPanel.add(button("硬件", "hardware.png", "cut", "hardware"));
 		menuPanel.add(button("视频监控", "video_monitor.png", "open", "video_monitor"));
+		menuPanel.add(button("数据可视化", "video_monitor.png", "open", "data_v"));
 
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, Frame.height));
@@ -75,6 +78,9 @@ public class Module {
 						switch (page) {
 						case "video_monitor":
 							new Monitor();
+							break;
+						case "data_v":
+							new DataV();
 							break;
 						default:
 							break;
