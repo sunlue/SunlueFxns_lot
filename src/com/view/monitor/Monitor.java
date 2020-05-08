@@ -28,8 +28,8 @@ import javax.swing.border.SoftBevelBorder;
 
 import com.alibaba.fastjson.JSONObject;
 import com.util.Layer;
-import com.util.Util;
 import com.util.Layer.LayerLoadingCallback;
+import com.util.Util;
 import com.view.monitor.DeviceMgr.DeviceMgrCallback;
 import com.view.monitor.Monitor.InitThreadCallback;
 
@@ -121,6 +121,11 @@ public class Monitor extends JFrame {
 	}
 
 	public interface InitThreadCallback {
+		/**
+		 * 完成
+		 * 
+		 * @param splitPane
+		 */
 		void complete(JSplitPane splitPane);
 	}
 
@@ -157,8 +162,7 @@ class DevicePanel extends JPanel {
 					@Override
 					public void handle(JDialog dialog) {
 						// 启用一个线程来获取数据并渲染到视图，关闭加载层
-						new deviceMngThread(deviceMngBtn, addDeviceDialog, mngDeviceDialog, dialog).start();
-
+						new DeviceMngThread(deviceMngBtn, addDeviceDialog, mngDeviceDialog, dialog).start();
 					}
 
 					@Override
@@ -227,14 +231,14 @@ class InitThread extends Thread {
 	}
 }
 
-class deviceMngThread extends Thread {
+class DeviceMngThread extends Thread {
 
 	private JButton deviceMngBtn;
 	private JDialog addDeviceDialog;
 	private JDialog mngDeviceDialog;
 	private JDialog dialog;
 
-	public deviceMngThread(JButton deviceMngBtn, JDialog addDeviceDialog, JDialog mngDeviceDialog, JDialog dialog) {
+	public DeviceMngThread(JButton deviceMngBtn, JDialog addDeviceDialog, JDialog mngDeviceDialog, JDialog dialog) {
 		this.deviceMngBtn = deviceMngBtn;
 		this.addDeviceDialog = addDeviceDialog;
 		this.mngDeviceDialog = mngDeviceDialog;

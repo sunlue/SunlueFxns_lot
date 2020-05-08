@@ -26,9 +26,10 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.util.Layer;
-import com.util.Util;
 import com.util.Layer.LayerCallback;
 import com.util.Layer.LayerConfirmCallback;
+import com.util.Util;
+
 /**
  * @author xiebing
  */
@@ -131,16 +132,12 @@ public class Frame {
 		if (java.awt.SystemTray.isSupported()) {
 			// 获取当前平台的系统托盘
 			SystemTray tray = SystemTray.getSystemTray();
-
 			// 加载一个图片用于托盘图标的显示
 			Image image = Util.getLogoIcon("logo_16_16.png");
-
 			// 创建点击图标时的弹出菜单
 			PopupMenu popupMenu = new PopupMenu();
-
 			MenuItem openItem = new MenuItem("打开");
 			MenuItem exitItem = new MenuItem("退出");
-
 			openItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -176,16 +173,12 @@ public class Frame {
 					});
 				}
 			});
-
 			popupMenu.add(openItem);
 			popupMenu.add(exitItem);
-
 			// 创建一个托盘图标
 			TrayIcon trayIcon = new TrayIcon(image, jf.getTitle(), popupMenu);
-
 			// 托盘图标自适应尺寸
 			trayIcon.setImageAutoSize(true);
-
 			trayIcon.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -214,7 +207,6 @@ public class Frame {
 					}
 				}
 			});
-
 			// 添加托盘图标到系统托盘
 			try {
 				tray.add(trayIcon);
@@ -225,6 +217,5 @@ public class Frame {
 		} else {
 			System.out.println("当前系统不支持系统托盘");
 		}
-
 	}
 }

@@ -2,7 +2,6 @@ package com.view.datav.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -11,12 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import com.util.CyFont;
 import com.util.Util;
 import com.view.datav.DataV;
 
@@ -29,7 +25,7 @@ public class Container extends JPanel {
 
 	public Container() {
 		setBackground(new Color(7, 10, 85));
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout(5, 0));
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		add(left(), BorderLayout.WEST);
 		add(center(), BorderLayout.CENTER);
@@ -50,22 +46,20 @@ public class Container extends JPanel {
 	}
 
 	private JPanel center() {
+		JPanel flop = new RealTimeTourists("2580").handle();
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.setLayout(new BorderLayout());
-		panel.add(new RealTimeTourists("2580").handle());
-		new Thread(new Runnable() {
+		panel.setLayout(new BorderLayout(0, 5));
+		panel.add(flop, BorderLayout.NORTH);
+		panel.add(new Map(), BorderLayout.CENTER);
+		panel.add(new TouristsFrom(), BorderLayout.SOUTH);
+		new Timer(1000, new ActionListener() {
 			@Override
-			public void run() {
-				new Timer(3000, new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						RealTimeTourists.change(Integer.toString(Util.random(10000, 99999)));
-					}
-				}).start();
+			public void actionPerformed(ActionEvent e) {
+				String number = Integer.toString(Util.random(10000, 99999));
+				new ChangeTourists(flop, number).start();
 			}
 		}).start();
-
 		return panel;
 	}
 
@@ -88,67 +82,4 @@ public class Container extends JPanel {
 		int x = 0, y = 0;
 		g.drawImage(Util.getImage("bg.png"), x, y, getSize().width, getSize().height, this);
 	}
-}
-
-class RealTimeTourists {
-	private static String[] numArr;
-	private static JPanel panel= new JPanel();
-
-	public RealTimeTourists(String number) {
-		numArr = calculate(number);
-	}
-
-	public Component handle() {
-		panel.setOpaque(false);
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-		for (int i = 0; i < numArr.length; i++) {
-			JLabel label = new JLabel();
-			label.setForeground(Color.white);
-			label.setText(numArr[i]);
-			if (!Character.isDigit(numArr[i].charAt(0))) {
-				label.setPreferredSize(new Dimension(20, 80));
-				label.setOpaque(false);
-				label.setFont(CyFont.puHuiTi(CyFont.Medium, 48));
-				label.setHorizontalAlignment(SwingConstants.CENTER);
-				label.setVerticalAlignment(SwingConstants.BOTTOM);
-			} else {
-				label.setPreferredSize(new Dimension(66, 80));
-				label.setOpaque(true);
-				label.setHorizontalAlignment(SwingConstants.CENTER);
-				label.setVerticalAlignment(SwingConstants.CENTER);
-				label.setFont(CyFont.puHuiTi(CyFont.Medium, 66));
-				label.setBackground(new Color(250, 250, 250, 20));
-			}
-
-			panel.add(label);
-		}
-		JLabel unit = new JLabel("人");
-		unit.setForeground(Color.white);
-		unit.setFont(CyFont.puHuiTi(CyFont.Medium, 14));
-		unit.setHorizontalAlignment(SwingConstants.CENTER);
-		unit.setVerticalAlignment(SwingConstants.BOTTOM);
-		unit.setPreferredSize(new Dimension(20, 80));
-		panel.add(unit);
-		return panel;
-	}
-
-	public static void change(String num) {
-		numArr = calculate(num);
-		for (int i = 0; i < numArr.length; i++) {
-			JLabel label=(JLabel) panel.getComponent(i);
-			label.setText(numArr[i]);
-		}
-	}
-
-	private static String[] calculate(String num) {
-		if (num.length() < 6) {
-			int size = 6 - num.length();
-			for (int i = 0; i < size; i++) {
-				num = "0" + num;
-			}
-		}
-		num = num.substring(0, 3) + "," + num.substring(3, 6);
-		return num.split("");
-	}
-
 }

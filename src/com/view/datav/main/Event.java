@@ -15,8 +15,10 @@ import javax.swing.table.DefaultTableModel;
 
 import com.util.CyFont;
 import com.view.datav.Cpanel;
+
 /**
  * 停车场数据
+ * 
  * @author xiebing
  *
  */
@@ -32,7 +34,6 @@ public class Event extends JPanel {
 		Cpanel panel = new Cpanel("事件处理", "parking lot", scrollPane);
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-//		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
 	}
@@ -53,6 +54,7 @@ public class Event extends JPanel {
 		DefaultTableCellRenderer tableRender = new DefaultTableCellRenderer() {
 			private static final long serialVersionUID = 1L;
 
+			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 					boolean hasFocus, int row, int column) {
 				table.setOpaque(false);
@@ -74,7 +76,7 @@ public class Event extends JPanel {
 		table.setDefaultRenderer(Object.class, tableRender);
 		table.setBorder(BorderFactory.createLineBorder(new Color(153, 186, 240), 1));
 
-		//设置默认表头大小为0来达到隐藏表头的目的
+		// 设置默认表头大小为0来达到隐藏表头的目的
 		table.getTableHeader().setPreferredSize(new Dimension(0, 0));
 
 		table.getColumnModel().getColumn(1).setMaxWidth(62);
@@ -83,8 +85,8 @@ public class Event extends JPanel {
 		table.getColumnModel().getColumn(4).setMaxWidth(90);
 
 		DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
-		//重新设置表头
-		tableModel.addRow(new Object[] { "停车场", "共计", "已使用", "未使用", "使用占比" });
+		// 重新设置表头
+		tableModel.addRow(new Object[] { "事件地点", "共计", "已使用", "未使用", "使用占比" });
 		tableModel.addRow(new Object[] { "竹艺村生态停车场", "50", "30", "20", "60%" });
 		tableModel.addRow(new Object[] { "竹艺村生态停车场", "50", "30", "20", "60%" });
 		tableModel.addRow(new Object[] { "竹艺村生态停车场", "50", "30", "20", "60%" });

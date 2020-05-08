@@ -35,13 +35,12 @@ public class Traffic extends JPanel {
 		mainPanel.setLayout(new GridLayout(1, 2, 10, 0));
 		mainPanel.add(leftPanel());
 		mainPanel.add(rightPanel());
-//		mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-//
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+
 		Cpanel panel = new Cpanel("当日车流量", "Daily traffic flow", mainPanel);
 
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-//		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
 	}
@@ -49,15 +48,17 @@ public class Traffic extends JPanel {
 	private Component leftPanel() {
 		JLabel icon = new JLabel() {
 			private static final long serialVersionUID = 1L;
+
+			@Override
 			protected void paintComponent(Graphics g) {
 				ImageIcon icon = Util.getImageIcon("Traffic_visit.png");
-				int width = icon.getIconWidth()*getHeight() / icon.getIconHeight();
-				g.drawImage(icon.getImage(), (getWidth()-width)/2, 0, width, getHeight(), icon.getImageObserver());
+				int width = icon.getIconWidth() * getHeight() / icon.getIconHeight();
+				g.drawImage(icon.getImage(), (getWidth() - width) / 2, 0, width, getHeight(), icon.getImageObserver());
 			}
 		};
 
 		JLabel label = new JLabel();
-		label.setText("今日到访："+Util.random(0, 2020));
+		label.setText("今日到访：" + Util.random(0, 2020));
 		label.setForeground(Color.WHITE);
 		label.setIconTextGap(10);
 		label.setFont(new Font("微软雅黑", Font.BOLD, 16));
@@ -78,15 +79,17 @@ public class Traffic extends JPanel {
 	private Component rightPanel() {
 		JLabel icon = new JLabel() {
 			private static final long serialVersionUID = 1L;
+
+			@Override
 			protected void paintComponent(Graphics g) {
 				ImageIcon icon = Util.getImageIcon("Traffic_return.png");
-				int width = icon.getIconWidth()*getHeight() / icon.getIconHeight();
-				g.drawImage(icon.getImage(), (getWidth()-width)/2, 0, width, getHeight(), icon.getImageObserver());
+				int width = icon.getIconWidth() * getHeight() / icon.getIconHeight();
+				g.drawImage(icon.getImage(), (getWidth() - width) / 2, 0, width, getHeight(), icon.getImageObserver());
 			}
 		};
 
 		JLabel label = new JLabel();
-		label.setText("今日返程："+Util.random(0, 2020));
+		label.setText("今日返程：" + Util.random(0, 2020));
 		label.setForeground(Color.WHITE);
 		label.setIconTextGap(10);
 		label.setFont(new Font("微软雅黑", Font.BOLD, 16));

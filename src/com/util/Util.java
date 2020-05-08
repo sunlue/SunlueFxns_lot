@@ -242,10 +242,12 @@ public class Util {
 		String md5code = new BigInteger(1, secretBytes).toString(16);
 		int length = 32 - md5code.length();
 		// 如果生成数字未满32位，�?要前面补0
+		StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < length; i++) {
-			md5code = "0" + md5code;
+			stringBuilder.append("0");
 		}
-		return md5code;
+		stringBuilder.append(md5code);
+		return stringBuilder.toString();
 	}
 
 	/**

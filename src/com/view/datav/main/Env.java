@@ -61,7 +61,7 @@ public class Env extends JPanel {
 
 		ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 
-		Map<String, Object> pm25 = new HashMap<String, Object>();
+		Map<String, Object> pm25 = new HashMap<String, Object>(5);
 		pm25.put("txt", "<html><body><p>PM2.5</p><p>细颗粒</p></body></html>");
 		pm25.put("txtColor", new Color(255, 255, 255));
 		pm25.put("num", "114");
@@ -69,7 +69,7 @@ public class Env extends JPanel {
 		pm25.put("bottomColor", new Color(255, 189, 0));
 		data.add(pm25);
 
-		Map<String, Object> pm10 = new HashMap<String, Object>();
+		Map<String, Object> pm10 = new HashMap<String, Object>(5);
 		pm10.put("txt", "<html><body><p>PM10</p><p>可吸入颗粒</p></body></html>");
 		pm10.put("txtColor", new Color(255, 255, 255));
 		pm10.put("num", "0");
@@ -77,21 +77,21 @@ public class Env extends JPanel {
 		pm10.put("bottomColor", new Color(255, 237, 47));
 		data.add(pm10);
 
-		Map<String, Object> NO2 = new HashMap<String, Object>();
-		NO2.put("txt", "<html><body><p>NO2</p><p>二氧化硫</p></body></html>");
-		NO2.put("txtColor", new Color(255, 255, 255));
-		NO2.put("num", "58");
-		NO2.put("numColor", new Color(7, 219, 255));
-		NO2.put("bottomColor", new Color(43, 238, 155));
-		data.add(NO2);
+		Map<String, Object> No2 = new HashMap<String, Object>(5);
+		No2.put("txt", "<html><body><p>NO2</p><p>二氧化硫</p></body></html>");
+		No2.put("txtColor", new Color(255, 255, 255));
+		No2.put("num", "58");
+		No2.put("numColor", new Color(7, 219, 255));
+		No2.put("bottomColor", new Color(43, 238, 155));
+		data.add(No2);
 
-		Map<String, Object> SO2 = new HashMap<String, Object>();
-		SO2.put("txt", "<html><body><p>SO2</p><p>二氧化碳</p></body></html>");
-		SO2.put("txtColor", new Color(255, 255, 255));
-		SO2.put("num", "20");
-		SO2.put("numColor", new Color(7, 219, 255));
-		SO2.put("bottomColor", new Color(121, 1, 204));
-		data.add(SO2);
+		Map<String, Object> So2 = new HashMap<String, Object>(5);
+		So2.put("txt", "<html><body><p>SO2</p><p>二氧化碳</p></body></html>");
+		So2.put("txtColor", new Color(255, 255, 255));
+		So2.put("num", "20");
+		So2.put("numColor", new Color(7, 219, 255));
+		So2.put("bottomColor", new Color(121, 1, 204));
+		data.add(So2);
 
 		for (int i = 0; i < data.size(); i++) {
 			Map<String, Object> item = data.get(i);
@@ -112,17 +112,7 @@ public class Env extends JPanel {
 			cellPan.add(numLabel, BorderLayout.EAST);
 			cellPan.add(linePanel, BorderLayout.SOUTH);
 
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					new Timer(3000, new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							numLabel.setText(Integer.toString(Util.random(80, 120)));
-						}
-					}).start();
-				}
-			}).start();
+			new ChangeNumEnv(numLabel).start();
 
 			rightPanel.add(cellPan);
 		}
@@ -141,12 +131,9 @@ public class Env extends JPanel {
 		aqiNumLabel.setFont(new Font("微软雅黑", Font.BOLD, 60));
 		aqiNumLabel.setVerticalAlignment(SwingConstants.CENTER);
 		aqiNumLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		new Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				aqiNumLabel.setText(Integer.toString(Util.random(80, 120)));
-			}
-		}).start();
+
+		new ChangeAqiEnv(aqiNumLabel).start();
+
 		JLabel aqiTxtLabel = new JLabel("AQI 轻度污染");
 		aqiTxtLabel.setForeground(Color.white);
 		aqiTxtLabel.setFont(new Font("微软雅黑", Font.BOLD, 14));
@@ -183,4 +170,40 @@ public class Env extends JPanel {
 		return leftPanel;
 	}
 
+}
+
+class ChangeAqiEnv extends Thread {
+	private JLabel aqiNumLabel;
+
+	public ChangeAqiEnv(JLabel aqiNumLabel) {
+		this.aqiNumLabel = aqiNumLabel;
+	}
+
+	@Override
+	public void run() {
+		new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				aqiNumLabel.setText(Integer.toString(Util.random(80, 120)));
+			}
+		}).start();
+	}
+}
+
+class ChangeNumEnv extends Thread {
+	private JLabel numLabel;
+
+	public ChangeNumEnv(JLabel numLabel) {
+		this.numLabel = numLabel;
+	}
+
+	@Override
+	public void run() {
+		new Timer(3000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				numLabel.setText(Integer.toString(Util.random(80, 120)));
+			}
+		}).start();
+	}
 }

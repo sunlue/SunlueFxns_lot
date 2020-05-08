@@ -17,11 +17,37 @@ public class Cpanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	public Cpanel(Component mainPanel) {
-		this.handle("", "", mainPanel);
+		this.handle(mainPanel);
+	}
+
+	public Cpanel(String tit, Component mainPanel) {
+		this.handle(tit, mainPanel);
 	}
 
 	public Cpanel(String tit, String subTit, Component mainPanel) {
 		this.handle(tit, subTit, mainPanel);
+	}
+
+	private void handle(Component mainPanel) {
+		setBorder(BorderFactory.createLineBorder(new Color(145, 233, 255, 80), 2, true));
+		setBackground(new Color(7, 10, 85));
+		setLayout(new BorderLayout());
+		add(mainPanel, BorderLayout.CENTER);
+	}
+
+	private void handle(String tit, Component mainPanel) {
+		JLabel titleLabel = new JLabel(tit);
+		titleLabel.setForeground(Color.white);
+		titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 16));
+		titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+		JPanel headerPanel = new JPanel();
+		headerPanel.setOpaque(false);
+		headerPanel.add(titleLabel);
+		setBorder(BorderFactory.createLineBorder(new Color(145, 233, 255, 80), 2, true));
+		setBackground(new Color(7, 10, 85));
+		setLayout(new BorderLayout());
+		add(headerPanel, BorderLayout.NORTH);
+		add(mainPanel, BorderLayout.CENTER);
 	}
 
 	private void handle(String tit, String subTit, Component mainPanel) {
@@ -39,7 +65,6 @@ public class Cpanel extends JPanel {
 		headerPanel.add(titleLabel);
 		headerPanel.add(subTitLabel);
 		setBorder(BorderFactory.createLineBorder(new Color(145, 233, 255, 80), 2, true));
-//		setOpaque(false);
 		setBackground(new Color(7, 10, 85));
 		setLayout(new BorderLayout());
 		add(headerPanel, BorderLayout.NORTH);

@@ -16,6 +16,11 @@ import com.sun.jna.ptr.IntByReference;
 import com.util.Layer;
 import com.view.monitor.DeviceTree;
 
+/**
+ * 
+ * @author xiebing
+ *
+ */
 public class Hikvision {
 	/**
 	 * 通道树节点数目
@@ -25,16 +30,26 @@ public class Hikvision {
 	 * 通道树根节点
 	 */
 	static DefaultMutableTreeNode mDeviceHikvisionRoot = DeviceTree.liveTree;
-	
+
 	private String ip;
 	private short port;
 	private String username;
 	private String password;
 	private Panel playPanel;
+	private Boolean isCreateTree = false;
 
 	public Hikvision() {
 	}
 
+	/**
+	 * 初始化海康类
+	 * 
+	 * @param ip        设备地址
+	 * @param port      设备端口
+	 * @param username  设备用户名
+	 * @param password  设备密码
+	 * @param playPanel 播放窗口
+	 */
 	public Hikvision(String ip, short port, String username, String password, Panel playPanel) {
 		this.ip = ip;
 		this.port = port;
@@ -43,6 +58,30 @@ public class Hikvision {
 		this.playPanel = playPanel;
 	}
 
+	/**
+	 * 初始化海康类
+	 * 
+	 * @param ip           设备地址
+	 * @param port         设备端口
+	 * @param username     设备用户名
+	 * @param password     设备密码
+	 * @param playPanel    播放窗口
+	 * @param isCreateTree 是否创建树
+	 */
+	public Hikvision(String ip, short port, String username, String password, Panel playPanel, Boolean isCreateTree) {
+		this.ip = ip;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+		this.playPanel = playPanel;
+		this.isCreateTree = isCreateTree;
+	}
+
+	/**
+	 * 海康威视SDK初始化 设备鉴权、预览
+	 * 
+	 * @param callback
+	 */
 	public void handle(RealPlayCallback callback) {
 		boolean initSuc = HCNetSDK.INSTANCE.NET_DVR_Init();
 		if (initSuc != true) {
@@ -50,7 +89,7 @@ public class Hikvision {
 			Layer.alert("海康威视SDK初始化失败", 180, 140);
 			return;
 		}
-		new HikvisionHandleThread(ip,port,username,password,playPanel,callback).start();
+		new HikvisionHandleThread(ip, port, username, password, playPanel, isCreateTree, callback).start();
 	}
 
 	/**
@@ -91,7 +130,7 @@ public class Hikvision {
 					mHikvisionTreeNodeNum++;
 				}
 			}
-			for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++){
+			for (int iChannum = 0; iChannum < HCNetSDK.MAX_IP_CHANNEL; iChannum++) {
 				if (mStrIpParaCfg.struIPChanInfo[iChannum].byEnable == 1) {
 					int channum = (iChannum + mDeviceInfo.byStartChan);
 					DefaultMutableTreeNode newNode = new DefaultMutableTreeNode("I@" + sDvrIp + ":" + channum);
@@ -107,28 +146,32 @@ public class Hikvision {
 
 }
 
-class HikvisionHandleThread extends Thread{
-	
-	
+class HikvisionHandleThread extends Thread {
+
 	private String ip;
 	private short port;
 	private String username;
 	private String password;
 	private Panel playPanel;
+	private Boolean isCreateTree;
 	private RealPlayCallback callback;
 
 	public HikvisionHandleThread(String ip, short port, String username, String password, Panel playPanel,
-			RealPlayCallback callback) {
-		this.ip=ip;
-		this.port=port;
-		this.username=username;
-		this.password=password;
-		this.playPanel=playPanel;
-		this.callback=callback;
+			Boolean isCreateTree, RealPlayCallback callback) {
+		this.ip = ip;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+		this.playPanel = playPanel;
+		this.isCreateTree = isCreateTree;
+		this.callback = callback;
 	}
 
 	@Override
 	public void run() {
+		/**
+		 * 海康威视设备登录
+		 */
 		new Login(ip, port, username, password).handle(new LoginCallback() {
 			@Override
 			public void fail(int errCode) {
@@ -138,7 +181,9 @@ class HikvisionHandleThread extends Thread{
 
 			@Override
 			public void success(NET_DVR_DEVICEINFO_V30 mDeviceInfo, NativeLong userId) {
-				Hikvision.createDeviceTree(ip, userId, mDeviceInfo);
+				if (isCreateTree) {
+					Hikvision.createDeviceTree(ip, userId, mDeviceInfo);
+				}
 				new RealPlay(ip, userId, 1, playPanel).handle(callback);
 			}
 		});

@@ -1,7 +1,6 @@
 package com.view.datav.main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -9,12 +8,17 @@ import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import com.server.monitor.hikvision.Hikvision;
+import com.server.monitor.hikvision.RealPlay;
+import com.server.monitor.hikvision.RealPlay.RealPlayCallback;
+import com.sun.jna.NativeLong;
 import com.util.CyFont;
 import com.view.datav.Cpanel;
 
@@ -34,16 +38,15 @@ public class Monitor extends JPanel implements MouseListener {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(width, height));
 		mainPanel.setOpaque(false);
-		mainPanel.setLayout(new GridLayout(1,2,10,0));
+		mainPanel.setLayout(new GridLayout(1, 2, 10, 0));
 		mainPanel.add(monitorPanel("1"));
 		mainPanel.add(monitorPanel("2"));
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 16, 10));
-		
+
 		Cpanel panel = new Cpanel("视频监控", "Daily traffic flow", mainPanel);
 
 		setOpaque(false);
 		setPreferredSize(new Dimension(width, height));
-//		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
 
@@ -55,66 +58,92 @@ public class Monitor extends JPanel implements MouseListener {
 		cellPanel.setName(name);
 		cellPanel.setOpaque(false);
 
-		JLabel nameLabel = new JLabel();
-		nameLabel.setForeground(Color.white);
-		nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-		JPanel setPanel = new JPanel();
-		setPanel.setLayout(new BorderLayout());
-		setPanel.setBackground(new Color(51, 51, 51));
-//		setPanel.setOpaque(false);
-		setPanel.add(nameLabel, BorderLayout.WEST);
-		
 		JLabel label = new JLabel("<html><body>暂无视频源或<br>没有视频信号<body></html>");
 		label.setFont(CyFont.puHuiTi(CyFont.Medium, 12));
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setVerticalAlignment(SwingConstants.CENTER);
-		label.setBackground(Color.white);
 		label.setOpaque(false);
-		
-		Panel palyPanel = new Panel();
-		palyPanel.setCursor(new Cursor(12));
-		palyPanel.setName(name);
-		palyPanel.setLayout(new BorderLayout());
-		palyPanel.add(label, BorderLayout.CENTER);
-		palyPanel.addMouseListener(this);
-		cellPanel.add(setPanel, BorderLayout.NORTH);
-		cellPanel.add(palyPanel, BorderLayout.CENTER);
+
+		Panel playPanel = new Panel();
+		playPanel.setCursor(new Cursor(12));
+		playPanel.setName(name);
+		playPanel.setLayout(new BorderLayout());
+		playPanel.add(label, BorderLayout.CENTER);
+		playPanel.addMouseListener(this);
+		cellPanel.add(playPanel, BorderLayout.CENTER);
+
+		String ip = "192.168.110.206";
+		short port = 8000;
+		String username = "admin";
+		String password = "DGANFN";
+
+		new PlayMonitorVideo(ip, port, username, password, playPanel).start();
 		return cellPanel;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (e.getClickCount() == 2) {
+			RealPlay.fullScreen(e);
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	
 
+	}
 
 }
 
+class PlayMonitorVideo extends Thread {
+
+	private Panel playPanel;
+	private String ip;
+	private short port;
+	private String username;
+	private String password;
+
+	public PlayMonitorVideo(String ip, short port, String username, String password, Panel playPanel) {
+		this.ip = ip;
+		this.port = port;
+		this.username = username;
+		this.password = password;
+		this.playPanel = playPanel;
+	}
+
+	@Override
+	public void run() {
+		JLabel label = (JLabel) playPanel.getComponent(0);
+		label.setText("正在执行中");
+		new Hikvision(ip, port, username, password, playPanel).handle(new RealPlayCallback() {
+			@Override
+			public void success(Map<String, Object> data, NativeLong realHandle) {
+				playPanel.setName(ip);
+			}
+
+			@Override
+			public void fail(NativeLong lPreviewHandle) {
+
+			}
+
+			@Override
+			public void fail() {
+			}
+		});
+	}
+}

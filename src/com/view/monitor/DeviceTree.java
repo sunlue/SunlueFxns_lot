@@ -27,6 +27,11 @@ import com.sun.jna.NativeLong;
 import com.util.Layer;
 import com.util.Layer.LayerLoadingCallback;
 
+/**
+ * 
+ * @author xiebing
+ *
+ */
 public class DeviceTree extends JTree {
 	private static final long serialVersionUID = 1L;
 	public static JTree rootTree;
@@ -208,7 +213,7 @@ class DevionTreeChangeThread extends Thread {
 	@Override
 	public void run() {
 		Panel playPanel = Container.RealPlayPanel;
-		new Hikvision(ip, port, username, password, playPanel).handle(new RealPlayCallback() {
+		new Hikvision(ip, port, username, password, playPanel, true).handle(new RealPlayCallback() {
 			@Override
 			public void success(Map<String, Object> data, NativeLong realHandle) {
 				JPanel parentPanel = (JPanel) playPanel.getParent();

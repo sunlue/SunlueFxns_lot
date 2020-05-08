@@ -2,6 +2,11 @@ package com.server.monitor.hikvision;
 
 import com.alibaba.fastjson.JSONObject;
 
+/**
+ * 
+ * @author xiebing
+ *
+ */
 public class Error {
 
 	JSONObject hikvisionMsg = new JSONObject();
