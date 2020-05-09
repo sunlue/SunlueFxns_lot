@@ -13,7 +13,6 @@ import com.server.monitor.hikvision.RealPlay.RealPlayCallback;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import com.util.Layer;
 import com.view.monitor.DeviceTree;
 
 /**
@@ -85,8 +84,7 @@ public class Hikvision {
 	public void handle(RealPlayCallback callback) {
 		boolean initSuc = HCNetSDK.INSTANCE.NET_DVR_Init();
 		if (initSuc != true) {
-			callback.fail();
-			Layer.alert("海康威视SDK初始化失败", 180, 140);
+			callback.fail("海康威视SDK初始化失败");
 			return;
 		}
 		new HikvisionHandleThread(ip, port, username, password, playPanel, isCreateTree, callback).start();
@@ -175,8 +173,7 @@ class HikvisionHandleThread extends Thread {
 		new Login(ip, port, username, password).handle(new LoginCallback() {
 			@Override
 			public void fail(int errCode) {
-				callback.fail();
-				Layer.alert("注册失败【" + new Error().hikvision(errCode) + "】", 200, 140);
+				callback.fail("注册失败【" + new Error().hikvision(errCode) + "】");
 			}
 
 			@Override

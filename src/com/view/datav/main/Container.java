@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.util.Util;
-import com.view.datav.DataV;
 
 /**
  * @author xiebing
@@ -23,18 +23,21 @@ public class Container extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	int leftWidth = 460;
+	int rightWidth = 460;
+	int centerWidth = Toolkit.getDefaultToolkit().getScreenSize().width - rightWidth - leftWidth - 100;
+	int height = Toolkit.getDefaultToolkit().getScreenSize().height - 70;
+
 	public Container() {
 		setBackground(new Color(7, 10, 85));
 		setLayout(new BorderLayout(5, 0));
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		add(left(), BorderLayout.WEST);
-		add(center(), BorderLayout.CENTER);
-		add(right(), BorderLayout.EAST);
+		add(left(leftWidth, height), BorderLayout.WEST);
+		add(center(centerWidth, height), BorderLayout.CENTER);
+		add(right(rightWidth, height), BorderLayout.EAST);
 	}
 
-	private JPanel left() {
-		int width = 460;
-		int height = ((int) DataV.screenSize.getHeight()) - 70;
+	private JPanel left(int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);
@@ -45,14 +48,14 @@ public class Container extends JPanel {
 		return panel;
 	}
 
-	private JPanel center() {
+	private JPanel center(int width, int height) {
 		JPanel flop = new RealTimeTourists("2580").handle();
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		panel.setLayout(new BorderLayout(0, 5));
 		panel.add(flop, BorderLayout.NORTH);
-		panel.add(new Map(), BorderLayout.CENTER);
-		panel.add(new TouristsFrom(), BorderLayout.SOUTH);
+		panel.add(new Map(width, height - 420), BorderLayout.CENTER);
+		panel.add(new TouristsFrom(width, 420), BorderLayout.SOUTH);
 		new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -63,9 +66,7 @@ public class Container extends JPanel {
 		return panel;
 	}
 
-	private JPanel right() {
-		int width = 460;
-		int height = ((int) DataV.screenSize.getHeight()) - 70;
+	private JPanel right(int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);

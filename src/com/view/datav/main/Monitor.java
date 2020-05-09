@@ -89,7 +89,11 @@ public class Monitor extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getClickCount() == 2) {
-			RealPlay.fullScreen(e);
+			try {
+				RealPlay.fullScreen(e);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -137,12 +141,15 @@ class PlayMonitorVideo extends Thread {
 			}
 
 			@Override
-			public void fail(NativeLong lPreviewHandle) {
+			public void fail(String errMsg) {
+				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void fail() {
+			public void fail(String errMsg, int width, int height) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 	}

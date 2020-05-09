@@ -19,6 +19,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
@@ -35,6 +38,7 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PieLabelLinkStyle;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
@@ -59,11 +63,14 @@ import org.jfree.data.time.TimeSeries;
  */
 
 public class Echarts {
-	private static String title = "";
+
+	private String title = "";
 	private int width = 200;
 	private int height = 200;
 	private static JFreeChart chart = null;
+	private static PiePlot piePlot = null;
 
+	/******************** start 饼图 *********************/
 	/**
 	 * 创建饼图
 	 * 
@@ -72,43 +79,195 @@ public class Echarts {
 	 * @return
 	 */
 	public Echarts pie(String[] categories, Object[] datas) {
+		pie(categories, datas, true, true, false);
+		return this;
+	}
+
+	/**
+	 * 创建饼图
+	 * 
+	 * @param categories 类别
+	 * @param datas      数值
+	 * @param legend     是否显示图例
+	 * @param tooltips   是否生成工具提示
+	 * @param urls       是否生成链接
+	 * @return
+	 */
+	public Echarts pie(String[] categories, Object[] datas, boolean legend, boolean tooltips, boolean urls) {
 		DefaultPieDataset dataset = Util.createDefaultPieDataset(categories, datas);
-		chart = ChartFactory.createPieChart(title, dataset);
+		chart = ChartFactory.createPieChart(title, dataset, legend, tooltips, urls);
 		// 设置边界线条不可见
 		chart.setBorderVisible(false);
 		// 设置背景颜色
 		chart.setBackgroundPaint(null);
 		// 设置背景图片透明度
 		chart.setBackgroundImageAlpha(0.0f);
+		/****** 标注 ******/
+		if (chart.getLegend() != null) {
+			// 设置标注边框颜色
+			chart.getLegend().setFrame(new BlockBorder(Color.RED));
+			// 设置标注无边框
+			chart.getLegend().setBorder(0, 0, 0, 0);
+			// 设置标注背景色
+			chart.getLegend().setBackgroundPaint(null);
+			// 设置标注字体颜色
+			chart.getLegend().setItemPaint(new Color(255, 255, 255));
+			// 标注位于右侧
+			chart.getLegend().setPosition(RectangleEdge.LEFT);
+		}
+
+		// 得到绘图区
+		piePlot = (PiePlot) chart.getPlot();
+		// 取出片区显示
+//		piePlot.setExplodePercent("四川", 0.1);
+		// 设置分类标签的字体颜色
+		piePlot.setLabelPaint(Color.WHITE);
+		// 设置分类标签的背景颜色
+		piePlot.setLabelLinkPaint(Color.WHITE);
 		/****** 数据区 ******/
 		// 设置数据区的背景透明度，范围在0.0～1.0间
-		chart.getPlot().setBackgroundAlpha(0.0f);
+		piePlot.setBackgroundAlpha(0.0f);
 		// 设置数据区的边界线条颜色
-		chart.getPlot().setOutlinePaint(null);
-
-		/****** 标注 ******/
-		// 设置标注边框颜色
-		chart.getLegend().setFrame(new BlockBorder(Color.RED));
-		// 设置标注无边框
-		chart.getLegend().setBorder(0, 0, 0, 0);
-		// 设置标注背景色
-		chart.getLegend().setBackgroundPaint(null);
-		// 设置标注字体颜色
-		chart.getLegend().setItemPaint(new Color(255, 255, 255));
-		// 标注位于右侧
-		chart.getLegend().setPosition(RectangleEdge.LEFT);
-		PiePlot plot = (PiePlot) chart.getPlot();
-		// 设置分类标签的字体颜色
-		plot.setLabelPaint(Color.WHITE);
-		// 设置分类标签的背景颜色
-		plot.setLabelLinkPaint(Color.WHITE);
+		piePlot.setOutlinePaint(null);
 		// 设置抗锯齿,防止字体显示不清楚
 		Util.setAntiAlias(chart);
 		// 对柱子进行渲染[创建不同图形]
 		Util.setPieRender(chart.getPlot());
+		return this;
+	}
+
+	/**
+	 * 获取饼图绘图区
+	 * 
+	 * @return
+	 */
+	public static PiePlot getPiePlot() {
+		return piePlot;
+	}
+
+	/**
+	 * 设置饼图数据
+	 * 
+	 * @param categories
+	 * @param datas
+	 */
+	public static void setPieData(String[] categories, Object[] datas) {
+		DefaultPieDataset dataset = Util.createDefaultPieDataset(categories, datas);
+		piePlot.setDataset(dataset);
+	}
+
+	/******************** end 饼图 *********************/
+	/******************** start 柱状图 *********************/
+	public Echarts bar(String[] categories, Vector<Serie> series) {
+		return bar("", "", categories, series, PlotOrientation.VERTICAL, true, true, true);
+	}
+
+	/**
+	 * 创建柱状图
+	 * 
+	 * @param categoryAxisLabel X轴标签
+	 * @param valueAxisLabel    Y轴标签
+	 * @param categories        类别标签
+	 * @param series            数据值
+	 * @return
+	 */
+	public Echarts bar(String categoryAxisLabel, String valueAxisLabel, String[] categories, Vector<Serie> series) {
+		return bar(categoryAxisLabel, valueAxisLabel, categories, series, PlotOrientation.VERTICAL, true, true, true);
+	}
+
+	/**
+	 * 
+	 * @param categoryAxisLabel X轴文字
+	 * @param valueAxisLabel    Y轴文字
+	 * @param categories        类别标签
+	 * @param series            数据值
+	 * @param orientation       图表方向
+	 * @param legend            是否显示图例标识
+	 * @param tooltips          是否显示toolTips
+	 * @param urls              是否生成超链接
+	 * @return
+	 */
+	public Echarts bar(String categoryAxisLabel, String valueAxisLabel, String[] categories, Vector<Serie> series,
+			PlotOrientation orientation, boolean legend, boolean tooltips, boolean urls) {
+
+		// 创建数据集合
+		DefaultCategoryDataset dataset = Util.createDefaultCategoryDataset(series, categories);
+		// 创建Chart
+		chart = ChartFactory.createBarChart(title, categoryAxisLabel, valueAxisLabel, dataset, orientation, legend,
+				tooltips, urls);
+		// 设置图表背景颜色
+		chart.setBackgroundPaint(null);
+		// 设置图表背景图片透明度
+		chart.setBackgroundImageAlpha(0.0f);
+
+		/****** 标注 ******/
+		if (chart.getLegend() != null) {
+			// 设置标注无边框
+			chart.getLegend().setBorder(0, 0, 0, 0);
+			// 设置标注背景色
+			chart.getLegend().setBackgroundPaint(null);
+			// 设置标注字体颜色
+			chart.getLegend().setItemPaint(new Color(255, 255, 255));
+			// 标注位于右侧
+			chart.getLegend().setPosition(RectangleEdge.TOP);
+		}
+
+		// 获取绘图区
+		CategoryPlot plot = chart.getCategoryPlot();
+		// 设置绘图区透明背景
+		plot.setBackgroundAlpha(0.0f);
+		// 设置不显示网格线
+		plot.setRangeGridlinesVisible(false);
+		// 设置绘图区边框不可见
+		plot.setOutlineVisible(false);
+		// 设置抗锯齿,防止字体显示不清楚
+		Util.setAntiAlias(chart);
+		// 对柱子进行渲染
+		Util.setBarRenderer(chart.getCategoryPlot(), false);
+		// 对其他部分进行渲染
+		// X坐标轴渲染
+		CategoryAxis xAxis = plot.getDomainAxis();
+		// X坐标轴颜色
+		xAxis.setAxisLinePaint(Color.WHITE);
+		// X坐标轴标记|竖线颜色
+		xAxis.setTickMarkPaint(Color.WHITE);
+		xAxis.setLabelPaint(Color.WHITE);
+		xAxis.setTickLabelPaint(Color.WHITE);
+		xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+		// 数据轴左边距
+		xAxis.setLowerMargin(0.0);
+		// 数据轴右边距
+		xAxis.setUpperMargin(0.0);
+		// Y坐标轴渲染
+		ValueAxis yAxis = plot.getRangeAxis();
+		yAxis.setTickLabelPaint(Color.WHITE);
+		// Y坐标轴颜色
+		yAxis.setAxisLinePaint(Color.WHITE);
+		// Y坐标轴标记|竖线颜色
+		yAxis.setTickMarkPaint(Color.WHITE);
+		// 是否显示Y刻度线
+		yAxis.setAxisLineVisible(true);
+		// 是否显示Y刻度
+		yAxis.setTickMarksVisible(true);
+		yAxis.setLabelPaint(Color.WHITE);
+		// 设置顶部Y坐标轴间距,防止数据无法显示
+		plot.getRangeAxis().setUpperMargin(0.0);
+		// 设置底部Y坐标轴间距
+		plot.getRangeAxis().setLowerMargin(0.0);
+		// 设置分类轴标记线的颜色
+		plot.setDomainGridlinePaint(Color.white);
+		// 设置数据轴标记线的颜色
+		plot.setRangeGridlinePaint(Color.white);
+		// 设置数据轴的绘制位置
+		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+
+		BarRenderer renderer = (BarRenderer) plot.getRenderer();
+		renderer.setDefaultItemLabelsVisible(true);
 
 		return this;
 	}
+
+	/******************** end 柱状图 *********************/
 
 	/**
 	 * 设置图表标题
@@ -117,7 +276,7 @@ public class Echarts {
 	 * @return
 	 */
 	public Echarts title(String title) {
-		Echarts.title = title;
+		this.title = title;
 		return this;
 	}
 
@@ -136,11 +295,11 @@ public class Echarts {
 	/**
 	 * 显示图表
 	 * 
-	 * @param title
 	 * @return
 	 */
 	public JPanel handle() {
-		ChartPanel chartPanel = new ChartPanel(chart);
+		ChartPanel chartPanel = new ChartPanel(chart, width, height, width, height, width, height, true, false, false,
+				false, false, true, false);
 		chartPanel.setPreferredSize(new Dimension(width, height));
 		chartPanel.setOpaque(false);
 		return chartPanel;
@@ -149,7 +308,6 @@ public class Echarts {
 	public static JFreeChart getChart() {
 		return chart;
 	}
-
 }
 
 class Util {
@@ -180,9 +338,9 @@ class Util {
 		chartTheme.setLargeFont(FONT);
 		chartTheme.setSmallFont(FONT);
 		// 标题字体颜色
-		chartTheme.setTitlePaint(new Color(51, 51, 51));
+		chartTheme.setTitlePaint(new Color(255, 255, 255));
 		// 副标题字体颜色
-		chartTheme.setSubtitlePaint(new Color(85, 85, 85));
+		chartTheme.setSubtitlePaint(new Color(255, 255, 255, 80));
 		// 设置标注背景
 		chartTheme.setLegendBackgroundPaint(Color.WHITE);
 		// 设置标注字体颜色
@@ -445,18 +603,15 @@ class Util {
 	 * @param isShowDataLabels
 	 */
 	public static void setBarRenderer(CategoryPlot plot, boolean isShowDataLabels) {
-
 		plot.setNoDataMessage(NO_DATA_MSG);
 		plot.setInsets(new RectangleInsets(10, 10, 5, 10));
 		BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
 		// 设置柱子最大宽度
 		renderer.setMaximumBarWidth(0.075);
-
 		if (isShowDataLabels) {
 			renderer.setDefaultItemLabelsVisible(true);
 		}
-
 		setXaixs(plot);
 		setYaixs(plot);
 	}
@@ -473,20 +628,21 @@ class Util {
 		StackedBarRenderer renderer = (StackedBarRenderer) plot.getRenderer();
 		renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator());
 		plot.setRenderer(renderer);
-		setXaixs(plot);
-		setYaixs(plot);
 	}
 
 	/**
 	 * 设置类别图表(CategoryPlot) X坐标轴线条颜色和样式
 	 */
 	public static void setXaixs(CategoryPlot plot) {
-		Color lineColor = new Color(31, 121, 170);
+		CategoryAxis x = plot.getDomainAxis();
 		// X坐标轴颜色
-		plot.getDomainAxis().setAxisLinePaint(lineColor);
+		x.setAxisLinePaint(Color.WHITE);
 		// X坐标轴标记|竖线颜色
-		plot.getDomainAxis().setTickMarkPaint(lineColor);
-
+		x.setTickMarkPaint(Color.WHITE);
+		x.setLabelPaint(Color.WHITE);
+		x.setTickLabelPaint(Color.WHITE);
+		x.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+		plot.setDomainAxis(x);
 	}
 
 	/**
@@ -494,23 +650,20 @@ class Util {
 	 *
 	 */
 	public static void setYaixs(CategoryPlot plot) {
-		Color lineColor = new Color(192, 208, 224);
 		ValueAxis axis = plot.getRangeAxis();
+		axis.setTickLabelPaint(Color.WHITE);
 		// Y坐标轴颜色
-		axis.setAxisLinePaint(lineColor);
+		axis.setAxisLinePaint(Color.WHITE);
 		// Y坐标轴标记|竖线颜色
-		axis.setTickMarkPaint(lineColor);
-		// 隐藏Y刻度
-		axis.setAxisLineVisible(false);
-		axis.setTickMarksVisible(false);
-		// Y轴网格线条
-		plot.setRangeGridlinePaint(new Color(192, 192, 192));
-		plot.setRangeGridlineStroke(new BasicStroke(1));
+		axis.setTickMarkPaint(Color.WHITE);
+		// 是否显示Y刻度线
+		axis.setAxisLineVisible(true);
+		// 是否显示Y刻度
+		axis.setTickMarksVisible(true);
 		// 设置顶部Y坐标轴间距,防止数据无法显示
 		plot.getRangeAxis().setUpperMargin(0.1);
 		// 设置底部Y坐标轴间距
 		plot.getRangeAxis().setLowerMargin(0.1);
-
 	}
 
 	/**
@@ -577,7 +730,7 @@ class Util {
 		piePlot.setShadowPaint(null);
 		// 0:category 1:value:2 :percentage
 		// 显示标签数据
-		piePlot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}:{2}"));
+		piePlot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}:{1}({2})"));
 	}
 
 	/**

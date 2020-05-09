@@ -18,12 +18,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import org.apache.log4j.PropertyConfigurator;
 
 import com.util.Layer;
 import com.util.Layer.LayerCallback;
@@ -48,9 +45,6 @@ public class Frame {
 	public static int height = 640;
 
 	public Frame() {
-		System.setProperty("ROOT_PATH", System.getProperty("user.dir"));
-		Properties properties = Util.config("log4j.ini");
-		PropertyConfigurator.configure(properties);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {

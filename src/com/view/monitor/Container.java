@@ -1,6 +1,13 @@
 package com.view.monitor;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -28,6 +35,7 @@ import com.util.Layer;
  */
 public class Container extends JSplitPane implements MouseListener {
 	private static final long serialVersionUID = 1L;
+	private static final int DoubleClick = 2;
 	static HCNetSDK hCNetSDK = HCNetSDK.INSTANCE;
 
 	public static JPanel RealPlayPanelArea = new JPanel();
@@ -60,12 +68,12 @@ public class Container extends JSplitPane implements MouseListener {
 			nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 			setPanel.add(nameLabel, BorderLayout.WEST);
 
-			Panel palyPanel = new Panel();
-			palyPanel.setCursor(new Cursor(12));
-			palyPanel.setName(String.valueOf(i));
-			palyPanel.setBackground(Color.WHITE);
+			Panel playPanel = new Panel();
+			playPanel.setCursor(new Cursor(12));
+			playPanel.setName(String.valueOf(i));
+			playPanel.setBackground(Color.WHITE);
 			if (i == 0) {
-				RealPlayPanel = palyPanel;
+				RealPlayPanel = playPanel;
 				cellPanel.setBorder(BorderFactory.createLineBorder(new Color(51, 51, 51), 2));
 			} else {
 				JLabel label = new JLabel("<html><body>暂无视频源或<br>没有视频信号<body></html>");
@@ -74,12 +82,12 @@ public class Container extends JSplitPane implements MouseListener {
 				label.setVerticalAlignment(SwingConstants.CENTER);
 				label.setBackground(Color.white);
 				label.setOpaque(true);
-				palyPanel.setLayout(new BorderLayout());
-				palyPanel.add(label, BorderLayout.CENTER);
+				playPanel.setLayout(new BorderLayout());
+				playPanel.add(label, BorderLayout.CENTER);
 			}
-			palyPanel.addMouseListener(this);
+			playPanel.addMouseListener(this);
 			cellPanel.add(setPanel, BorderLayout.NORTH);
-			cellPanel.add(palyPanel, BorderLayout.CENTER);
+			cellPanel.add(playPanel, BorderLayout.CENTER);
 			RealPlayPanelArea.add(cellPanel);
 		}
 
@@ -160,8 +168,12 @@ public class Container extends JSplitPane implements MouseListener {
 		/*************************************************
 		 * 函数: "播放窗口" 双击响应函数 函数描述: 双击全屏预览当前预览通道
 		 *************************************************/
-		if (e.getClickCount() == 2) {
-			RealPlay.fullScreen(e);
+		if (e.getClickCount() == DoubleClick) {
+			try {
+				RealPlay.fullScreen(e);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 

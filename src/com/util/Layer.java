@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
-import com.util.Util;
 import com.view.monitor.Monitor;
 
 /***
@@ -37,6 +36,7 @@ public class Layer extends JDialog {
 
 	private static JButton okBtn = new JButton("确定");
 	private static JButton cancelBtn = new JButton("取消");
+
 	@Override
 	public int getWidth() {
 		return Layer.width;
@@ -45,6 +45,7 @@ public class Layer extends JDialog {
 	public static void setWidth(int width) {
 		Layer.width = width;
 	}
+
 	@Override
 	public int getHeight() {
 		return Layer.height;
@@ -214,6 +215,7 @@ public class Layer extends JDialog {
 
 	/**
 	 * 弹出自定义层
+	 * 
 	 * @param title
 	 * @param contentPane
 	 * @return
@@ -270,7 +272,7 @@ public class Layer extends JDialog {
 
 	/************************ 公共方法 ***************************/
 
-	static void labelTextLine(JLabel jLabel, String longString) {
+	public static void labelTextLine(JLabel jLabel, String longString) {
 		StringBuilder builder = new StringBuilder("<html>");
 		char[] chars = longString.toCharArray();
 		FontMetrics fontMetrics = jLabel.getFontMetrics(jLabel.getFont());
@@ -279,7 +281,7 @@ public class Layer extends JDialog {
 		while (start + len < longString.length()) {
 			while (true) {
 				len++;
-				if (start + len > longString.length()){
+				if (start + len > longString.length()) {
 					break;
 				}
 				if (fontMetrics.charsWidth(chars, start, len) > jLabel.getWidth()) {
@@ -298,6 +300,7 @@ public class Layer extends JDialog {
 	public interface LayerCallback {
 		/**
 		 * 点击按钮回调
+		 * 
 		 * @param btn
 		 */
 		void clickBtn(String btn);
@@ -309,6 +312,7 @@ public class Layer extends JDialog {
 
 		/**
 		 * 点击确定按钮
+		 * 
 		 * @param dispose
 		 */
 		void clickOkBtn(LayerConfirmCallback dispose);
@@ -328,6 +332,7 @@ public class Layer extends JDialog {
 
 		/**
 		 * 销毁
+		 * 
 		 * @param dialog
 		 */
 		void destroy(JDialog dialog);
@@ -341,12 +346,14 @@ public class Layer extends JDialog {
 
 		/**
 		 * 结束
+		 * 
 		 * @param dialog
 		 */
 		void end(JDialog dialog);
 
 		/**
 		 * 执行
+		 * 
 		 * @param dialog
 		 */
 		void handle(JDialog dialog);

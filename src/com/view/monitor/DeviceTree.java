@@ -227,13 +227,14 @@ class DevionTreeChangeThread extends Thread {
 			}
 
 			@Override
-			public void fail(NativeLong lPreviewHandle) {
-
+			public void fail(String errMsg) {
+				dialog.dispose();
+				Layer.alert(errMsg, 180, 140);
 			}
 
 			@Override
-			public void fail() {
-				dialog.dispose();
+			public void fail(String errMsg, int width, int height) {
+				Layer.alert(errMsg, width, height);
 			}
 		});
 	}

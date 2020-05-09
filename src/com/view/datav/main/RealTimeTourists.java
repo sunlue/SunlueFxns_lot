@@ -25,7 +25,6 @@ public class RealTimeTourists {
 
 	public JPanel handle() {
 		panel.setOpaque(false);
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		for (int i = 0; i < numArr.length; i++) {
 			JLabel label = new JLabel();
 			label.setForeground(Color.WHITE);
