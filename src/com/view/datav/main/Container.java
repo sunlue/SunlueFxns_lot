@@ -42,7 +42,7 @@ public class Container extends JPanel {
 		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);
 		panel.setLayout(new GridLayout(3, 1, 0, 5));
-		panel.add(new Env(width, height / 3));
+		panel.add(new Env(width, height / 3, false));
 		panel.add(new FeedBack(width, height / 3));
 		panel.add(new Access(width, height / 3));
 		return panel;

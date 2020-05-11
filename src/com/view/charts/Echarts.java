@@ -40,6 +40,14 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.plot.dial.DialCap;
+import org.jfree.chart.plot.dial.DialPlot;
+import org.jfree.chart.plot.dial.DialPointer.Pointer;
+import org.jfree.chart.plot.dial.DialTextAnnotation;
+import org.jfree.chart.plot.dial.DialValueIndicator;
+import org.jfree.chart.plot.dial.StandardDialFrame;
+import org.jfree.chart.plot.dial.StandardDialRange;
+import org.jfree.chart.plot.dial.StandardDialScale;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
@@ -52,6 +60,7 @@ import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 
@@ -268,6 +277,112 @@ public class Echarts {
 	}
 
 	/******************** end 柱状图 *********************/
+	/******************** start 仪表盘 *********************/
+
+	public Echarts gauge() {
+		// 1,数据集合对象 此处为DefaultValueDataset
+		DefaultValueDataset dataset = new DefaultValueDataset();
+		// 当前指针指向的位置，即：我们需要显示的数据
+		dataset.setValue(89.2D);
+		/**
+		 * 获取图表区域对象
+		 */
+		DialPlot dialplot = new DialPlot();
+		dialplot.setView(0.0D, 0.0D, 1.0D, 1.0D);
+		dialplot.setDataset(0, dataset);
+		/**
+		 * 开始设置显示框架结构 B. setDailFrame(DailFrame dailFrame); 设置表盘的底层面板图像，通常表盘是整个仪表的最底层。
+		 */
+
+		StandardDialFrame dialFrame = new StandardDialFrame();
+		dialFrame.setBackgroundPaint(new Color(7, 10, 85));
+		dialFrame.setForegroundPaint(new Color(7, 10, 85));
+		dialplot.setDialFrame(dialFrame);
+		/**
+		 * 结束设置显示框架结构 C. setBackground(Color color); 设置表盘的颜色，可以采用Java内置的颜色控制方式来调用该方法。
+		 */
+//		GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(),
+//				new Color(170, 170, 220));
+//		DialBackground dialbackground = new DialBackground(gradientpaint);
+//		StandardGradientPaintTransformer gradientPaintTransformer = new StandardGradientPaintTransformer(
+//				GradientPaintTransformType.VERTICAL);
+//		dialbackground.setGradientPaintTransformer(gradientPaintTransformer);
+//		dialplot.setBackground(dialbackground);
+
+		// 设置显示在表盘中央位置的信息
+		DialTextAnnotation dialtextannotation = new DialTextAnnotation("湿度(%)");
+		dialtextannotation.setFont(new Font("微软雅黑", 1, 14));
+		dialtextannotation.setRadius(0.69999999999999996D);
+		dialtextannotation.setPaint(Color.WHITE);
+
+		dialplot.addLayer(dialtextannotation);
+
+		/**
+		 * 指针指向的数据,用文本显示出来,并指向一个数据集
+		 */
+		DialValueIndicator dvi = new DialValueIndicator(0);
+		dvi.setFont(new Font("微软雅黑", Font.PLAIN, 26));
+		dvi.setRadius(0.6);
+		dvi.setAngle(-94.0);
+		dvi.setPaint(Color.white);
+		dvi.setBackgroundPaint(new Color(7, 10, 85));
+		dvi.setOutlinePaint(new Color(7, 10, 85));
+		dialplot.addLayer(dvi);
+
+		// 对应pointer
+		StandardDialScale dialScale = new StandardDialScale();
+		// 最底表盘刻度
+		dialScale.setLowerBound(0D);
+		// 最高表盘刻度
+		dialScale.setUpperBound(100D);
+		// 刚好与人的正常视觉对齐,弧度为120
+		dialScale.setStartAngle(-120D);
+		// 刚好与人的正常视觉对齐,弧度为300
+		dialScale.setExtent(-300D);
+		// 值越大,与刻度盘框架边缘越近
+		dialScale.setTickRadius(0.88D);
+		// 值越大,与刻度盘刻度越远0.14999999999999999D
+		dialScale.setTickLabelOffset(0.14999999999999999D);
+		// 刻度盘刻度字体
+		dialScale.setTickLabelFont(new Font("微软雅黑", 0, 14));
+		// 刻度盘刻度字体颜色
+		dialScale.setTickLabelPaint(Color.WHITE);
+		// 设置刻度线的颜色
+		dialScale.setMajorTickPaint(new Color(30, 144, 255));
+		// 设置刻度线增量
+		dialScale.setMajorTickIncrement(10.0);
+		dialplot.addScale(0, dialScale);
+
+		// 设置刻度范围
+		StandardDialRange standarddialrange = new StandardDialRange(0D, 100D, new Color(30, 144, 255));
+		standarddialrange.setInnerRadius(0.9D);
+		standarddialrange.setOuterRadius(0.9D);
+		dialplot.addLayer(standarddialrange);
+
+		/**
+		 * 设置指针 G. addPointer(DailPointer dailPointer);
+		 * 用于设定表盘使用的指针样式，JFreeChart中有很多可供选择指针样式， 用户可以根据使用需要，采用不同的DailPoint的实现类来调用该方法
+		 */
+		// 指针一
+		Pointer pointer = new Pointer(0);
+		pointer.setOutlinePaint(new Color(66, 228, 251));
+		pointer.setWidthRadius(0.04D);
+		pointer.setFillPaint(new Color(66, 228, 251));
+		pointer.setRadius(0.6D);
+		dialplot.addPointer(pointer);
+		dialplot.mapDatasetToScale(0, 0);
+
+		DialCap dialcap = new DialCap();
+		dialcap.setRadius(0.06D);
+		dialplot.setCap(dialcap);
+
+		chart = new JFreeChart(dialplot);
+		chart.setBackgroundPaint(null);
+
+		return this;
+	}
+
+	/******************** end 仪表盘 *********************/
 
 	/**
 	 * 设置图表标题
@@ -308,6 +423,7 @@ public class Echarts {
 	public static JFreeChart getChart() {
 		return chart;
 	}
+
 }
 
 class Util {

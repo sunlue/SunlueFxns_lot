@@ -1,33 +1,46 @@
 package com.view.datav.weather;
 
-import java.awt.BorderLayout;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import com.util.Util;
-import com.view.datav.Cpanel;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.ThermometerPlot;
+import org.jfree.data.general.DefaultValueDataset;
 
+import com.util.Util;
+import com.view.charts.Echarts;
+import com.view.datav.Cpanel;
+import com.view.datav.main.Env;
+
+/**
+ * 环境天气
+ * 
+ * @author xiebing
+ *
+ */
 public class Container extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	public Container() {
+		int width = Toolkit.getDefaultToolkit().getScreenSize().width - 95;
+		int height = Toolkit.getDefaultToolkit().getScreenSize().height - 75;
 		setBackground(new Color(7, 10, 85));
 		setLayout(new GridLayout(2, 2, 5, 5));
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		add(tLeftPanel(400, 400));
+		add(tLeftPanel(width / 2, height / 2));
 		add(tRightPanel());
 		add(weaterLeftPanel());
 		add(weaterRightPanel());
@@ -35,100 +48,88 @@ public class Container extends JPanel {
 
 	private JPanel tLeftPanel(int width, int height) {
 
-		JPanel rightPanel = new JPanel();
-		rightPanel.setOpaque(false);
-		rightPanel.setPreferredSize(new Dimension(808 / 3 * 2, height));
-		rightPanel.setLayout(new GridLayout(4, 1));
+		DefaultValueDataset defaultvaluedataset = new DefaultValueDataset(41.5D);
 
-		ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+		ThermometerPlot thermometerplot = new ThermometerPlot(defaultvaluedataset);
+		thermometerplot.setNoDataMessage("没有可用的数据");
+		thermometerplot.setThermometerStroke(new BasicStroke(2.0F));
+		thermometerplot.setThermometerPaint(Color.lightGray);
+		thermometerplot.setColumnRadius(10);
+		thermometerplot.setBulbRadius(25);
+		thermometerplot.setRange(-20.D, 50.0D);
+		thermometerplot.setValuePaint(Color.RED);
+		thermometerplot.setUseSubrangePaint(true);
+		thermometerplot.setUnits(ThermometerPlot.UNITS_CELCIUS);
+		thermometerplot.setSubrange(1, 1, 5);
+		thermometerplot.setSubrange(35, 1, 5);
+		JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, thermometerplot, false);
+		chart.setBackgroundPaint(null);
 
-		Map<String, Object> pm25 = new HashMap<String, Object>(5);
-		pm25.put("txt", "<html><body><p>PM2.5</p><p>细颗粒</p></body></html>");
-		pm25.put("txtColor", new Color(255, 255, 255));
-		pm25.put("num", "114");
-		pm25.put("numColor", new Color(7, 219, 255));
-		pm25.put("bottomColor", new Color(255, 189, 0));
-		data.add(pm25);
+		JPanel leftMainPanel = new JPanel();
+		leftMainPanel.setOpaque(false);
+		Cpanel leftWenduPanel = new Cpanel("当前温度", "Current temperature (℃)", leftMainPanel);
 
-		Map<String, Object> pm10 = new HashMap<String, Object>(5);
-		pm10.put("txt", "<html><body><p>PM10</p><p>可吸入颗粒</p></body></html>");
-		pm10.put("txtColor", new Color(255, 255, 255));
-		pm10.put("num", "0");
-		pm10.put("numColor", new Color(7, 219, 255));
-		pm10.put("bottomColor", new Color(255, 237, 47));
-		data.add(pm10);
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new Dimension(width, height));
+		chartPanel.setOpaque(false);
 
-		Map<String, Object> No2 = new HashMap<String, Object>(5);
-		No2.put("txt", "<html><body><p>NO2</p><p>二氧化硫</p></body></html>");
-		No2.put("txtColor", new Color(255, 255, 255));
-		No2.put("num", "58");
-		No2.put("numColor", new Color(7, 219, 255));
-		No2.put("bottomColor", new Color(43, 238, 155));
-		data.add(No2);
+//		leftWenduPanel.add(chartPanel);
 
-		Map<String, Object> So2 = new HashMap<String, Object>(5);
-		So2.put("txt", "<html><body><p>SO2</p><p>二氧化碳</p></body></html>");
-		So2.put("txtColor", new Color(255, 255, 255));
-		So2.put("num", "20");
-		So2.put("numColor", new Color(7, 219, 255));
-		So2.put("bottomColor", new Color(121, 1, 204));
-		data.add(So2);
+		leftWenduPanel.setBounds(0, 0, width / 24 * 10, height / 2 - 5);
 
-		for (int i = 0; i < data.size(); i++) {
-			Map<String, Object> item = data.get(i);
-			JLabel txtLabel = new JLabel(item.get("txt").toString());
-			txtLabel.setForeground(Color.white);
-			txtLabel.setFont(new Font("微软雅黑", Font.BOLD, 14));
-			JLabel numLabel = new JLabel(item.get("num").toString());
-			numLabel.setForeground((Color) item.get("numColor"));
-			numLabel.setFont(new Font("微软雅黑", Font.BOLD, 36));
-			JPanel linePanel = new JPanel();
-			linePanel.setBackground((Color) item.get("bottomColor"));
-			linePanel.setPreferredSize(new Dimension(width, 3));
+		Cpanel leftShiduPanel = new Cpanel("当前湿度", "Current humidity (%)", leftMainPanel);
+		leftShiduPanel.setBounds(0, height / 2, width / 24 * 10, height / 2);
+		leftShiduPanel.setLayout(null);
+		JPanel WenduChat = new Echarts().size(height / 2, height / 2).gauge().handle();
+		WenduChat.setBounds((leftShiduPanel.getWidth() - height / 2) / 2, 0, height / 2, height / 2);
+		leftShiduPanel.add(WenduChat);
 
-			JPanel cellPan = new JPanel();
-			cellPan.setOpaque(false);
-			cellPan.setLayout(new BorderLayout());
-			cellPan.add(txtLabel, BorderLayout.WEST);
-			cellPan.add(numLabel, BorderLayout.EAST);
-			cellPan.add(linePanel, BorderLayout.SOUTH);
-
-			new ChangeNumEnv(numLabel).start();
-
-			rightPanel.add(cellPan);
-		}
-
-		JPanel leftPanel = new JPanel();
-		leftPanel.setOpaque(false);
-		leftPanel.setPreferredSize(new Dimension(808 / 3, 400));
+		JPanel rightPanel = new Env(width / 24 * 14, height);
+		rightPanel.setPreferredSize(new Dimension(width / 24 * 14 - 5, height));
+		rightPanel.setBounds(width / 24 * 10 + 5, 0, width / 24 * 14 - 5, height);
 
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.setLayout(new BorderLayout());
-		panel.add(new Cpanel(leftPanel), BorderLayout.WEST);
-		panel.add(new Cpanel(rightPanel), BorderLayout.EAST);
+		panel.setLayout(null);
+		panel.add(leftWenduPanel);
+		panel.add(leftShiduPanel);
+		panel.add(rightPanel);
 		return panel;
 	}
 
 	private JPanel tRightPanel() {
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.add(new JLabel("tRightPanel"));
-		return new Cpanel(panel);
+		return new Cpanel("未来7天天气预报", "Weather forecast for the next 7 days", panel);
 	}
 
 	private JPanel weaterLeftPanel() {
+		final int hours = 24;
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.add(new JLabel("weaterLeftPanel"));
-		return new Cpanel(panel);
+		panel.setLayout(new GridLayout(4, 6, 5, 5));
+		panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+		for (int i = 0; i < hours; i++) {
+			JLabel itemLabel = new JLabel("<html><body><p>08时 小雨 20℃</p><p>无持续风向 <3级</p></body></html>");
+			itemLabel.setIcon(Util.getImageIcon("weather_yu.png", 48, 48));
+			itemLabel.setOpaque(true);
+			itemLabel.setBorder(BorderFactory.createLineBorder(new Color(7, 219, 255), 1, true));
+			itemLabel.setForeground(new Color(0, 213, 255));
+			itemLabel.setBackground(new Color(23, 46, 107));
+			itemLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			itemLabel.setVerticalAlignment(SwingConstants.CENTER);
+			itemLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+			itemLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+			panel.add(itemLabel);
+		}
+		return new Cpanel("24小时天气", "24-hour weather", panel);
 	}
 
 	private JPanel weaterRightPanel() {
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		panel.add(new JLabel("weaterLeftPanel"));
-		return new Cpanel(panel);
+		return new Cpanel("当日24小时温度", "24 hour temperature", panel);
 	}
 }
 

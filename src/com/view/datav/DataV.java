@@ -28,7 +28,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.util.Http;
 import com.util.Util;
 import com.view.datav.DataV.WeaterCallback;
-import com.view.datav.weather.Container;
 
 /**
  * 数据可视化底层类
@@ -46,7 +45,7 @@ public class DataV extends JWindow implements MouseListener {
 		setLayout(new BorderLayout());
 		add(header(), BorderLayout.NORTH);
 		add(menu(), BorderLayout.WEST);
-		add(new Container(), BorderLayout.CENTER);
+		add(new com.view.datav.weather.Container(), BorderLayout.CENTER);
 		setVisible(true);
 		addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override

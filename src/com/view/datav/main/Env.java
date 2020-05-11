@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
@@ -30,18 +31,28 @@ public class Env extends JPanel {
 	public Env(Dimension preferredSize) {
 		int width = (int) (preferredSize.getWidth());
 		int height = (int) (preferredSize.getHeight());
-		new Env(width, height);
+		handle(width, height, true);
 	}
 
 	public Env(int width, int height) {
-		/** 实时环境监测 **/
+		handle(width, height, true);
+	}
 
+	public Env(int width, int height, boolean tips) {
+		handle(width, height, tips);
+	}
+
+	private void handle(int width, int height, boolean tips) {
+		/** 实时环境监测 **/
 		JPanel mainPanel = new JPanel();
 		mainPanel.setPreferredSize(new Dimension(width, height));
 		mainPanel.setOpaque(false);
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(leftPanel(width / 24 * 8, height - 90), BorderLayout.WEST);
-		mainPanel.add(rightPanel(width / 24 * 16, height - 90), BorderLayout.CENTER);
+		mainPanel.add(leftPanel(), BorderLayout.WEST);
+		mainPanel.add(rightPanel(), BorderLayout.CENTER);
+		if (tips) {
+			mainPanel.add(bottomPanel(), BorderLayout.SOUTH);
+		}
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 16, 10));
 
 		Cpanel panel = new Cpanel("实时环境监测", "environmental monitoring", mainPanel);
@@ -50,13 +61,28 @@ public class Env extends JPanel {
 		setPreferredSize(new Dimension(width, height));
 		setLayout(new BorderLayout());
 		add(panel, BorderLayout.CENTER);
-
 	}
 
-	private Component rightPanel(int width, int height) {
+	private Component bottomPanel() {
+		JPanel panel = new JPanel();
+		panel.setOpaque(false);
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		panel.setLayout(new GridLayout(1, 1));
+		JTextArea textArea = new JTextArea();
+		textArea.setText("空气好，可以外出活动，除极少数对污染物特别敏感的人群以外，对公众没有危害！");
+		textArea.setEditable(false);
+		textArea.setFont(new Font("微软雅黑", Font.BOLD, 14));
+		textArea.setForeground(Color.WHITE);
+		textArea.setOpaque(false);
+		textArea.setWrapStyleWord(true);
+		textArea.setLineWrap(true);
+		panel.add(textArea);
+		return panel;
+	}
+
+	private Component rightPanel() {
 		JPanel rightPanel = new JPanel();
 		rightPanel.setOpaque(false);
-		rightPanel.setPreferredSize(new Dimension(width, height));
 		rightPanel.setLayout(new GridLayout(4, 1));
 
 		ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
@@ -103,7 +129,7 @@ public class Env extends JPanel {
 			numLabel.setFont(new Font("微软雅黑", Font.BOLD, 36));
 			JPanel linePanel = new JPanel();
 			linePanel.setBackground((Color) item.get("bottomColor"));
-			linePanel.setPreferredSize(new Dimension(width, 3));
+//			linePanel.setPreferredSize(new Dimension(width, 3));
 
 			JPanel cellPan = new JPanel();
 			cellPan.setOpaque(false);
@@ -120,11 +146,12 @@ public class Env extends JPanel {
 		return rightPanel;
 	}
 
-	private Component leftPanel(int width, int height) {
+	private Component leftPanel() {
 
 		JPanel leftPanel = new JPanel();
 		leftPanel.setOpaque(false);
-		leftPanel.setPreferredSize(new Dimension(width, height));
+		leftPanel.setPreferredSize(new Dimension(200, 0));
+		leftPanel.setLayout(new GridLayout(2, 1));
 
 		JLabel aqiNumLabel = new JLabel("96");
 		aqiNumLabel.setForeground(new Color(7, 219, 255));
@@ -140,7 +167,6 @@ public class Env extends JPanel {
 		aqiTxtLabel.setVerticalAlignment(SwingConstants.CENTER);
 		aqiTxtLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		JPanel topPanel = new JPanel();
-		topPanel.setPreferredSize(new Dimension(width, height / 5 * 3));
 		topPanel.setOpaque(false);
 		topPanel.setLayout(new GridLayout(2, 1));
 		topPanel.add(aqiNumLabel);
@@ -157,7 +183,6 @@ public class Env extends JPanel {
 		qiyaLabel.setForeground(Color.white);
 
 		JPanel bottomPanel = new JPanel();
-		bottomPanel.setPreferredSize(new Dimension(width, height / 5 * 2));
 		bottomPanel.setLayout(new GridLayout(3, 1));
 		bottomPanel.setOpaque(false);
 		bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10));
