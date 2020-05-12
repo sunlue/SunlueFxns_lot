@@ -38,14 +38,17 @@ public class DataV extends JWindow implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private JPanel headerPanel;
 	private JPanel menuPanel;
+	private JPanel mainPanel;
+	private String[] menuItemList = new String[] { "综合管理", "视频监控", "指挥调度", "停车管理", "环境天气" };
 
 	public DataV() {
 		setSize(screenSize);
 		setLayout(new BorderLayout());
 		add(header(), BorderLayout.NORTH);
 		add(menu(), BorderLayout.WEST);
-		add(new com.view.datav.weather.Container(), BorderLayout.CENTER);
+		add(main(), BorderLayout.CENTER);
 		setVisible(true);
 		addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
@@ -59,10 +62,10 @@ public class DataV extends JWindow implements MouseListener {
 	}
 
 	private JPanel header() {
-		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(100, 60));
-		panel.setBackground(new Color(7, 10, 85));
-		panel.setLayout(new BorderLayout());
+		headerPanel = new JPanel();
+		headerPanel.setPreferredSize(new Dimension(100, 60));
+		headerPanel.setBackground(new Color(7, 10, 85));
+		headerPanel.setLayout(new BorderLayout());
 
 		JLabel currTime = new JLabel();
 		currTime.setIcon(Util.getImageIcon("logo_200_200.png", 48, 48));
@@ -103,14 +106,14 @@ public class DataV extends JWindow implements MouseListener {
 			@Override
 			public void complete(JPanel weatherPanel) {
 				weatherPanel.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 0.2), 60));
-				panel.add(weatherPanel, BorderLayout.EAST);
+				headerPanel.add(weatherPanel, BorderLayout.EAST);
 			}
 		}).start();
 
-		panel.add(currTime, BorderLayout.WEST);
-		panel.add(centerPanel, BorderLayout.CENTER);
+		headerPanel.add(currTime, BorderLayout.WEST);
+		headerPanel.add(centerPanel, BorderLayout.CENTER);
 
-		return panel;
+		return headerPanel;
 	}
 
 	private JPanel menu() {
@@ -120,7 +123,6 @@ public class DataV extends JWindow implements MouseListener {
 		menuPanel.setBackground(new Color(8, 38, 113));
 		menuPanel.setLayout(null);
 
-		String[] menuItem = new String[] { "综合管理", "视频监控", "指挥调度", "停车管理", "环境天气" };
 		ArrayList<ImageIcon> menuIcon = new ArrayList<ImageIcon>();
 
 		menuIcon.add(Util.getImageIcon("datav_main.png", 38, 38));
@@ -129,8 +131,8 @@ public class DataV extends JWindow implements MouseListener {
 		menuIcon.add(Util.getImageIcon("datav_parking.png", 38, 38));
 		menuIcon.add(Util.getImageIcon("datav_weather.png", 38, 38));
 
-		for (int i = 0; i < menuItem.length; i++) {
-			JLabel item = new JLabel(menuItem[i], menuIcon.get(i), JLabel.CENTER);
+		for (int i = 0; i < menuItemList.length; i++) {
+			JLabel item = new JLabel(menuItemList[i], menuIcon.get(i), JLabel.CENTER);
 			item.setHorizontalAlignment(JLabel.CENTER);
 			item.setVerticalAlignment(JLabel.CENTER);
 			item.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -139,7 +141,7 @@ public class DataV extends JWindow implements MouseListener {
 			item.setFont(new Font("微软雅黑", 1, 12));
 			item.setBounds(0, 100 * i, 80, 100);
 			item.setCursor(new Cursor(12));
-			item.setName(menuItem[i]);
+			item.setName(menuItemList[i]);
 			item.addMouseListener(this);
 			if (i == 0) {
 				item.setOpaque(true);
@@ -151,6 +153,13 @@ public class DataV extends JWindow implements MouseListener {
 		return menuPanel;
 	}
 
+	private JPanel main() {
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(new com.view.datav.main.Container(), BorderLayout.CENTER);
+		return mainPanel;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int menuLabelCount = menuPanel.getComponentCount();
@@ -159,6 +168,19 @@ public class DataV extends JWindow implements MouseListener {
 			if (menuItem.equals(e.getComponent())) {
 				menuItem.setOpaque(true);
 				menuItem.setBackground(new Color(18, 25, 88));
+				mainPanel.removeAll();
+				if (menuItemList[0].equals(menuItem.getText())) {
+					mainPanel.add(new com.view.datav.main.Container(), BorderLayout.CENTER);
+				} else if (menuItemList[1].equals(menuItem.getText())) {
+					mainPanel.add(new com.view.datav.monitor.Container(), BorderLayout.CENTER);
+				} else if (menuItemList[2].equals(menuItem.getText())) {
+
+				} else if (menuItemList[3].equals(menuItem.getText())) {
+
+				} else if (menuItemList[4].equals(menuItem.getText())) {
+					mainPanel.add(new com.view.datav.weather.Container(), BorderLayout.CENTER);
+				}
+				mainPanel.validate();
 			} else {
 				menuItem.setOpaque(false);
 				menuItem.setBackground(new Color(8, 38, 113));

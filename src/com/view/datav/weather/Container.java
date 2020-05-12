@@ -1,8 +1,9 @@
 package com.view.datav.weather;
 
-import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -11,16 +12,16 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.ThermometerPlot;
-import org.jfree.data.general.DefaultValueDataset;
-
 import com.util.Util;
-import com.view.charts.Echarts;
+import com.view.charts.Echarts.EchartType;
+import com.view.charts.weather.Hours;
+import com.view.charts.weather.Humidity;
+import com.view.charts.weather.Temperature;
+import com.view.charts.weather.Weather;
 import com.view.datav.Cpanel;
 import com.view.datav.main.Env;
 
@@ -41,69 +42,92 @@ public class Container extends JPanel {
 		setLayout(new GridLayout(2, 2, 5, 5));
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		add(tLeftPanel(width / 2, height / 2));
-		add(tRightPanel());
-		add(weaterLeftPanel());
-		add(weaterRightPanel());
+		add(tRightPanel(width / 2, height / 2));
+		add(weaterLeftPanel(width / 2, height / 2));
+		add(weaterRightPanel(width / 2, height / 2));
 	}
 
 	private JPanel tLeftPanel(int width, int height) {
 
-		DefaultValueDataset defaultvaluedataset = new DefaultValueDataset(41.5D);
+		/************ 温度 ***********/
+		JPanel wenduMainPanel = new Temperature(EchartType.THERMOMETER, Util.random(20, 50)).size(120, height).handle();
+		wenduMainPanel.setPreferredSize(new Dimension(80, height));
+		wenduMainPanel.setOpaque(false);
+		JPanel wenduPanel = new Cpanel(wenduMainPanel);
 
-		ThermometerPlot thermometerplot = new ThermometerPlot(defaultvaluedataset);
-		thermometerplot.setNoDataMessage("没有可用的数据");
-		thermometerplot.setThermometerStroke(new BasicStroke(2.0F));
-		thermometerplot.setThermometerPaint(Color.lightGray);
-		thermometerplot.setColumnRadius(10);
-		thermometerplot.setBulbRadius(25);
-		thermometerplot.setRange(-20.D, 50.0D);
-		thermometerplot.setValuePaint(Color.RED);
-		thermometerplot.setUseSubrangePaint(true);
-		thermometerplot.setUnits(ThermometerPlot.UNITS_CELCIUS);
-		thermometerplot.setSubrange(1, 1, 5);
-		thermometerplot.setSubrange(35, 1, 5);
-		JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, thermometerplot, false);
-		chart.setBackgroundPaint(null);
+		/************ 湿度 ***********/
+		JPanel shiduChat = new Humidity(EchartType.GAUGE, Util.random(80, 100)).size(248, 248).handle();
+		JPanel shiduMainPanel = new JPanel();
+		shiduMainPanel.setOpaque(false);
+		shiduMainPanel.add(shiduChat);
+		Cpanel shiduPanel = new Cpanel("当前湿度", "Current humidity (%)", shiduMainPanel);
+		/************ 预警信息 ***********/
+		JPanel warnMainPanel = new JPanel();
+		warnMainPanel.setOpaque(false);
+		warnMainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		warnMainPanel.setLayout(new BorderLayout(5, 5));
 
-		JPanel leftMainPanel = new JPanel();
-		leftMainPanel.setOpaque(false);
-		Cpanel leftWenduPanel = new Cpanel("当前温度", "Current temperature (℃)", leftMainPanel);
+		JTextArea warnTypeArea = new JTextArea();
+		warnTypeArea.setText("预警类型：大风预警");
+		warnTypeArea.setEditable(false);
+		warnTypeArea.setFont(new Font("微软雅黑", Font.BOLD, 14));
+		warnTypeArea.setForeground(Color.WHITE);
+		warnTypeArea.setOpaque(false);
+		warnTypeArea.setWrapStyleWord(true);
+		warnTypeArea.setLineWrap(true);
 
-		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(width, height));
-		chartPanel.setOpaque(false);
+		JTextArea warnLevelArea = new JTextArea();
+		warnLevelArea.setText("预警类型：Ⅲ级");
+		warnLevelArea.setEditable(false);
+		warnLevelArea.setFont(new Font("微软雅黑", Font.BOLD, 14));
+		warnLevelArea.setForeground(Color.WHITE);
+		warnLevelArea.setOpaque(false);
+		warnLevelArea.setWrapStyleWord(true);
+		warnLevelArea.setLineWrap(true);
 
-//		leftWenduPanel.add(chartPanel);
+		JTextArea warnInfoArea = new JTextArea();
+		warnInfoArea.setText(
+				"预警信息：晋中市气象台2020年5月10日10时55分发布大风蓝色预警信号，预警区域为：全市。 预计24小时内可能受大风影响，平均风力可达4-5级,阵风可达6-7级或以上，请有关单位和人员做好防范准备");
+		warnInfoArea.setEditable(false);
+		warnInfoArea.setFont(new Font("微软雅黑", Font.BOLD, 14));
+		warnInfoArea.setForeground(Color.WHITE);
+		warnInfoArea.setOpaque(false);
+		warnInfoArea.setWrapStyleWord(true);
+		warnInfoArea.setLineWrap(true);
 
-		leftWenduPanel.setBounds(0, 0, width / 24 * 10, height / 2 - 5);
+		warnMainPanel.add(warnTypeArea, BorderLayout.NORTH);
+		warnMainPanel.add(warnLevelArea, BorderLayout.CENTER);
+		warnMainPanel.add(warnInfoArea, BorderLayout.SOUTH);
 
-		Cpanel leftShiduPanel = new Cpanel("当前湿度", "Current humidity (%)", leftMainPanel);
-		leftShiduPanel.setBounds(0, height / 2, width / 24 * 10, height / 2);
-		leftShiduPanel.setLayout(null);
-		JPanel WenduChat = new Echarts().size(height / 2, height / 2).gauge().handle();
-		WenduChat.setBounds((leftShiduPanel.getWidth() - height / 2) / 2, 0, height / 2, height / 2);
-		leftShiduPanel.add(WenduChat);
-
-		JPanel rightPanel = new Env(width / 24 * 14, height);
-		rightPanel.setPreferredSize(new Dimension(width / 24 * 14 - 5, height));
-		rightPanel.setBounds(width / 24 * 10 + 5, 0, width / 24 * 14 - 5, height);
-
+		JPanel warnPanel = new Cpanel("预警信息", "The early warning information", warnMainPanel);
+		/************ 左面板 ***********/
+		JPanel leftPanel = new JPanel();
+		leftPanel.setOpaque(false);
+		leftPanel.setLayout(new BorderLayout(5, 5));
+		leftPanel.add(wenduPanel, BorderLayout.WEST);
+		leftPanel.add(shiduPanel, BorderLayout.CENTER);
+		leftPanel.add(warnPanel, BorderLayout.SOUTH);
+		/************ 右面板 ***********/
+		JPanel rightPanel = new Env(0, height);
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.setLayout(null);
-		panel.add(leftWenduPanel);
-		panel.add(leftShiduPanel);
+		panel.setLayout(new GridLayout(1, 2, 5, 5));
+		panel.add(leftPanel);
 		panel.add(rightPanel);
 		return panel;
 	}
 
-	private JPanel tRightPanel() {
+	private JPanel tRightPanel(int width, int height) {
+		JPanel mainPanel = new Weather().size(width, height - 90).line().handle();
+
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
+		panel.add(mainPanel);
+
 		return new Cpanel("未来7天天气预报", "Weather forecast for the next 7 days", panel);
 	}
 
-	private JPanel weaterLeftPanel() {
+	private JPanel weaterLeftPanel(int width, int height) {
 		final int hours = 24;
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
@@ -125,10 +149,13 @@ public class Container extends JPanel {
 		return new Cpanel("24小时天气", "24-hour weather", panel);
 	}
 
-	private JPanel weaterRightPanel() {
+	private JPanel weaterRightPanel(int width, int height) {
+
+		JPanel mainPanel = new Hours().size(width, height - 90).line().handle();
+
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
-		panel.add(new JLabel("weaterLeftPanel"));
+		panel.add(mainPanel);
 		return new Cpanel("当日24小时温度", "24 hour temperature", panel);
 	}
 }

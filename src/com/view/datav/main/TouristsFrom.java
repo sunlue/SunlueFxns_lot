@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 
 import org.jfree.chart.plot.PlotOrientation;
 
-import com.view.charts.Echarts;
 import com.view.charts.Serie;
 import com.view.datav.Cpanel;
 
@@ -35,19 +34,20 @@ public class TouristsFrom extends JPanel {
 		/**** 饼图 ****/
 		String[] pieCategories = { "四川", "绵阳", "成都", "广元", "德阳", "巴中", "自贡", "内江", "资阳", };
 		Object[] pieDatas = { 8, 3, 1, 6, 8, 4, 4, 1, 0 };
-		JPanel chartPiePanel = new Echarts().size(160, 160).pie(pieCategories, pieDatas, false, false, false).handle();
+		JPanel chartPiePanel = new com.view.charts.main.TouristsFrom().pie(pieCategories, pieDatas, false, false, false)
+				.size(160, 160).handle();
 		chartPiePanel.setBounds(width - 180, 10, 160, 160);
 
 		/**** 柱状图 ****/
 		String[] barCategories = { "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "十三月",
-				"十四月", "十五月", "十六月", "十七月", "十八月", "十九月", "二十月", "二十一月", "二十二月", "而是桑月", "二十四月", "二十五月", "二十六月", "二十七月",
+				"十四月", "十五月", "十六月", "十七月", "十八月", "十九月", "二十月", "二十一月", "二十二月", "二十三月", "二十四月", "二十五月", "二十六月", "二十七月",
 				"二十八月", "二十九月", "三十月", "三十一月" };
 		Vector<Serie> barSeries = new Vector<Serie>();
 		Double[] value = new Double[] { 49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
 				49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 49.9, 71.5, 106.4,
 				129.2, 144.0, 176.0, 135.6 };
 		barSeries.add(new Serie("游客(人)", value));
-		JPanel chartBarPanel = new Echarts()
+		JPanel chartBarPanel = new com.view.charts.main.TouristsFrom()
 				.bar("", "游客(人)", barCategories, barSeries, PlotOrientation.VERTICAL, false, false, false)
 				.size(width, height - 100).handle();
 		chartBarPanel.setBounds(0, 100, width, height - 100);

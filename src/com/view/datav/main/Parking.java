@@ -70,6 +70,7 @@ public class Parking extends JPanel {
 		tableRender.setHorizontalAlignment(SwingConstants.CENTER);
 
 		table.setFont(CyFont.puHuiTi(CyFont.Bold, 12));
+		table.setOpaque(false);
 		table.setForeground(new Color(51, 51, 51));
 		table.setGridColor(new Color(153, 186, 240));
 		table.setRowHeight(32);

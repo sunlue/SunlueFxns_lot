@@ -2,24 +2,18 @@ package com.view.charts;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import javax.swing.JPanel;
-
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.DateAxis;
@@ -38,16 +32,7 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PieLabelLinkStyle;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.plot.dial.DialCap;
-import org.jfree.chart.plot.dial.DialPlot;
-import org.jfree.chart.plot.dial.DialPointer.Pointer;
-import org.jfree.chart.plot.dial.DialTextAnnotation;
-import org.jfree.chart.plot.dial.DialValueIndicator;
-import org.jfree.chart.plot.dial.StandardDialFrame;
-import org.jfree.chart.plot.dial.StandardDialRange;
-import org.jfree.chart.plot.dial.StandardDialScale;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
@@ -55,12 +40,10 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.chart.ui.TextAnchor;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 
@@ -73,360 +56,10 @@ import org.jfree.data.time.TimeSeries;
 
 public class Echarts {
 
-	private String title = "";
-	private int width = 200;
-	private int height = 200;
-	private static JFreeChart chart = null;
-	private static PiePlot piePlot = null;
+	public static enum EchartType {
+		GAUGE, THERMOMETER, LINE
+	};
 
-	/******************** start 饼图 *********************/
-	/**
-	 * 创建饼图
-	 * 
-	 * @param categories 类别
-	 * @param datas      数值
-	 * @return
-	 */
-	public Echarts pie(String[] categories, Object[] datas) {
-		pie(categories, datas, true, true, false);
-		return this;
-	}
-
-	/**
-	 * 创建饼图
-	 * 
-	 * @param categories 类别
-	 * @param datas      数值
-	 * @param legend     是否显示图例
-	 * @param tooltips   是否生成工具提示
-	 * @param urls       是否生成链接
-	 * @return
-	 */
-	public Echarts pie(String[] categories, Object[] datas, boolean legend, boolean tooltips, boolean urls) {
-		DefaultPieDataset dataset = Util.createDefaultPieDataset(categories, datas);
-		chart = ChartFactory.createPieChart(title, dataset, legend, tooltips, urls);
-		// 设置边界线条不可见
-		chart.setBorderVisible(false);
-		// 设置背景颜色
-		chart.setBackgroundPaint(null);
-		// 设置背景图片透明度
-		chart.setBackgroundImageAlpha(0.0f);
-		/****** 标注 ******/
-		if (chart.getLegend() != null) {
-			// 设置标注边框颜色
-			chart.getLegend().setFrame(new BlockBorder(Color.RED));
-			// 设置标注无边框
-			chart.getLegend().setBorder(0, 0, 0, 0);
-			// 设置标注背景色
-			chart.getLegend().setBackgroundPaint(null);
-			// 设置标注字体颜色
-			chart.getLegend().setItemPaint(new Color(255, 255, 255));
-			// 标注位于右侧
-			chart.getLegend().setPosition(RectangleEdge.LEFT);
-		}
-
-		// 得到绘图区
-		piePlot = (PiePlot) chart.getPlot();
-		// 取出片区显示
-//		piePlot.setExplodePercent("四川", 0.1);
-		// 设置分类标签的字体颜色
-		piePlot.setLabelPaint(Color.WHITE);
-		// 设置分类标签的背景颜色
-		piePlot.setLabelLinkPaint(Color.WHITE);
-		/****** 数据区 ******/
-		// 设置数据区的背景透明度，范围在0.0～1.0间
-		piePlot.setBackgroundAlpha(0.0f);
-		// 设置数据区的边界线条颜色
-		piePlot.setOutlinePaint(null);
-		// 设置抗锯齿,防止字体显示不清楚
-		Util.setAntiAlias(chart);
-		// 对柱子进行渲染[创建不同图形]
-		Util.setPieRender(chart.getPlot());
-		return this;
-	}
-
-	/**
-	 * 获取饼图绘图区
-	 * 
-	 * @return
-	 */
-	public static PiePlot getPiePlot() {
-		return piePlot;
-	}
-
-	/**
-	 * 设置饼图数据
-	 * 
-	 * @param categories
-	 * @param datas
-	 */
-	public static void setPieData(String[] categories, Object[] datas) {
-		DefaultPieDataset dataset = Util.createDefaultPieDataset(categories, datas);
-		piePlot.setDataset(dataset);
-	}
-
-	/******************** end 饼图 *********************/
-	/******************** start 柱状图 *********************/
-	public Echarts bar(String[] categories, Vector<Serie> series) {
-		return bar("", "", categories, series, PlotOrientation.VERTICAL, true, true, true);
-	}
-
-	/**
-	 * 创建柱状图
-	 * 
-	 * @param categoryAxisLabel X轴标签
-	 * @param valueAxisLabel    Y轴标签
-	 * @param categories        类别标签
-	 * @param series            数据值
-	 * @return
-	 */
-	public Echarts bar(String categoryAxisLabel, String valueAxisLabel, String[] categories, Vector<Serie> series) {
-		return bar(categoryAxisLabel, valueAxisLabel, categories, series, PlotOrientation.VERTICAL, true, true, true);
-	}
-
-	/**
-	 * 
-	 * @param categoryAxisLabel X轴文字
-	 * @param valueAxisLabel    Y轴文字
-	 * @param categories        类别标签
-	 * @param series            数据值
-	 * @param orientation       图表方向
-	 * @param legend            是否显示图例标识
-	 * @param tooltips          是否显示toolTips
-	 * @param urls              是否生成超链接
-	 * @return
-	 */
-	public Echarts bar(String categoryAxisLabel, String valueAxisLabel, String[] categories, Vector<Serie> series,
-			PlotOrientation orientation, boolean legend, boolean tooltips, boolean urls) {
-
-		// 创建数据集合
-		DefaultCategoryDataset dataset = Util.createDefaultCategoryDataset(series, categories);
-		// 创建Chart
-		chart = ChartFactory.createBarChart(title, categoryAxisLabel, valueAxisLabel, dataset, orientation, legend,
-				tooltips, urls);
-		// 设置图表背景颜色
-		chart.setBackgroundPaint(null);
-		// 设置图表背景图片透明度
-		chart.setBackgroundImageAlpha(0.0f);
-
-		/****** 标注 ******/
-		if (chart.getLegend() != null) {
-			// 设置标注无边框
-			chart.getLegend().setBorder(0, 0, 0, 0);
-			// 设置标注背景色
-			chart.getLegend().setBackgroundPaint(null);
-			// 设置标注字体颜色
-			chart.getLegend().setItemPaint(new Color(255, 255, 255));
-			// 标注位于右侧
-			chart.getLegend().setPosition(RectangleEdge.TOP);
-		}
-
-		// 获取绘图区
-		CategoryPlot plot = chart.getCategoryPlot();
-		// 设置绘图区透明背景
-		plot.setBackgroundAlpha(0.0f);
-		// 设置不显示网格线
-		plot.setRangeGridlinesVisible(false);
-		// 设置绘图区边框不可见
-		plot.setOutlineVisible(false);
-		// 设置抗锯齿,防止字体显示不清楚
-		Util.setAntiAlias(chart);
-		// 对柱子进行渲染
-		Util.setBarRenderer(chart.getCategoryPlot(), false);
-		// 对其他部分进行渲染
-		// X坐标轴渲染
-		CategoryAxis xAxis = plot.getDomainAxis();
-		// X坐标轴颜色
-		xAxis.setAxisLinePaint(Color.WHITE);
-		// X坐标轴标记|竖线颜色
-		xAxis.setTickMarkPaint(Color.WHITE);
-		xAxis.setLabelPaint(Color.WHITE);
-		xAxis.setTickLabelPaint(Color.WHITE);
-		xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
-		// 数据轴左边距
-		xAxis.setLowerMargin(0.0);
-		// 数据轴右边距
-		xAxis.setUpperMargin(0.0);
-		// Y坐标轴渲染
-		ValueAxis yAxis = plot.getRangeAxis();
-		yAxis.setTickLabelPaint(Color.WHITE);
-		// Y坐标轴颜色
-		yAxis.setAxisLinePaint(Color.WHITE);
-		// Y坐标轴标记|竖线颜色
-		yAxis.setTickMarkPaint(Color.WHITE);
-		// 是否显示Y刻度线
-		yAxis.setAxisLineVisible(true);
-		// 是否显示Y刻度
-		yAxis.setTickMarksVisible(true);
-		yAxis.setLabelPaint(Color.WHITE);
-		// 设置顶部Y坐标轴间距,防止数据无法显示
-		plot.getRangeAxis().setUpperMargin(0.0);
-		// 设置底部Y坐标轴间距
-		plot.getRangeAxis().setLowerMargin(0.0);
-		// 设置分类轴标记线的颜色
-		plot.setDomainGridlinePaint(Color.white);
-		// 设置数据轴标记线的颜色
-		plot.setRangeGridlinePaint(Color.white);
-		// 设置数据轴的绘制位置
-		plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-
-		BarRenderer renderer = (BarRenderer) plot.getRenderer();
-		renderer.setDefaultItemLabelsVisible(true);
-
-		return this;
-	}
-
-	/******************** end 柱状图 *********************/
-	/******************** start 仪表盘 *********************/
-
-	public Echarts gauge() {
-		// 1,数据集合对象 此处为DefaultValueDataset
-		DefaultValueDataset dataset = new DefaultValueDataset();
-		// 当前指针指向的位置，即：我们需要显示的数据
-		dataset.setValue(89.2D);
-		/**
-		 * 获取图表区域对象
-		 */
-		DialPlot dialplot = new DialPlot();
-		dialplot.setView(0.0D, 0.0D, 1.0D, 1.0D);
-		dialplot.setDataset(0, dataset);
-		/**
-		 * 开始设置显示框架结构 B. setDailFrame(DailFrame dailFrame); 设置表盘的底层面板图像，通常表盘是整个仪表的最底层。
-		 */
-
-		StandardDialFrame dialFrame = new StandardDialFrame();
-		dialFrame.setBackgroundPaint(new Color(7, 10, 85));
-		dialFrame.setForegroundPaint(new Color(7, 10, 85));
-		dialplot.setDialFrame(dialFrame);
-		/**
-		 * 结束设置显示框架结构 C. setBackground(Color color); 设置表盘的颜色，可以采用Java内置的颜色控制方式来调用该方法。
-		 */
-//		GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(),
-//				new Color(170, 170, 220));
-//		DialBackground dialbackground = new DialBackground(gradientpaint);
-//		StandardGradientPaintTransformer gradientPaintTransformer = new StandardGradientPaintTransformer(
-//				GradientPaintTransformType.VERTICAL);
-//		dialbackground.setGradientPaintTransformer(gradientPaintTransformer);
-//		dialplot.setBackground(dialbackground);
-
-		// 设置显示在表盘中央位置的信息
-		DialTextAnnotation dialtextannotation = new DialTextAnnotation("湿度(%)");
-		dialtextannotation.setFont(new Font("微软雅黑", 1, 14));
-		dialtextannotation.setRadius(0.69999999999999996D);
-		dialtextannotation.setPaint(Color.WHITE);
-
-		dialplot.addLayer(dialtextannotation);
-
-		/**
-		 * 指针指向的数据,用文本显示出来,并指向一个数据集
-		 */
-		DialValueIndicator dvi = new DialValueIndicator(0);
-		dvi.setFont(new Font("微软雅黑", Font.PLAIN, 26));
-		dvi.setRadius(0.6);
-		dvi.setAngle(-94.0);
-		dvi.setPaint(Color.white);
-		dvi.setBackgroundPaint(new Color(7, 10, 85));
-		dvi.setOutlinePaint(new Color(7, 10, 85));
-		dialplot.addLayer(dvi);
-
-		// 对应pointer
-		StandardDialScale dialScale = new StandardDialScale();
-		// 最底表盘刻度
-		dialScale.setLowerBound(0D);
-		// 最高表盘刻度
-		dialScale.setUpperBound(100D);
-		// 刚好与人的正常视觉对齐,弧度为120
-		dialScale.setStartAngle(-120D);
-		// 刚好与人的正常视觉对齐,弧度为300
-		dialScale.setExtent(-300D);
-		// 值越大,与刻度盘框架边缘越近
-		dialScale.setTickRadius(0.88D);
-		// 值越大,与刻度盘刻度越远0.14999999999999999D
-		dialScale.setTickLabelOffset(0.14999999999999999D);
-		// 刻度盘刻度字体
-		dialScale.setTickLabelFont(new Font("微软雅黑", 0, 14));
-		// 刻度盘刻度字体颜色
-		dialScale.setTickLabelPaint(Color.WHITE);
-		// 设置刻度线的颜色
-		dialScale.setMajorTickPaint(new Color(30, 144, 255));
-		// 设置刻度线增量
-		dialScale.setMajorTickIncrement(10.0);
-		dialplot.addScale(0, dialScale);
-
-		// 设置刻度范围
-		StandardDialRange standarddialrange = new StandardDialRange(0D, 100D, new Color(30, 144, 255));
-		standarddialrange.setInnerRadius(0.9D);
-		standarddialrange.setOuterRadius(0.9D);
-		dialplot.addLayer(standarddialrange);
-
-		/**
-		 * 设置指针 G. addPointer(DailPointer dailPointer);
-		 * 用于设定表盘使用的指针样式，JFreeChart中有很多可供选择指针样式， 用户可以根据使用需要，采用不同的DailPoint的实现类来调用该方法
-		 */
-		// 指针一
-		Pointer pointer = new Pointer(0);
-		pointer.setOutlinePaint(new Color(66, 228, 251));
-		pointer.setWidthRadius(0.04D);
-		pointer.setFillPaint(new Color(66, 228, 251));
-		pointer.setRadius(0.6D);
-		dialplot.addPointer(pointer);
-		dialplot.mapDatasetToScale(0, 0);
-
-		DialCap dialcap = new DialCap();
-		dialcap.setRadius(0.06D);
-		dialplot.setCap(dialcap);
-
-		chart = new JFreeChart(dialplot);
-		chart.setBackgroundPaint(null);
-
-		return this;
-	}
-
-	/******************** end 仪表盘 *********************/
-
-	/**
-	 * 设置图表标题
-	 * 
-	 * @param title
-	 * @return
-	 */
-	public Echarts title(String title) {
-		this.title = title;
-		return this;
-	}
-
-	/**
-	 * 设置图表大小
-	 * 
-	 * @param title
-	 * @return
-	 */
-	public Echarts size(int width, int height) {
-		this.width = width;
-		this.height = height;
-		return this;
-	}
-
-	/**
-	 * 显示图表
-	 * 
-	 * @return
-	 */
-	public JPanel handle() {
-		ChartPanel chartPanel = new ChartPanel(chart, width, height, width, height, width, height, true, false, false,
-				false, false, true, false);
-		chartPanel.setPreferredSize(new Dimension(width, height));
-		chartPanel.setOpaque(false);
-		return chartPanel;
-	}
-
-	public static JFreeChart getChart() {
-		return chart;
-	}
-
-}
-
-class Util {
 	private static String NO_DATA_MSG = "数据加载失败";
 	private static Font FONT = new Font("宋体", Font.PLAIN, 12);
 	public static Color[] CHART_COLORS = { new Color(2, 114, 252), new Color(235, 97, 95), new Color(255, 170, 1),
@@ -435,9 +68,6 @@ class Util {
 
 	static {
 		setChartTheme();
-	}
-
-	public Util() {
 	}
 
 	/**
@@ -615,20 +245,14 @@ class Util {
 		plot.setNoDataMessage(NO_DATA_MSG);
 		plot.setInsets(new RectangleInsets(10, 10, 0, 10), false);
 		LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
-
 		renderer.setDefaultStroke(new BasicStroke(1.5F));
 		if (isShowDataLabels) {
 			renderer.setDefaultItemLabelsVisible(true);
-			renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(
-					StandardCategoryItemLabelGenerator.DEFAULT_LABEL_FORMAT_STRING, NumberFormat.getInstance()));
 			renderer.setDefaultPositiveItemLabelPosition(
 					new ItemLabelPosition(ItemLabelAnchor.OUTSIDE1, TextAnchor.BOTTOM_CENTER));
 		}
 		// 数据点绘制形状
 		renderer.setDefaultShapesVisible(isShapesVisible);
-		setXaixs(plot);
-		setYaixs(plot);
-
 	}
 
 	/**

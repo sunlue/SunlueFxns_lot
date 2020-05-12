@@ -1,6 +1,7 @@
 package com.view.datav.main;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -142,14 +143,14 @@ class PlayMonitorVideo extends Thread {
 
 			@Override
 			public void fail(String errMsg) {
-				// TODO Auto-generated method stub
-
+				label.setText(errMsg);
+				label.setForeground(Color.RED);
 			}
 
 			@Override
 			public void fail(String errMsg, int width, int height) {
-				// TODO Auto-generated method stub
-
+				label.setText(errMsg);
+				label.setForeground(Color.RED);
 			}
 		});
 	}

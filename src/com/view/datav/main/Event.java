@@ -73,6 +73,7 @@ public class Event extends JPanel {
 		table.setForeground(new Color(51, 51, 51));
 		table.setGridColor(new Color(153, 186, 240));
 		table.setRowHeight(32);
+		table.setOpaque(false);
 		table.setDefaultRenderer(Object.class, tableRender);
 		table.setBorder(BorderFactory.createLineBorder(new Color(153, 186, 240), 1));
 

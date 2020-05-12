@@ -24,6 +24,7 @@ public class RealTimeTourists {
 	}
 
 	public JPanel handle() {
+		panel.removeAll();
 		panel.setOpaque(false);
 		for (int i = 0; i < numArr.length; i++) {
 			JLabel label = new JLabel();
