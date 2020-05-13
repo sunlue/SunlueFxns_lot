@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -44,7 +43,9 @@ public class DataV extends JWindow implements MouseListener {
 	private String[] menuItemList = new String[] { "综合管理", "视频监控", "指挥调度", "停车管理", "环境天气" };
 
 	public DataV() {
+		windowInit();
 		setSize(screenSize);
+		setAlwaysOnTop(true);
 		setLayout(new BorderLayout());
 		add(header(), BorderLayout.NORTH);
 		add(menu(), BorderLayout.WEST);
@@ -83,7 +84,7 @@ public class DataV extends JWindow implements MouseListener {
 		timer.start();
 
 		JLabel title = new JLabel();
-		title.setText("四川上略互动网络技术有限公司");
+		title.setText("道明·竹艺村综合管理平台");
 		title.setFont(new Font("微软雅黑", 1, 34));
 		title.setForeground(Color.white);
 		title.setVerticalAlignment(SwingConstants.CENTER);
@@ -156,7 +157,7 @@ public class DataV extends JWindow implements MouseListener {
 	private JPanel main() {
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(new com.view.datav.main.Container(), BorderLayout.CENTER);
+		mainPanel.add(new com.view.datav.parking.Container(), BorderLayout.CENTER);
 		return mainPanel;
 	}
 
@@ -169,6 +170,7 @@ public class DataV extends JWindow implements MouseListener {
 				menuItem.setOpaque(true);
 				menuItem.setBackground(new Color(18, 25, 88));
 				mainPanel.removeAll();
+				mainPanel.repaint();
 				if (menuItemList[0].equals(menuItem.getText())) {
 					mainPanel.add(new com.view.datav.main.Container(), BorderLayout.CENTER);
 				} else if (menuItemList[1].equals(menuItem.getText())) {
@@ -176,7 +178,7 @@ public class DataV extends JWindow implements MouseListener {
 				} else if (menuItemList[2].equals(menuItem.getText())) {
 
 				} else if (menuItemList[3].equals(menuItem.getText())) {
-
+					mainPanel.add(new com.view.datav.parking.Container(), BorderLayout.CENTER);
 				} else if (menuItemList[4].equals(menuItem.getText())) {
 					mainPanel.add(new com.view.datav.weather.Container(), BorderLayout.CENTER);
 				}
@@ -233,7 +235,6 @@ class GetWeater extends Thread {
 			today.setHorizontalAlignment(SwingConstants.RIGHT);
 			today.setVerticalAlignment(SwingConstants.CENTER);
 			today.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-			today.setPreferredSize(new Dimension(68, 60));
 
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(result.getString("wea"));
@@ -249,12 +250,11 @@ class GetWeater extends Thread {
 			weather.setHorizontalAlignment(SwingConstants.RIGHT);
 			weather.setVerticalAlignment(SwingConstants.CENTER);
 			weather.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
-			weather.setPreferredSize(new Dimension(160, 60));
 
 			JPanel weatherPanel = new JPanel();
-			weatherPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-			weatherPanel.add(today);
-			weatherPanel.add(weather);
+			weatherPanel.setLayout(new BorderLayout(0, 0));
+			weatherPanel.add(today, BorderLayout.CENTER);
+			weatherPanel.add(weather, BorderLayout.EAST);
 			weatherPanel.setOpaque(false);
 			callback.complete(weatherPanel);
 		} catch (Exception e1) {

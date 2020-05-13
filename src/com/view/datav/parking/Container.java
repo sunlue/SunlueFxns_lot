@@ -1,11 +1,9 @@
-package com.view.datav.main;
+package com.view.datav.parking;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,15 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import com.util.Util;
-import com.view.datav.parking.Monitor;
-import com.view.datav.parking.Parking;
-import com.view.datav.parking.Traffic;
+import com.view.datav.main.Map;
+import com.view.datav.main.TouristsFrom;
 
-/**
- * @author xiebing
- */
 public class Container extends JPanel {
-
 	private static final long serialVersionUID = 1L;
 
 	int leftWidth = 460;
@@ -33,26 +26,29 @@ public class Container extends JPanel {
 
 	public Container() {
 		setBackground(new Color(7, 10, 85));
-		setLayout(new BorderLayout(5, 0));
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		setLayout(new BorderLayout(5, 5));
 		add(left(leftWidth, height), BorderLayout.WEST);
 		add(center(centerWidth, height), BorderLayout.CENTER);
 		add(right(rightWidth, height), BorderLayout.EAST);
 	}
 
 	private JPanel left(int width, int height) {
+
 		JPanel panel = new JPanel();
-		panel.setPreferredSize(new Dimension(width, height));
 		panel.setOpaque(false);
-		panel.setLayout(new GridLayout(3, 1, 0, 5));
-		panel.add(new Env(width, height / 3, false));
-		panel.add(new FeedBack(width, height / 3));
-		panel.add(new Access(width, height / 3));
+		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
+		panel.setPreferredSize(new Dimension(width, height));
+		panel.setBackground(Color.RED);
+		panel.add(new TotalVehicleFlow(width, 96));
+		panel.add(new Parking(width, 210, "停车场使用情况", "Car park usage"));
+		panel.add(new RegionVehicle(width, height - 454));
+
 		return panel;
 	}
 
 	private JPanel center(int width, int height) {
-		JPanel flop = new RealTimeTourists("2580").handle();
+		JPanel flop = new RealTimeCar(Integer.toString(Util.random(10000, 99999))).handle();
 		JPanel panel = new JPanel();
 		panel.setOpaque(false);
 		panel.setLayout(new BorderLayout(0, 5));
@@ -76,14 +72,7 @@ public class Container extends JPanel {
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
 		panel.add(new Traffic(width, 220));
 		panel.add(new Parking(width, 210));
-		panel.add(new Event(width, height - 670));
-		panel.add(new Monitor(width, 220, "停车场视频监控", "Video surveillance of parking lot"));
+		panel.add(new Monitor(width, 220, "视频监控", "Daily traffic flow"));
 		return panel;
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		int x = 0, y = 0;
-		g.drawImage(Util.getImage("bg.png"), x, y, getSize().width, getSize().height, this);
 	}
 }

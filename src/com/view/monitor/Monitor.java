@@ -45,14 +45,13 @@ public class Monitor extends JFrame {
 
 	public Monitor() {
 
-		InitThread init = new InitThread(new InitThreadCallback() {
+		new Initialize(new InitThreadCallback() {
 			@Override
 			public void complete(JSplitPane splitPane) {
 				setContentPane(splitPane);
 				validate();
 			}
-		});
-		init.start();
+		}).start();
 
 		JLabel loading = new JLabel("正在加载中,请稍后...");
 		loading.setFont(new Font("微软雅黑", 1, 20));
@@ -211,11 +210,11 @@ class DevicePanel extends JPanel {
 
 }
 
-class InitThread extends Thread {
+class Initialize extends Thread {
 
 	private InitThreadCallback callback;
 
-	public InitThread(InitThreadCallback callback) {
+	public Initialize(InitThreadCallback callback) {
 		this.callback = callback;
 	}
 
